@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "functions/**"
+      - "firebase.json"
       - ".github/workflows/deploy-functions.yml"
 
 jobs:
@@ -20,6 +21,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: Check Firebase files
+        run: |
+          echo "Workspace:"
+          pwd
+          echo "Root files:"
+          ls -la
+          echo "Firebase config:"
+          cat firebase.json
 
       - name: Install Firebase Functions dependencies
         working-directory: functions
@@ -38,4 +48,7 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
         run: |
-          firebase deploy --only functions --project ssc-exam-project-8af6b
+          firebase deploy \
+            --only functions \
+            --project ssc-exam-project-8af6b \
+            --config "${{ github.workspace }}/firebase.json"
