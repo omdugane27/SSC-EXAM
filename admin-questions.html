@@ -1,0 +1,2525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Admin Question Bank - AI</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f7fb;
+    color:#172033;
+}
+
+.header{
+    background:linear-gradient(135deg,#111827,#2563eb);
+    color:white;
+    padding:18px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.header h1{
+    font-size:22px;
+}
+
+.header p{
+    margin-top:5px;
+    font-size:13px;
+    opacity:.9;
+}
+
+.back-btn{
+    border:0;
+    background:white;
+    color:#1d4ed8;
+    padding:11px 17px;
+    border-radius:9px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.07);
+}
+
+.card h2{
+    margin-bottom:15px;
+    font-size:19px;
+}
+
+.status{
+    display:none;
+    padding:14px;
+    border-radius:9px;
+    margin-bottom:18px;
+    white-space:pre-wrap;
+    word-break:break-word;
+    line-height:1.5;
+}
+
+.status.success{
+    display:block;
+    background:#dcfce7;
+    border:1px solid #86efac;
+    color:#166534;
+}
+
+.status.error{
+    display:block;
+    background:#fee2e2;
+    border:1px solid #fca5a5;
+    color:#991b1b;
+}
+
+.status.info{
+    display:block;
+    background:#dbeafe;
+    border:1px solid #93c5fd;
+    color:#1e40af;
+}
+
+.status.warning{
+    display:block;
+    background:#fef3c7;
+    border:1px solid #fcd34d;
+    color:#92400e;
+}
+
+label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:7px;
+}
+
+select,
+input[type=file]{
+    width:100%;
+    padding:12px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    background:white;
+    font-size:14px;
+}
+
+select:focus{
+    outline:none;
+    border-color:#2563eb;
+}
+
+.pdf-box{
+    border:2px dashed #94a3b8;
+    background:#f8fafc;
+    border-radius:13px;
+    padding:25px;
+    text-align:center;
+}
+
+.pdf-box p{
+    color:#64748b;
+    margin-bottom:14px;
+    line-height:1.5;
+}
+
+.btn{
+    border:0;
+    border-radius:9px;
+    padding:11px 17px;
+    margin-top:12px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn-success{
+    background:#16a34a;
+    color:white;
+}
+
+.btn-secondary{
+    background:#475569;
+    color:white;
+}
+
+.btn-ai{
+    background:linear-gradient(135deg,#7c3aed,#2563eb);
+    color:white;
+}
+
+.btn-login{
+    background:#dc2626;
+    color:white;
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.loading{
+    margin-top:10px;
+    color:#2563eb;
+    font-weight:bold;
+}
+
+.count{
+    display:inline-block;
+    background:#2563eb;
+    color:white;
+    padding:7px 12px;
+    border-radius:20px;
+    margin-bottom:15px;
+    font-size:13px;
+}
+
+.question-card{
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:14px;
+    background:#fff;
+}
+
+.question-number{
+    color:#1d4ed8;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.question-text{
+    font-weight:bold;
+    line-height:1.5;
+    margin-bottom:10px;
+}
+
+.option{
+    background:#f8fafc;
+    padding:9px 10px;
+    border-radius:7px;
+    margin:5px 0;
+    line-height:1.4;
+}
+
+.option.correct{
+    background:#dcfce7;
+    color:#166534;
+    font-weight:bold;
+    border:1px solid #86efac;
+}
+
+.meta{
+    margin-top:10px;
+    font-size:13px;
+    color:#64748b;
+    line-height:1.7;
+}
+
+.ai-meta{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+    margin-top:10px;
+}
+
+.badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+    background:#eef2ff;
+    color:#3730a3;
+}
+
+.badge.easy{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.badge.medium{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.badge.hard{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.confidence-high{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.confidence-medium{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.confidence-low{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.question-list-item{
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:10px;
+}
+
+.question-list-item h3{
+    font-size:15px;
+    line-height:1.5;
+    margin-bottom:9px;
+}
+
+.small{
+    color:#64748b;
+    font-size:13px;
+    margin:5px 0;
+    line-height:1.4;
+}
+
+.delete-btn{
+    border:0;
+    background:#dc2626;
+    color:white;
+    padding:8px 12px;
+    border-radius:7px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+.empty{
+    text-align:center;
+    padding:25px;
+    color:#64748b;
+}
+
+.auth-box{
+    background:#eff6ff;
+    border:1px solid #93c5fd;
+    padding:15px;
+    border-radius:10px;
+    margin-top:12px;
+}
+
+.auth-email{
+    font-weight:bold;
+    color:#1d4ed8;
+}
+
+.ai-box{
+    margin-top:15px;
+    padding:14px;
+    border-radius:10px;
+    background:#f5f3ff;
+    border:1px solid #c4b5fd;
+    color:#5b21b6;
+    line-height:1.5;
+}
+
+.warning-box{
+    margin-top:15px;
+    padding:12px;
+    border-radius:9px;
+    background:#fff7ed;
+    border:1px solid #fdba74;
+    color:#9a3412;
+    font-size:13px;
+    line-height:1.5;
+}
+
+@media(max-width:600px){
+
+    .container{
+        padding:12px;
+    }
+
+    .card{
+        padding:15px;
+    }
+
+    .header h1{
+        font-size:19px;
+    }
+
+    .btn{
+        width:100%;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div>
+        <h1>🤖 AI Question Bank</h1>
+        <p>SSC Examination System — Admin Panel</p>
+    </div>
+
+    <button
+        class="back-btn"
+        onclick="goDashboard()"
+    >
+        ← Dashboard
+    </button>
+
+</header>
+
+
+<div class="container">
+
+    <div
+        id="statusBox"
+        class="status"
+    ></div>
+
+
+    <!-- AUTH -->
+
+    <div class="card">
+
+        <h2>🔐 Admin Authentication</h2>
+
+        <div id="authStatus">
+            Checking Firebase login...
+        </div>
+
+        <button
+            id="loginAgainBtn"
+            class="btn btn-login"
+            style="display:none"
+            onclick="goLogin()"
+        >
+            🔐 Login as Admin
+        </button>
+
+    </div>
+
+
+    <!-- EXAM -->
+
+    <div class="card">
+
+        <h2>1️⃣ Select Exam</h2>
+
+        <label>
+            Select Exam
+        </label>
+
+        <select id="examSelect">
+
+            <option value="">
+                Checking exams...
+            </option>
+
+        </select>
+
+        <div
+            id="examLoading"
+            class="loading"
+        ></div>
+
+    </div>
+
+
+    <!-- PDF -->
+
+    <div class="card">
+
+        <h2>2️⃣ Upload Question PDF</h2>
+
+        <div class="pdf-box">
+
+            <p>
+                Upload your MCQ PDF.<br>
+                AI will analyze questions,
+                options, answers, topics and difficulty.
+            </p>
+
+            <input
+                type="file"
+                id="pdfFile"
+                accept=".pdf,application/pdf"
+            >
+
+        </div>
+
+        <button
+            id="analyzeBtn"
+            class="btn btn-ai"
+            onclick="analyzePDFWithAI()"
+        >
+            🤖 Analyze PDF with AI
+        </button>
+
+        <div class="ai-box">
+
+            <strong>AI Processing:</strong><br>
+
+            PDF → Text Extraction →
+            AI Analysis → Preview →
+            Admin Approval → Firestore
+
+        </div>
+
+        <div class="warning-box">
+
+            ⚠️ Always review AI-generated
+            questions before importing.
+
+        </div>
+
+    </div>
+
+
+    <!-- PREVIEW -->
+
+    <div
+        class="card"
+        id="previewCard"
+        style="display:none"
+    >
+
+        <h2>3️⃣ AI Question Preview</h2>
+
+        <div
+            id="questionCount"
+            class="count"
+        >
+            0 Questions
+        </div>
+
+        <div
+            id="aiSummary"
+            class="ai-box"
+        ></div>
+
+        <div
+            id="previewContainer"
+        ></div>
+
+        <div class="actions">
+
+            <button
+                id="importBtn"
+                class="btn btn-success"
+                onclick="importQuestions()"
+            >
+                ☁️ Approve & Import Questions
+            </button>
+
+            <button
+                class="btn btn-secondary"
+                onclick="clearPreview()"
+            >
+                Clear
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- EXISTING -->
+
+    <div class="card">
+
+        <h2>4️⃣ Existing Questions</h2>
+
+        <div id="existingQuestions">
+
+            <div class="empty">
+                Select an exam to view questions.
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   FIREBASE CONFIG
+   EXACT CONFIG FROM FIREBASE CONSOLE
+===================================================== */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+
+    authDomain:
+        "ssc-exam-project-8af6b.firebaseapp.com",
+
+    projectId:
+        "ssc-exam-project-8af6b",
+
+    storageBucket:
+        "ssc-exam-project-8af6b.firebasestorage.app",
+
+    messagingSenderId:
+        "288245274853",
+
+    appId:
+        "1:288245274853:web:b4d535a08faf305f5e9c0c",
+
+    measurementId:
+        "G-4BTLY67VDS"
+};
+
+
+/* =====================================================
+   SUPABASE EDGE FUNCTION
+===================================================== */
+
+const HYPER_FUNCTION_URL =
+    "https://sjvdfvibbdxjtmfmuyci.supabase.co/functions/v1/hyper-function";
+
+
+/* =====================================================
+   FIREBASE INITIALIZE
+===================================================== */
+
+try{
+
+    if(!firebase.apps.length){
+
+        firebase.initializeApp(
+            firebaseConfig
+        );
+
+    }
+
+}catch(error){
+
+    console.error(
+        "Firebase initialization error:",
+        error
+    );
+
+}
+
+
+/* =====================================================
+   FIREBASE SERVICES
+===================================================== */
+
+const auth =
+    firebase.auth();
+
+const db =
+    firebase.firestore();
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let currentUser = null;
+
+let extractedQuestions = [];
+
+let selectedExamId = "";
+
+let selectedExamName = "";
+
+let selectedExamSubject = "";
+
+let availableExams = [];
+
+
+/* =====================================================
+   START
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        showStatus(
+            "🔄 Connecting to Firebase...",
+            "info"
+        );
+
+        waitForFirebaseAuth();
+
+    }
+);
+
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+function waitForFirebaseAuth(){
+
+    auth.onAuthStateChanged(
+        async function(user){
+
+            console.log(
+                "Firebase Auth State:",
+                user
+                    ? user.email
+                    : "LOGGED OUT"
+            );
+
+            if(user){
+
+                currentUser =
+                    user;
+
+                document.getElementById(
+                    "authStatus"
+                ).innerHTML = `
+
+                    <div class="auth-box">
+
+                        ✅ <strong>Admin logged in</strong>
+
+                        <br><br>
+
+                        Email:
+                        <span class="auth-email">
+                            ${escapeHtml(
+                                user.email
+                            )}
+                        </span>
+
+                    </div>
+
+                `;
+
+                document.getElementById(
+                    "loginAgainBtn"
+                ).style.display =
+                    "none";
+
+                showStatus(
+                    "✅ Firebase Admin authentication successful.",
+                    "success"
+                );
+
+                await loadExams();
+
+            }else{
+
+                currentUser =
+                    null;
+
+                document.getElementById(
+                    "authStatus"
+                ).innerHTML = `
+
+                    <div class="auth-box">
+
+                        ❌ <strong>
+                            Firebase Admin login not found.
+                        </strong>
+
+                        <br><br>
+
+                        Please login from Admin Login page.
+
+                    </div>
+
+                `;
+
+                document.getElementById(
+                    "loginAgainBtn"
+                ).style.display =
+                    "block";
+
+                document.getElementById(
+                    "examSelect"
+                ).innerHTML =
+                    '<option value="">Login required</option>';
+
+                showStatus(
+                    "⚠️ Firebase Admin login is not active.\n\n" +
+                    "Click 'Login as Admin' and login again.",
+                    "warning"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   LOAD EXAMS
+===================================================== */
+
+async function loadExams(){
+
+    const select =
+        document.getElementById(
+            "examSelect"
+        );
+
+    const loading =
+        document.getElementById(
+            "examLoading"
+        );
+
+    select.innerHTML =
+        '<option value="">Loading exams...</option>';
+
+    loading.innerText =
+        "Loading exams from Firestore...";
+
+    try{
+
+        if(!auth.currentUser){
+
+            throw new Error(
+                "Firebase user is not authenticated."
+            );
+
+        }
+
+        const snapshot =
+            await db
+                .collection("exams")
+                .get();
+
+        availableExams =
+            [];
+
+        snapshot.forEach(
+            function(doc){
+
+                const data =
+                    doc.data();
+
+                availableExams.push({
+
+                    id:
+                        doc.id,
+
+                    examName:
+                        data.examName ||
+                        "Unnamed Exam",
+
+                    subject:
+                        data.subject ||
+                        "",
+
+                    status:
+                        data.status ||
+                        "draft",
+
+                    examDate:
+                        data.examDate ||
+                        ""
+
+                });
+
+            }
+        );
+
+
+        availableExams.sort(
+            function(a,b){
+
+                return a.examName.localeCompare(
+                    b.examName
+                );
+
+            }
+        );
+
+
+        select.innerHTML =
+            '<option value="">-- Select Exam --</option>';
+
+
+        if(
+            availableExams.length === 0
+        ){
+
+            loading.innerText =
+                "No exams found.";
+
+            showStatus(
+                "⚠️ No exams found.\n\n" +
+                "Go to Admin → Exams and create an exam first.",
+                "warning"
+            );
+
+            return;
+
+        }
+
+
+        availableExams.forEach(
+            function(exam){
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    exam.id;
+
+                option.textContent =
+                    exam.examName +
+                    " — " +
+                    (
+                        exam.subject ||
+                        "No Subject"
+                    ) +
+                    " [" +
+                    exam.status.toUpperCase() +
+                    "]";
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        if(
+            availableExams.length === 1
+        ){
+
+            select.value =
+                availableExams[0].id;
+
+            selectedExamId =
+                availableExams[0].id;
+
+            selectedExamName =
+                availableExams[0].examName;
+
+            selectedExamSubject =
+                availableExams[0].subject;
+
+            loading.innerText =
+                "✅ 1 exam found — automatically selected.";
+
+            await loadExistingQuestions();
+
+        }else{
+
+            loading.innerText =
+                availableExams.length +
+                " exams loaded. Select one.";
+
+        }
+
+
+        select.onchange =
+            async function(){
+
+                const id =
+                    this.value;
+
+                if(!id){
+
+                    selectedExamId =
+                        "";
+
+                    selectedExamName =
+                        "";
+
+                    selectedExamSubject =
+                        "";
+
+                    document.getElementById(
+                        "existingQuestions"
+                    ).innerHTML =
+                        '<div class="empty">' +
+                        'Select an exam to view questions.' +
+                        '</div>';
+
+                    return;
+
+                }
+
+
+                const exam =
+                    availableExams.find(
+                        function(item){
+
+                            return item.id === id;
+
+                        }
+                    );
+
+
+                if(exam){
+
+                    selectedExamId =
+                        exam.id;
+
+                    selectedExamName =
+                        exam.examName;
+
+                    selectedExamSubject =
+                        exam.subject;
+
+                }
+
+
+                showStatus(
+                    "✅ Exam selected:\n" +
+                    selectedExamName,
+                    "success"
+                );
+
+
+                await loadExistingQuestions();
+
+            };
+
+
+        showStatus(
+            "✅ " +
+            availableExams.length +
+            " exam(s) loaded successfully.",
+            "success"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "LOAD EXAMS ERROR:",
+            error
+        );
+
+        select.innerHTML =
+            '<option value="">Unable to load exams</option>';
+
+        loading.innerText =
+            "Failed to load exams.";
+
+        showStatus(
+            "❌ Firebase Exam Loading Error\n\n" +
+            "Code: " +
+            (
+                error.code ||
+                "unknown"
+            ) +
+            "\n\nMessage:\n" +
+            (
+                error.message ||
+                error
+            ),
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   AI PDF ANALYSIS
+===================================================== */
+
+async function analyzePDFWithAI(){
+
+    if(!currentUser){
+
+        showStatus(
+            "❌ Admin Firebase login is missing.\n\n" +
+            "Please login again.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!selectedExamId){
+
+        showStatus(
+            "⚠️ Please select an exam first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const fileInput =
+        document.getElementById(
+            "pdfFile"
+        );
+
+    const file =
+        fileInput.files[0];
+
+
+    if(!file){
+
+        showStatus(
+            "⚠️ Please select a PDF file.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(
+        file.type !== "application/pdf" &&
+        !file.name.toLowerCase().endsWith(".pdf")
+    ){
+
+        showStatus(
+            "❌ Only PDF files are allowed.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "analyzeBtn"
+        );
+
+    button.disabled =
+        true;
+
+    button.innerText =
+        "⏳ Reading PDF...";
+
+
+    try{
+
+        showStatus(
+            "📄 Step 1/2\nReading PDF text...",
+            "info"
+        );
+
+
+        const arrayBuffer =
+            await file.arrayBuffer();
+
+
+        const pdf =
+            await pdfjsLib
+                .getDocument({
+                    data:arrayBuffer
+                })
+                .promise;
+
+
+        let fullText =
+            "";
+
+
+        for(
+            let pageNumber = 1;
+            pageNumber <= pdf.numPages;
+            pageNumber++
+        ){
+
+            const page =
+                await pdf.getPage(
+                    pageNumber
+                );
+
+
+            const content =
+                await page.getTextContent();
+
+
+            const pageText =
+                content.items
+                    .map(
+                        function(item){
+
+                            return item.str || "";
+
+                        }
+                    )
+                    .join(" ");
+
+
+            fullText +=
+                "\n--- PAGE " +
+                pageNumber +
+                " ---\n" +
+                pageText;
+
+        }
+
+
+        if(
+            !fullText.trim()
+        ){
+
+            throw new Error(
+                "PDF contains no readable text."
+            );
+
+        }
+
+
+        button.innerText =
+            "🤖 AI analyzing...";
+
+
+        showStatus(
+            "🤖 Step 2/2\nSending PDF text to AI...\n\nPlease wait.",
+            "info"
+        );
+
+
+        const idToken =
+            await currentUser.getIdToken(
+                true
+            );
+
+
+        const response =
+            await fetch(
+                HYPER_FUNCTION_URL,
+                {
+
+                    method:
+                        "POST",
+
+                    headers:{
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            "Bearer " +
+                            idToken
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            action:
+                                "analyze_questions",
+
+                            text:
+                                fullText,
+
+                            examName:
+                                selectedExamName,
+
+                            subject:
+                                selectedExamSubject
+
+                        })
+
+                }
+            );
+
+
+        const rawText =
+            await response.text();
+
+
+        let result;
+
+
+        try{
+
+            result =
+                JSON.parse(
+                    rawText
+                );
+
+        }catch(error){
+
+            throw new Error(
+                "Invalid response from Supabase.\n\n" +
+                rawText.substring(
+                    0,
+                    2000
+                )
+            );
+
+        }
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "AI Function HTTP " +
+                response.status +
+                "\n\n" +
+                (
+                    result.error ||
+                    result.message ||
+                    rawText
+                )
+            );
+
+        }
+
+
+        if(!result.success){
+
+            throw new Error(
+                result.error ||
+                "AI analysis failed."
+            );
+
+        }
+
+
+        if(
+            !Array.isArray(
+                result.questions
+            ) ||
+            result.questions.length === 0
+        ){
+
+            throw new Error(
+                "AI did not return any questions."
+            );
+
+        }
+
+
+        extractedQuestions =
+            normalizeAIQuestions(
+                result.questions
+            );
+
+
+        if(
+            extractedQuestions.length === 0
+        ){
+
+            throw new Error(
+                "No valid questions returned by AI."
+            );
+
+        }
+
+
+        renderPreview(
+            result.model ||
+            "AI"
+        );
+
+
+        showStatus(
+            "✅ AI analysis completed successfully.\n\n" +
+            "Questions found: " +
+            extractedQuestions.length,
+            "success"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "AI ANALYSIS ERROR:",
+            error
+        );
+
+
+        showStatus(
+            "❌ AI Question Analysis Failed\n\n" +
+            (
+                error.message ||
+                error
+            ),
+            "error"
+        );
+
+
+    }finally{
+
+        button.disabled =
+            false;
+
+        button.innerText =
+            "🤖 Analyze PDF with AI";
+
+    }
+
+}
+
+
+/* =====================================================
+   NORMALIZE AI QUESTIONS
+===================================================== */
+
+function normalizeAIQuestions(
+    questions
+){
+
+    return questions
+        .map(
+            function(q,index){
+
+                let answer =
+                    q.correctAnswer;
+
+
+                if(
+                    answer !== null &&
+                    answer !== undefined
+                ){
+
+                    answer =
+                        String(answer)
+                            .trim()
+                            .toUpperCase();
+
+
+                    if(
+                        ![
+                            "A",
+                            "B",
+                            "C",
+                            "D"
+                        ].includes(answer)
+                    ){
+
+                        answer =
+                            null;
+
+                    }
+
+                }else{
+
+                    answer =
+                        null;
+
+                }
+
+
+                let difficulty =
+                    String(
+                        q.difficulty ||
+                        "Medium"
+                    );
+
+
+                if(
+                    ![
+                        "Easy",
+                        "Medium",
+                        "Hard"
+                    ].includes(
+                        difficulty
+                    )
+                ){
+
+                    difficulty =
+                        "Medium";
+
+                }
+
+
+                let confidence =
+                    Number(
+                        q.confidence
+                    );
+
+
+                if(
+                    Number.isNaN(
+                        confidence
+                    )
+                ){
+
+                    confidence =
+                        0;
+
+                }
+
+
+                if(
+                    confidence > 1
+                ){
+
+                    confidence =
+                        confidence / 100;
+
+                }
+
+
+                confidence =
+                    Math.max(
+                        0,
+                        Math.min(
+                            1,
+                            confidence
+                        )
+                    );
+
+
+                return{
+
+                    questionNumber:
+                        Number(
+                            q.questionNumber
+                        ) ||
+                        index + 1,
+
+                    questionText:
+                        cleanText(
+                            q.questionText ||
+                            ""
+                        ),
+
+                    optionA:
+                        cleanText(
+                            q.optionA ||
+                            ""
+                        ),
+
+                    optionB:
+                        cleanText(
+                            q.optionB ||
+                            ""
+                        ),
+
+                    optionC:
+                        cleanText(
+                            q.optionC ||
+                            ""
+                        ),
+
+                    optionD:
+                        cleanText(
+                            q.optionD ||
+                            ""
+                        ),
+
+                    correctAnswer:
+                        answer,
+
+                    marks:
+                        Number(q.marks) > 0
+                        ? Number(q.marks)
+                        : 1,
+
+                    topic:
+                        cleanText(
+                            q.topic ||
+                            "General"
+                        ),
+
+                    difficulty:
+                        difficulty,
+
+                    confidence:
+                        confidence
+
+                };
+
+            }
+        )
+        .filter(
+            function(q){
+
+                return(
+                    q.questionText &&
+                    q.optionA &&
+                    q.optionB &&
+                    q.optionC &&
+                    q.optionD
+                );
+
+            }
+        );
+
+}
+
+
+/* =====================================================
+   PREVIEW
+===================================================== */
+
+function renderPreview(
+    modelName
+){
+
+    const card =
+        document.getElementById(
+            "previewCard"
+        );
+
+    const container =
+        document.getElementById(
+            "previewContainer"
+        );
+
+    const count =
+        document.getElementById(
+            "questionCount"
+        );
+
+    const summary =
+        document.getElementById(
+            "aiSummary"
+        );
+
+
+    card.style.display =
+        "block";
+
+
+    count.innerText =
+        extractedQuestions.length +
+        " Questions";
+
+
+    summary.innerHTML =
+        "🤖 <strong>AI Analysis Complete</strong><br>" +
+
+        "Model: " +
+        escapeHtml(
+            modelName ||
+            "AI"
+        ) +
+
+        "<br>" +
+
+        "Exam: " +
+        escapeHtml(
+            selectedExamName
+        ) +
+
+        "<br>" +
+
+        "Subject: " +
+        escapeHtml(
+            selectedExamSubject ||
+            "Not specified"
+        ) +
+
+        "<br><br>" +
+
+        "⚠️ Review every question before importing.";
+
+
+    container.innerHTML =
+        "";
+
+
+    extractedQuestions.forEach(
+        function(q,index){
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "question-card";
+
+
+            const difficultyClass =
+                String(
+                    q.difficulty ||
+                    "Medium"
+                ).toLowerCase();
+
+
+            const confidencePercent =
+                Math.round(
+                    (
+                        q.confidence ||
+                        0
+                    ) *
+                    100
+                );
+
+
+            let confidenceClass =
+                "confidence-low";
+
+
+            if(
+                confidencePercent >= 80
+            ){
+
+                confidenceClass =
+                    "confidence-high";
+
+            }else if(
+                confidencePercent >= 50
+            ){
+
+                confidenceClass =
+                    "confidence-medium";
+
+            }
+
+
+            div.innerHTML = `
+
+                <div class="question-number">
+                    Question ${
+                        escapeHtml(
+                            q.questionNumber ||
+                            index + 1
+                        )
+                    }
+                </div>
+
+                <div class="question-text">
+                    ${escapeHtml(
+                        q.questionText
+                    )}
+                </div>
+
+                <div class="option ${
+                    q.correctAnswer === "A"
+                    ? "correct"
+                    : ""
+                }">
+                    A. ${escapeHtml(
+                        q.optionA
+                    )}
+                </div>
+
+                <div class="option ${
+                    q.correctAnswer === "B"
+                    ? "correct"
+                    : ""
+                }">
+                    B. ${escapeHtml(
+                        q.optionB
+                    )}
+                </div>
+
+                <div class="option ${
+                    q.correctAnswer === "C"
+                    ? "correct"
+                    : ""
+                }">
+                    C. ${escapeHtml(
+                        q.optionC
+                    )}
+                </div>
+
+                <div class="option ${
+                    q.correctAnswer === "D"
+                    ? "correct"
+                    : ""
+                }">
+                    D. ${escapeHtml(
+                        q.optionD
+                    )}
+                </div>
+
+                <div class="ai-meta">
+
+                    <span class="badge">
+                        📚 Topic:
+                        ${escapeHtml(
+                            q.topic
+                        )}
+                    </span>
+
+                    <span class="badge ${difficultyClass}">
+                        🎯 Difficulty:
+                        ${escapeHtml(
+                            q.difficulty
+                        )}
+                    </span>
+
+                    <span class="badge">
+                        ⭐ Marks:
+                        ${escapeHtml(
+                            q.marks
+                        )}
+                    </span>
+
+                    <span class="badge ${confidenceClass}">
+                        🤖 Confidence:
+                        ${confidencePercent}%
+                    </span>
+
+                </div>
+
+                <div class="meta">
+
+                    Correct Answer:
+                    <strong>
+                        ${
+                            q.correctAnswer
+                            ? escapeHtml(
+                                q.correctAnswer
+                            )
+                            : "Not detected"
+                        }
+                    </strong>
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   IMPORT QUESTIONS
+===================================================== */
+
+async function importQuestions(){
+
+    if(!currentUser){
+
+        showStatus(
+            "❌ Admin Firebase login is missing.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!selectedExamId){
+
+        showStatus(
+            "⚠️ Please select an exam.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(
+        extractedQuestions.length === 0
+    ){
+
+        showStatus(
+            "⚠️ No questions available.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "importBtn"
+        );
+
+
+    button.disabled =
+        true;
+
+
+    button.innerText =
+        "⏳ Importing...";
+
+
+    try{
+
+        let totalImported =
+            0;
+
+
+        for(
+            let start = 0;
+            start < extractedQuestions.length;
+            start += 400
+        ){
+
+            const batch =
+                db.batch();
+
+
+            const chunk =
+                extractedQuestions.slice(
+                    start,
+                    start + 400
+                );
+
+
+            chunk.forEach(
+                function(q){
+
+                    const ref =
+                        db
+                            .collection(
+                                "questions"
+                            )
+                            .doc();
+
+
+                    batch.set(
+                        ref,
+                        {
+
+                            examId:
+                                selectedExamId,
+
+                            examName:
+                                selectedExamName,
+
+                            questionNumber:
+                                q.questionNumber,
+
+                            questionText:
+                                q.questionText,
+
+                            optionA:
+                                q.optionA,
+
+                            optionB:
+                                q.optionB,
+
+                            optionC:
+                                q.optionC,
+
+                            optionD:
+                                q.optionD,
+
+                            correctAnswer:
+                                q.correctAnswer,
+
+                            marks:
+                                q.marks,
+
+                            topic:
+                                q.topic,
+
+                            difficulty:
+                                q.difficulty,
+
+                            confidence:
+                                q.confidence,
+
+                            source:
+                                "PDF_AI",
+
+                            createdBy:
+                                currentUser.uid,
+
+                            createdAt:
+                                firebase.firestore
+                                    .FieldValue
+                                    .serverTimestamp(),
+
+                            updatedAt:
+                                firebase.firestore
+                                    .FieldValue
+                                    .serverTimestamp()
+
+                        }
+                    );
+
+                }
+            );
+
+
+            await batch.commit();
+
+
+            totalImported +=
+                chunk.length;
+
+        }
+
+
+        showStatus(
+            "✅ Questions imported successfully!\n\n" +
+            "Exam: " +
+            selectedExamName +
+            "\nTotal Questions: " +
+            totalImported,
+            "success"
+        );
+
+
+        clearPreview();
+
+
+        await loadExistingQuestions();
+
+
+    }catch(error){
+
+        console.error(
+            "IMPORT ERROR:",
+            error
+        );
+
+
+        showStatus(
+            "❌ Firestore Import Error\n\n" +
+            "Code: " +
+            (
+                error.code ||
+                "unknown"
+            ) +
+            "\n\nMessage:\n" +
+            (
+                error.message ||
+                error
+            ),
+            "error"
+        );
+
+
+    }finally{
+
+        button.disabled =
+            false;
+
+        button.innerText =
+            "☁️ Approve & Import Questions";
+
+    }
+
+}
+
+
+/* =====================================================
+   EXISTING QUESTIONS
+===================================================== */
+
+async function loadExistingQuestions(){
+
+    const container =
+        document.getElementById(
+            "existingQuestions"
+        );
+
+
+    if(!selectedExamId){
+
+        container.innerHTML =
+            '<div class="empty">' +
+            'Select an exam to view questions.' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        '<div class="loading">' +
+        'Loading questions...' +
+        '</div>';
+
+
+    try{
+
+        const snapshot =
+            await db
+                .collection(
+                    "questions"
+                )
+                .where(
+                    "examId",
+                    "==",
+                    selectedExamId
+                )
+                .get();
+
+
+        if(snapshot.empty){
+
+            container.innerHTML =
+                '<div class="empty">' +
+                'No questions imported for this exam yet.' +
+                '</div>';
+
+            return;
+
+        }
+
+
+        const questions =
+            [];
+
+
+        snapshot.forEach(
+            function(doc){
+
+                questions.push({
+
+                    id:
+                        doc.id,
+
+                    ...doc.data()
+
+                });
+
+            }
+        );
+
+
+        questions.sort(
+            function(a,b){
+
+                return(
+                    (a.questionNumber || 0) -
+                    (b.questionNumber || 0)
+                );
+
+            }
+        );
+
+
+        container.innerHTML =
+            "";
+
+
+        questions.forEach(
+            function(q,index){
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.className =
+                    "question-list-item";
+
+
+                div.innerHTML = `
+
+                    <h3>
+                        Q${
+                            escapeHtml(
+                                q.questionNumber ||
+                                index + 1
+                            )
+                        }.
+                        ${escapeHtml(
+                            q.questionText ||
+                            ""
+                        )}
+                    </h3>
+
+                    <div class="small">
+                        A.
+                        ${escapeHtml(
+                            q.optionA ||
+                            ""
+                        )}
+                    </div>
+
+                    <div class="small">
+                        B.
+                        ${escapeHtml(
+                            q.optionB ||
+                            ""
+                        )}
+                    </div>
+
+                    <div class="small">
+                        C.
+                        ${escapeHtml(
+                            q.optionC ||
+                            ""
+                        )}
+                    </div>
+
+                    <div class="small">
+                        D.
+                        ${escapeHtml(
+                            q.optionD ||
+                            ""
+                        )}
+                    </div>
+
+                    <div class="meta">
+
+                        Correct Answer:
+                        <strong>
+                            ${escapeHtml(
+                                q.correctAnswer ||
+                                "-"
+                            )}
+                        </strong>
+
+                        &nbsp; | &nbsp;
+
+                        Marks:
+                        <strong>
+                            ${escapeHtml(
+                                q.marks ||
+                                1
+                            )}
+                        </strong>
+
+                        <br>
+
+                        Topic:
+                        <strong>
+                            ${escapeHtml(
+                                q.topic ||
+                                "-"
+                            )}
+                        </strong>
+
+                        &nbsp; | &nbsp;
+
+                        Difficulty:
+                        <strong>
+                            ${escapeHtml(
+                                q.difficulty ||
+                                "-"
+                            )}
+                        </strong>
+
+                        &nbsp; | &nbsp;
+
+                        Source:
+                        <strong>
+                            ${escapeHtml(
+                                q.source ||
+                                "-"
+                            )}
+                        </strong>
+
+                    </div>
+
+                    <button
+                        class="delete-btn"
+                        onclick="deleteQuestion('${q.id}')"
+                    >
+                        🗑 Delete
+                    </button>
+
+                `;
+
+
+                container.appendChild(
+                    div
+                );
+
+            }
+        );
+
+
+    }catch(error){
+
+        container.innerHTML = `
+
+            <div class="status error">
+
+                ❌ Unable to load questions.
+
+                <br><br>
+
+                Code:
+                ${escapeHtml(
+                    error.code ||
+                    "unknown"
+                )}
+
+                <br><br>
+
+                ${escapeHtml(
+                    error.message ||
+                    ""
+                )}
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   DELETE
+===================================================== */
+
+async function deleteQuestion(
+    id
+){
+
+    if(!currentUser){
+
+        showStatus(
+            "❌ Admin login required.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(
+        !confirm(
+            "Delete this question?\n\n" +
+            "This cannot be undone."
+        )
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        await db
+            .collection(
+                "questions"
+            )
+            .doc(id)
+            .delete();
+
+
+        showStatus(
+            "✅ Question deleted.",
+            "success"
+        );
+
+
+        await loadExistingQuestions();
+
+
+    }catch(error){
+
+        showStatus(
+            "❌ Delete Error\n\n" +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CLEAR
+===================================================== */
+
+function clearPreview(){
+
+    extractedQuestions =
+        [];
+
+
+    document.getElementById(
+        "previewCard"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "previewContainer"
+    ).innerHTML =
+        "";
+
+
+    document.getElementById(
+        "aiSummary"
+    ).innerHTML =
+        "";
+
+
+    document.getElementById(
+        "pdfFile"
+    ).value =
+        "";
+
+}
+
+
+/* =====================================================
+   CLEAN TEXT
+===================================================== */
+
+function cleanText(
+    text
+){
+
+    return String(text)
+        .replace(/\s+/g," ")
+        .trim();
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(
+    text
+){
+
+    if(
+        text === undefined ||
+        text === null
+    ){
+
+        return "";
+
+    }
+
+
+    return String(text)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+function showStatus(
+    message,
+    type
+){
+
+    const box =
+        document.getElementById(
+            "statusBox"
+        );
+
+
+    box.className =
+        "status " +
+        type;
+
+
+    box.textContent =
+        message;
+
+
+    if(
+        type === "error"
+    ){
+
+        box.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+
+    }
+
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+function goLogin(){
+
+    window.location.href =
+        "admin-login.html";
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function goDashboard(){
+
+    window.location.href =
+        "admin-dashboard.html";
+
+}
+
+</script>
+
+</body>
+</html>

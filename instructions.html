@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Exam Instructions | SSC Examination System</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f4f7fb;
+    color:#1f2937;
+    min-height:100vh;
+}
+
+header{
+    background:#123b72;
+    color:white;
+    padding:18px 22px;
+}
+
+header h1{
+    font-size:21px;
+}
+
+.container{
+    max-width:950px;
+    margin:25px auto;
+    padding:0 15px;
+}
+
+.card{
+    background:white;
+    border-radius:12px;
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow:0 3px 15px rgba(0,0,0,.08);
+}
+
+.card h2{
+    color:#123b72;
+    margin-bottom:18px;
+}
+
+.exam-info{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+}
+
+.info{
+    background:#f8fafc;
+    border:1px solid #e5e7eb;
+    padding:13px;
+    border-radius:7px;
+}
+
+.info label{
+    display:block;
+    color:#6b7280;
+    font-size:12px;
+    margin-bottom:5px;
+}
+
+.info strong{
+    font-size:15px;
+}
+
+.instructions{
+    list-style:none;
+}
+
+.instructions li{
+    padding:12px 10px;
+    border-bottom:1px solid #e5e7eb;
+    line-height:1.5;
+}
+
+.instructions li:last-child{
+    border-bottom:none;
+}
+
+.instructions li::before{
+    content:"✓";
+    color:#15803d;
+    font-weight:bold;
+    margin-right:10px;
+}
+
+.warning{
+    background:#fff7ed;
+    border:1px solid #fed7aa;
+    color:#9a3412;
+    padding:15px;
+    border-radius:8px;
+    line-height:1.6;
+    margin-top:20px;
+}
+
+.agreement{
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    padding:18px;
+    border-radius:8px;
+    margin-top:20px;
+}
+
+.checkbox-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    line-height:1.5;
+}
+
+.checkbox-row input{
+    width:18px;
+    height:18px;
+    margin-top:2px;
+    flex-shrink:0;
+}
+
+.start-btn{
+    width:100%;
+    margin-top:20px;
+    padding:15px;
+    border:none;
+    border-radius:8px;
+    background:#15803d;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.start-btn:disabled{
+    background:#94a3b8;
+    cursor:not-allowed;
+}
+
+.message{
+    display:none;
+    padding:13px;
+    border-radius:8px;
+    margin-bottom:18px;
+    line-height:1.5;
+}
+
+.message.show{
+    display:block;
+}
+
+.message.error{
+    background:#fee2e2;
+    color:#991b1b;
+    border:1px solid #fca5a5;
+}
+
+.message.success{
+    background:#dcfce7;
+    color:#166534;
+    border:1px solid #86efac;
+}
+
+.message.info{
+    background:#dbeafe;
+    color:#1e40af;
+    border:1px solid #93c5fd;
+}
+
+.security-note{
+    text-align:center;
+    color:#64748b;
+    font-size:12px;
+    margin-top:15px;
+}
+
+.loading{
+    text-align:center;
+    padding:15px;
+    color:#2563eb;
+    font-weight:bold;
+}
+
+.hidden{
+    display:none !important;
+}
+
+@media(max-width:700px){
+
+    .exam-info{
+        grid-template-columns:1fr;
+    }
+
+    .card{
+        padding:20px;
+    }
+
+    header h1{
+        font-size:18px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <h1>SSC Examination System - Examination Instructions</h1>
+</header>
+
+
+<div class="container">
+
+    <div id="message" class="message"></div>
+
+
+    <!-- LOADING -->
+
+    <div
+        id="loadingBox"
+        class="card loading"
+    >
+        Loading examination details...
+    </div>
+
+
+    <!-- EXAMINATION DETAILS -->
+
+    <div
+        id="examDetails"
+        class="card hidden"
+    >
+
+        <h2>
+            Examination Details
+        </h2>
+
+        <div class="exam-info">
+
+            <div class="info">
+                <label>Candidate Name</label>
+                <strong id="candidateName">-</strong>
+            </div>
+
+            <div class="info">
+                <label>Roll Number</label>
+                <strong id="rollNumber">-</strong>
+            </div>
+
+            <div class="info">
+                <label>Examination</label>
+                <strong id="examName">-</strong>
+            </div>
+
+            <div class="info">
+                <label>Exam Code</label>
+                <strong id="examCode">-</strong>
+            </div>
+
+            <div class="info">
+                <label>Examination Centre</label>
+                <strong id="centreName">-</strong>
+            </div>
+
+            <div class="info">
+                <label>Computer Lab</label>
+                <strong id="roomName">-</strong>
+            </div>
+
+            <div class="info">
+                <label>Seat Number</label>
+                <strong id="seatNumber">-</strong>
+            </div>
+
+            <div class="info">
+                <label>Duration</label>
+                <strong id="duration">-</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- INSTRUCTIONS -->
+
+    <div
+        id="instructionCard"
+        class="card hidden"
+    >
+
+        <h2>
+            Important Instructions
+        </h2>
+
+        <ul class="instructions">
+
+            <li>
+                Read all examination instructions carefully before starting.
+            </li>
+
+            <li>
+                The examination timer will start when the examination begins.
+            </li>
+
+            <li>
+                Select only one option for each question.
+            </li>
+
+            <li>
+                You can navigate between questions using the question navigation controls.
+            </li>
+
+            <li>
+                You may review and change your answers before submitting the examination.
+            </li>
+
+            <li>
+                Do not refresh, close or leave the examination page during the examination.
+            </li>
+
+            <li>
+                Do not use unauthorized books, notes, mobile devices or other materials.
+            </li>
+
+            <li>
+                Follow all instructions given by the invigilator.
+            </li>
+
+            <li>
+                Submit the examination before the timer expires.
+            </li>
+
+            <li>
+                Once the examination is finally submitted, answers cannot be changed.
+            </li>
+
+        </ul>
+
+
+        <div class="warning">
+
+            <strong>Important:</strong>
+
+            If you experience any technical problem during the examination,
+            immediately inform the invigilator. Do not attempt to restart
+            the examination on your own.
+
+        </div>
+
+    </div>
+
+
+    <!-- DECLARATION -->
+
+    <div
+        id="declarationCard"
+        class="card hidden"
+    >
+
+        <h2>
+            Candidate Declaration
+        </h2>
+
+        <div class="agreement">
+
+            <label class="checkbox-row">
+
+                <input
+                    type="checkbox"
+                    id="agreeCheckbox"
+                >
+
+                <span>
+                    I have read and understood all the examination
+                    instructions. I agree to follow the examination
+                    rules and instructions given by the invigilator.
+                </span>
+
+            </label>
+
+        </div>
+
+
+        <button
+            id="startButton"
+            class="start-btn"
+            disabled
+        >
+            I Agree & Start Examination
+        </button>
+
+
+        <div class="security-note">
+            Examination access is valid only for the authorized candidate.
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- FIREBASE -->
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+
+<script>
+
+/* =====================================================
+   FIREBASE CONFIG
+===================================================== */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+
+    authDomain:
+        "ssc-exam-project-8af6b.firebaseapp.com",
+
+    projectId:
+        "ssc-exam-project-8af6b",
+
+    storageBucket:
+        "ssc-exam-project-8af6b.firebasestorage.app",
+
+    messagingSenderId:
+        "288245274853",
+
+    appId:
+        "1:288245274853:web:b4d535a08faf305f5e9c0c",
+
+    measurementId:
+        "G-4BTLY67VDS"
+};
+
+
+if(!firebase.apps.length){
+
+    firebase.initializeApp(
+        firebaseConfig
+    );
+
+}
+
+
+const auth =
+    firebase.auth();
+
+const db =
+    firebase.firestore();
+
+
+/* =====================================================
+   SESSION DATA
+===================================================== */
+
+const accessGranted =
+    sessionStorage.getItem(
+        "examAccessGranted"
+    );
+
+const accessTime =
+    Number(
+        sessionStorage.getItem(
+            "examAccessTime"
+        ) || 0
+    );
+
+const candidateId =
+    sessionStorage.getItem(
+        "candidateId"
+    );
+
+const examId =
+    sessionStorage.getItem(
+        "examId"
+    );
+
+
+const ACCESS_DURATION =
+    30 * 60 * 1000;
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const loadingBox =
+    document.getElementById(
+        "loadingBox"
+    );
+
+const examDetails =
+    document.getElementById(
+        "examDetails"
+    );
+
+const instructionCard =
+    document.getElementById(
+        "instructionCard"
+    );
+
+const declarationCard =
+    document.getElementById(
+        "declarationCard"
+    );
+
+const messageBox =
+    document.getElementById(
+        "message"
+    );
+
+const agreeCheckbox =
+    document.getElementById(
+        "agreeCheckbox"
+    );
+
+const startButton =
+    document.getElementById(
+        "startButton"
+    );
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(
+    text,
+    type
+){
+
+    messageBox.textContent =
+        text;
+
+    messageBox.className =
+        "message show " +
+        type;
+
+}
+
+
+function hideLoading(){
+
+    loadingBox.classList.add(
+        "hidden"
+    );
+
+}
+
+
+/* =====================================================
+   SESSION VALIDATION
+===================================================== */
+
+if(
+
+    accessGranted !== "true" ||
+
+    !accessTime ||
+
+    !candidateId ||
+
+    !examId ||
+
+    (
+        Date.now() -
+        accessTime >
+        ACCESS_DURATION
+    )
+
+){
+
+    sessionStorage.removeItem(
+        "examAccessGranted"
+    );
+
+    sessionStorage.removeItem(
+        "examAccessTime"
+    );
+
+    sessionStorage.removeItem(
+        "examId"
+    );
+
+    sessionStorage.removeItem(
+        "candidateId"
+    );
+
+    window.location.href =
+        "exam_access.html";
+
+}
+
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+auth.onAuthStateChanged(
+    async function(user){
+
+        if(!user){
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        if(
+            user.uid !==
+            candidateId
+        ){
+
+            showMessage(
+                "Candidate authentication mismatch.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        await loadCandidate(
+            user.uid
+        );
+
+    }
+);
+
+
+/* =====================================================
+   LOAD CANDIDATE
+===================================================== */
+
+async function loadCandidate(
+    uid
+){
+
+    try{
+
+        const candidateDoc =
+            await db
+            .collection("candidates")
+            .doc(uid)
+            .get();
+
+
+        if(!candidateDoc.exists){
+
+            hideLoading();
+
+            showMessage(
+                "Candidate record was not found.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const candidate =
+            candidateDoc.data();
+
+
+        /*
+           Candidate status check
+        */
+
+        if(
+            candidate.status &&
+            candidate.status !== "active"
+        ){
+
+            hideLoading();
+
+            showMessage(
+                "Candidate account is not active.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        /*
+           Exam assignment check
+        */
+
+        if(
+            candidate.assignedExamId !==
+            examId
+        ){
+
+            hideLoading();
+
+            showMessage(
+                "This examination is not assigned to this candidate.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        /*
+           Display candidate information
+        */
+
+        document.getElementById(
+            "candidateName"
+        ).textContent =
+            candidate.fullName ||
+            candidate.name ||
+            "-";
+
+
+        document.getElementById(
+            "rollNumber"
+        ).textContent =
+            candidate.rollNumber ||
+            "-";
+
+
+        /*
+           IMPORTANT FIX:
+           Firestore uses centre, not centreName
+        */
+
+        document.getElementById(
+            "centreName"
+        ).textContent =
+            candidate.centre ||
+            candidate.center ||
+            candidate.centreName ||
+            "-";
+
+
+        /*
+           IMPORTANT FIX:
+           Firestore uses roomNo / lab
+        */
+
+        document.getElementById(
+            "roomName"
+        ).textContent =
+            candidate.roomNo ||
+            candidate.lab ||
+            candidate.room ||
+            candidate.roomName ||
+            "-";
+
+
+        document.getElementById(
+            "seatNumber"
+        ).textContent =
+            candidate.seatNumber ||
+            "-";
+
+
+        /*
+           Save useful session data
+        */
+
+        sessionStorage.setItem(
+            "candidateName",
+            candidate.fullName ||
+            candidate.name ||
+            ""
+        );
+
+        sessionStorage.setItem(
+            "rollNumber",
+            candidate.rollNumber ||
+            ""
+        );
+
+        sessionStorage.setItem(
+            "centre",
+            candidate.centre ||
+            candidate.center ||
+            candidate.centreName ||
+            ""
+        );
+
+        sessionStorage.setItem(
+            "roomNo",
+            candidate.roomNo ||
+            candidate.lab ||
+            candidate.room ||
+            candidate.roomName ||
+            ""
+        );
+
+        sessionStorage.setItem(
+            "seatNumber",
+            candidate.seatNumber ||
+            ""
+        );
+
+
+        /*
+           Load exam
+        */
+
+        await loadExam(
+            examId
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Candidate loading error:",
+            error
+        );
+
+        hideLoading();
+
+        showMessage(
+            "Unable to load candidate information: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD EXAM
+===================================================== */
+
+async function loadExam(
+    id
+){
+
+    try{
+
+        const examDoc =
+            await db
+            .collection("exams")
+            .doc(id)
+            .get();
+
+
+        if(!examDoc.exists){
+
+            hideLoading();
+
+            showMessage(
+                "The assigned examination could not be found.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const exam =
+            examDoc.data();
+
+
+        /*
+           Accept published/active exams.
+           Draft exams are not allowed.
+        */
+
+        const examStatus =
+            String(
+                exam.status ||
+                ""
+            ).toLowerCase();
+
+
+        if(
+            examStatus !== "published" &&
+            examStatus !== "active"
+        ){
+
+            hideLoading();
+
+            showMessage(
+                "This examination is not published yet.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        /*
+           Display exam details
+        */
+
+        document.getElementById(
+            "examName"
+        ).textContent =
+            exam.examName ||
+            "-";
+
+
+        document.getElementById(
+            "examCode"
+        ).textContent =
+            exam.examCode ||
+            id ||
+            "-";
+
+
+        document.getElementById(
+            "duration"
+        ).textContent =
+            exam.duration
+            ? exam.duration + " Minutes"
+            : "-";
+
+
+        /*
+           Save exam information
+        */
+
+        sessionStorage.setItem(
+            "examName",
+            exam.examName ||
+            ""
+        );
+
+        sessionStorage.setItem(
+            "examCode",
+            exam.examCode ||
+            ""
+        );
+
+        sessionStorage.setItem(
+            "examDuration",
+            exam.duration ||
+            ""
+        );
+
+
+        /*
+           Show page
+        */
+
+        hideLoading();
+
+        examDetails.classList.remove(
+            "hidden"
+        );
+
+        instructionCard.classList.remove(
+            "hidden"
+        );
+
+        declarationCard.classList.remove(
+            "hidden"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Exam loading error:",
+            error
+        );
+
+        hideLoading();
+
+        showMessage(
+            "Unable to load examination details: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   AGREEMENT
+===================================================== */
+
+agreeCheckbox.addEventListener(
+    "change",
+    function(){
+
+        startButton.disabled =
+            !this.checked;
+
+    }
+);
+
+
+/* =====================================================
+   START EXAM
+===================================================== */
+
+startButton.addEventListener(
+    "click",
+    function(){
+
+        if(!agreeCheckbox.checked){
+
+            showMessage(
+                "You must agree to the examination instructions before starting.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        /*
+           Keep exam access session active.
+        */
+
+        sessionStorage.setItem(
+            "instructionsAccepted",
+            "true"
+        );
+
+        sessionStorage.setItem(
+            "examStartReady",
+            "true"
+        );
+
+
+        /*
+           Continue to exam page.
+
+           IMPORTANT:
+           If your actual exam page has another filename,
+           change only the filename below.
+        */
+
+        window.location.href =
+            "exam.html?examId=" +
+            encodeURIComponent(
+                examId
+            );
+
+    }
+);
+
+</script>
+
+</body>
+</html>

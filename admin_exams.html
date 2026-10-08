@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Exam Management - SSC Examination System</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  background:#f4f7fb;
+  color:#1f2937;
+}
+
+.header{
+  background:linear-gradient(135deg,#111827,#1e3a8a);
+  color:white;
+  padding:18px 25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+
+.header h1{
+  font-size:21px;
+}
+
+.header p{
+  font-size:12px;
+  opacity:.8;
+  margin-top:4px;
+}
+
+.header-buttons{
+  display:flex;
+  gap:8px;
+}
+
+.header button{
+  border:0;
+  color:white;
+  padding:10px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.back-btn{
+  background:#475569;
+}
+
+.logout-btn{
+  background:#dc2626;
+}
+
+.container{
+  width:95%;
+  max-width:1250px;
+  margin:25px auto;
+}
+
+.card{
+  background:white;
+  border-radius:14px;
+  padding:22px;
+  margin-bottom:20px;
+  box-shadow:0 5px 20px rgba(0,0,0,.07);
+}
+
+.title{
+  font-size:19px;
+  font-weight:bold;
+  color:#1e3a8a;
+  margin-bottom:18px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+}
+
+.form-group label{
+  display:block;
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:6px;
+  color:#374151;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid #d1d5db;
+  border-radius:8px;
+  outline:none;
+  background:white;
+}
+
+.form-group textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+  border-color:#2563eb;
+  box-shadow:0 0 0 3px rgba(37,99,235,.1);
+}
+
+.btn{
+  border:0;
+  border-radius:8px;
+  padding:12px 18px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.btn-primary{
+  background:#2563eb;
+  color:white;
+}
+
+.btn-secondary{
+  background:#64748b;
+  color:white;
+}
+
+.btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.message{
+  display:none;
+  margin-top:15px;
+  padding:12px;
+  border-radius:8px;
+  font-size:14px;
+  word-break:break-word;
+}
+
+.message.success{
+  background:#dcfce7;
+  color:#166534;
+  display:block;
+}
+
+.message.error{
+  background:#fee2e2;
+  color:#991b1b;
+  display:block;
+}
+
+.message.info{
+  background:#dbeafe;
+  color:#1e40af;
+  display:block;
+}
+
+.table-wrapper{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:1100px;
+}
+
+th,td{
+  padding:12px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:left;
+  font-size:13px;
+}
+
+th{
+  background:#f8fafc;
+}
+
+.status{
+  display:inline-block;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.published{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.stopped{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.draft{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.small-btn{
+  border:0;
+  padding:7px 10px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.edit-btn{
+  background:#dbeafe;
+  color:#1e40af;
+}
+
+.publish-btn{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.stop-btn{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.delete-btn{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.view-btn{
+  background:#e0e7ff;
+  color:#3730a3;
+}
+
+.loading{
+  text-align:center;
+  padding:20px;
+  color:#2563eb;
+  font-weight:bold;
+}
+
+.empty{
+  text-align:center;
+  padding:25px;
+  color:#64748b;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.65);
+  z-index:999;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-content{
+  width:100%;
+  max-width:650px;
+  max-height:90vh;
+  overflow-y:auto;
+  background:white;
+  border-radius:15px;
+  padding:22px;
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.close{
+  border:0;
+  background:#fee2e2;
+  color:#991b1b;
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:18px;
+}
+
+.modal-actions{
+  display:flex;
+  gap:10px;
+  margin-top:18px;
+}
+
+.modal-actions button{
+  flex:1;
+}
+
+@media(max-width:700px){
+
+  .header{
+    padding:15px;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .header-buttons{
+    width:100%;
+  }
+
+  .header-buttons button{
+    flex:1;
+  }
+
+  .container{
+    width:93%;
+  }
+
+  .card{
+    padding:16px;
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .btn{
+    width:100%;
+    margin-top:5px;
+  }
+
+  .modal-actions{
+    flex-direction:column;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+  <div>
+    <h1>📝 Exam Management</h1>
+    <p>SSC Examination System - Admin Panel</p>
+  </div>
+
+  <div class="header-buttons">
+
+    <button
+      class="back-btn"
+      onclick="goBack()">
+      ← Dashboard
+    </button>
+
+    <button
+      class="logout-btn"
+      onclick="logout()">
+      Logout
+    </button>
+
+  </div>
+
+</header>
+
+<main class="container">
+
+<section class="card">
+
+  <div class="title">
+    ➕ Create New Examination
+  </div>
+
+  <div class="form-grid">
+
+    <div class="form-group">
+      <label>Exam Name</label>
+      <input
+        type="text"
+        id="examName"
+        placeholder="Example: SSC Mathematics Examination">
+    </div>
+
+    <div class="form-group">
+      <label>Subject</label>
+
+      <select id="subject">
+        <option value="">-- Select Subject --</option>
+        <option value="Mathematics">Mathematics</option>
+        <option value="Science">Science</option>
+        <option value="English">English</option>
+        <option value="Social Science">Social Science</option>
+        <option value="Marathi">Marathi</option>
+        <option value="Hindi">Hindi</option>
+        <option value="Computer">Computer</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Exam Date</label>
+      <input type="date" id="examDate">
+    </div>
+
+    <div class="form-group">
+      <label>Start Time</label>
+      <input type="time" id="startTime">
+    </div>
+
+    <div class="form-group">
+      <label>Duration (Minutes)</label>
+      <input
+        type="number"
+        id="duration"
+        min="1"
+        placeholder="Example: 120">
+    </div>
+
+    <div class="form-group">
+      <label>Total Questions</label>
+      <input
+        type="number"
+        id="totalQuestions"
+        min="1"
+        placeholder="Example: 50">
+    </div>
+
+    <div class="form-group">
+      <label>Total Marks</label>
+      <input
+        type="number"
+        id="totalMarks"
+        min="1"
+        placeholder="Example: 100">
+    </div>
+
+    <div class="form-group">
+      <label>Exam Type</label>
+
+      <select id="examType">
+        <option value="Online">Online</option>
+        <option value="Computer Based Test">
+          Computer Based Test
+        </option>
+      </select>
+    </div>
+
+  </div>
+
+  <br>
+
+  <div class="form-group">
+    <label>Instructions</label>
+
+    <textarea
+      id="instructions"
+      placeholder="Enter examination instructions..."></textarea>
+  </div>
+
+  <br>
+
+  <button
+    class="btn btn-primary"
+    id="createBtn"
+    onclick="createExam()">
+    📝 Create Examination
+  </button>
+
+  <div id="message" class="message"></div>
+
+</section>
+
+<section class="card">
+
+  <div class="title">
+    📋 Examination List
+  </div>
+
+  <div id="loading" class="loading">
+    Loading examinations...
+  </div>
+
+  <div class="table-wrapper">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Exam Name</th>
+          <th>Subject</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Duration</th>
+          <th>Questions</th>
+          <th>Marks</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody id="examTable"></tbody>
+
+    </table>
+
+  </div>
+
+  <div
+    id="emptyMessage"
+    class="empty"
+    style="display:none;">
+    No examinations found.
+  </div>
+
+</section>
+
+</main>
+
+<!-- EDIT MODAL -->
+
+<div id="editModal" class="modal">
+
+  <div class="modal-content">
+
+    <div class="modal-header">
+
+      <h2>Edit Examination</h2>
+
+      <button
+        class="close"
+        onclick="closeEditModal()">
+        ×
+      </button>
+
+    </div>
+
+    <input type="hidden" id="editExamId">
+
+    <div class="form-group">
+      <label>Exam Name</label>
+      <input type="text" id="editExamName">
+    </div>
+
+    <br>
+
+    <div class="form-group">
+      <label>Subject</label>
+
+      <select id="editSubject">
+        <option value="Mathematics">Mathematics</option>
+        <option value="Science">Science</option>
+        <option value="English">English</option>
+        <option value="Social Science">Social Science</option>
+        <option value="Marathi">Marathi</option>
+        <option value="Hindi">Hindi</option>
+        <option value="Computer">Computer</option>
+      </select>
+    </div>
+
+    <br>
+
+    <div class="form-group">
+      <label>Exam Date</label>
+      <input type="date" id="editExamDate">
+    </div>
+
+    <br>
+
+    <div class="form-group">
+      <label>Start Time</label>
+      <input type="time" id="editStartTime">
+    </div>
+
+    <br>
+
+    <div class="form-group">
+      <label>Duration</label>
+      <input type="number" id="editDuration" min="1">
+    </div>
+
+    <br>
+
+    <div class="form-group">
+      <label>Total Questions</label>
+      <input type="number" id="editQuestions" min="1">
+    </div>
+
+    <br>
+
+    <div class="form-group">
+      <label>Total Marks</label>
+      <input type="number" id="editMarks" min="1">
+    </div>
+
+    <div class="modal-actions">
+
+      <button
+        class="btn btn-secondary"
+        onclick="closeEditModal()">
+        Cancel
+      </button>
+
+      <button
+        class="btn btn-primary"
+        id="updateBtn"
+        onclick="updateExam()">
+        Save Changes
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+/* =====================================================
+   FIREBASE CONFIG
+===================================================== */
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+
+  authDomain:
+    "ssc-exam-project-8af6b.firebaseapp.com",
+
+  projectId:
+    "ssc-exam-project-8af6b",
+
+  storageBucket:
+    "ssc-exam-project-8af6b.firebasestorage.app",
+
+  messagingSenderId:
+    "288245274853",
+
+  appId:
+    "1:288245274853:web:b4d535a08faf305f5e9c0c",
+
+  measurementId:
+    "G-4BTLY67VDS"
+};
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+if(!firebase.apps.length){
+  firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+
+/* =====================================================
+   ADMIN SESSION
+===================================================== */
+
+if(
+  sessionStorage.getItem("adminLoggedIn") !== "true"
+){
+
+  window.location.replace(
+    "admin_login.html"
+  );
+
+}
+
+
+/* =====================================================
+   CREATE EXAM
+===================================================== */
+
+async function createExam(){
+
+  const examName =
+    document.getElementById("examName").value.trim();
+
+  const subject =
+    document.getElementById("subject").value;
+
+  const examDate =
+    document.getElementById("examDate").value;
+
+  const startTime =
+    document.getElementById("startTime").value;
+
+  const duration =
+    document.getElementById("duration").value;
+
+  const totalQuestions =
+    document.getElementById("totalQuestions").value;
+
+  const totalMarks =
+    document.getElementById("totalMarks").value;
+
+  const examType =
+    document.getElementById("examType").value;
+
+  const instructions =
+    document.getElementById("instructions").value.trim();
+
+
+  if(!examName)
+    return showMessage(
+      "Please enter exam name.",
+      "error"
+    );
+
+  if(!subject)
+    return showMessage(
+      "Please select subject.",
+      "error"
+    );
+
+  if(!examDate)
+    return showMessage(
+      "Please select exam date.",
+      "error"
+    );
+
+  if(!startTime)
+    return showMessage(
+      "Please select start time.",
+      "error"
+    );
+
+  if(!duration || Number(duration) <= 0)
+    return showMessage(
+      "Please enter valid duration.",
+      "error"
+    );
+
+  if(!totalQuestions || Number(totalQuestions) <= 0)
+    return showMessage(
+      "Please enter total questions.",
+      "error"
+    );
+
+  if(!totalMarks || Number(totalMarks) <= 0)
+    return showMessage(
+      "Please enter total marks.",
+      "error"
+    );
+
+
+  const createBtn =
+    document.getElementById("createBtn");
+
+  createBtn.disabled = true;
+  createBtn.textContent = "Creating...";
+
+
+  try{
+
+    const adminUID =
+      sessionStorage.getItem("adminUID");
+
+
+    await db.collection("exams").add({
+
+      examName: examName,
+
+      subject: subject,
+
+      examDate: examDate,
+
+      startTime: startTime,
+
+      duration: Number(duration),
+
+      totalQuestions: Number(totalQuestions),
+
+      totalMarks: Number(totalMarks),
+
+      examType: examType,
+
+      instructions: instructions,
+
+      status: "draft",
+
+      createdBy: adminUID || "",
+
+      createdAt:
+        firebase.firestore.FieldValue.serverTimestamp(),
+
+      updatedAt:
+        firebase.firestore.FieldValue.serverTimestamp()
+
+    });
+
+
+    showMessage(
+      "✅ Examination created successfully.",
+      "success"
+    );
+
+
+    clearCreateForm();
+
+    await loadExams();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      "❌ Unable to create examination: " +
+      error.message,
+      "error"
+    );
+
+  }finally{
+
+    createBtn.disabled = false;
+    createBtn.textContent =
+      "📝 Create Examination";
+
+  }
+
+}
+
+
+/* =====================================================
+   LOAD EXAMS
+===================================================== */
+
+async function loadExams(){
+
+  const table =
+    document.getElementById("examTable");
+
+  const loading =
+    document.getElementById("loading");
+
+  const empty =
+    document.getElementById("emptyMessage");
+
+
+  loading.style.display = "block";
+
+  table.innerHTML = "";
+
+  empty.style.display = "none";
+
+
+  try{
+
+    const snapshot =
+      await db.collection("exams").get();
+
+
+    loading.style.display = "none";
+
+
+    if(snapshot.empty){
+
+      empty.style.display = "block";
+
+      return;
+
+    }
+
+
+    const exams = [];
+
+
+    snapshot.forEach(doc => {
+
+      exams.push({
+        id: doc.id,
+        ...doc.data()
+      });
+
+    });
+
+
+    exams.sort((a,b) => {
+
+      const aTime =
+        a.createdAt?.seconds || 0;
+
+      const bTime =
+        b.createdAt?.seconds || 0;
+
+      return bTime - aTime;
+
+    });
+
+
+    exams.forEach(exam => {
+
+      const status =
+        exam.status || "draft";
+
+
+      const row =
+        document.createElement("tr");
+
+
+      row.innerHTML = `
+
+        <td>
+          <strong>
+            ${escapeHtml(exam.examName || "-")}
+          </strong>
+        </td>
+
+        <td>
+          ${escapeHtml(exam.subject || "-")}
+        </td>
+
+        <td>
+          ${escapeHtml(exam.examDate || "-")}
+        </td>
+
+        <td>
+          ${escapeHtml(exam.startTime || "-")}
+        </td>
+
+        <td>
+          ${exam.duration || 0} min
+        </td>
+
+        <td>
+          ${exam.totalQuestions || 0}
+        </td>
+
+        <td>
+          ${exam.totalMarks || 0}
+        </td>
+
+        <td>
+
+          <span class="status ${
+            status === "published"
+              ? "published"
+              : status === "stopped"
+              ? "stopped"
+              : "draft"
+          }">
+
+            ${escapeHtml(status)}
+
+          </span>
+
+        </td>
+
+        <td>
+
+          <div class="actions">
+
+            <button
+              class="small-btn view-btn"
+              onclick="viewExam('${exam.id}')">
+              View
+            </button>
+
+
+            <button
+              class="small-btn edit-btn"
+              onclick="editExam('${exam.id}')">
+              Edit
+            </button>
+
+
+            ${
+              status === "published"
+
+              ? `
+
+                <button
+                  class="small-btn stop-btn"
+                  onclick="changeExamStatus(
+                    '${exam.id}',
+                    'stopped'
+                  )">
+                  Stop
+                </button>
+
+              `
+
+              : `
+
+                <button
+                  class="small-btn publish-btn"
+                  onclick="changeExamStatus(
+                    '${exam.id}',
+                    'published'
+                  )">
+                  Publish
+                </button>
+
+              `
+            }
+
+
+            <button
+              class="small-btn delete-btn"
+              onclick="deleteExam('${exam.id}')">
+              Delete
+            </button>
+
+          </div>
+
+        </td>
+
+      `;
+
+
+      table.appendChild(row);
+
+    });
+
+
+  }catch(error){
+
+    loading.style.display = "none";
+
+    console.error(error);
+
+    showMessage(
+      "Unable to load examinations: " +
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   VIEW EXAM
+===================================================== */
+
+async function viewExam(id){
+
+  try{
+
+    const doc =
+      await db.collection("exams").doc(id).get();
+
+
+    if(!doc.exists){
+
+      alert("Examination not found.");
+
+      return;
+
+    }
+
+
+    const data = doc.data();
+
+
+    alert(
+
+      "EXAMINATION DETAILS\n\n" +
+
+      "Exam: " +
+      (data.examName || "-") +
+
+      "\nSubject: " +
+      (data.subject || "-") +
+
+      "\nDate: " +
+      (data.examDate || "-") +
+
+      "\nStart Time: " +
+      (data.startTime || "-") +
+
+      "\nDuration: " +
+      (data.duration || 0) +
+      " minutes" +
+
+      "\nQuestions: " +
+      (data.totalQuestions || 0) +
+
+      "\nMarks: " +
+      (data.totalMarks || 0) +
+
+      "\nType: " +
+      (data.examType || "-") +
+
+      "\nStatus: " +
+      (data.status || "draft") +
+
+      "\n\nInstructions:\n" +
+      (data.instructions || "None") +
+
+      "\n\nExam ID: " +
+      id
+
+    );
+
+  }catch(error){
+
+    alert(
+      "Unable to view exam: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   EDIT EXAM
+===================================================== */
+
+async function editExam(id){
+
+  try{
+
+    const doc =
+      await db.collection("exams").doc(id).get();
+
+
+    if(!doc.exists){
+
+      alert("Examination not found.");
+
+      return;
+
+    }
+
+
+    const data = doc.data();
+
+
+    document.getElementById("editExamId").value =
+      id;
+
+    document.getElementById("editExamName").value =
+      data.examName || "";
+
+    document.getElementById("editSubject").value =
+      data.subject || "";
+
+    document.getElementById("editExamDate").value =
+      data.examDate || "";
+
+    document.getElementById("editStartTime").value =
+      data.startTime || "";
+
+    document.getElementById("editDuration").value =
+      data.duration || "";
+
+    document.getElementById("editQuestions").value =
+      data.totalQuestions || "";
+
+    document.getElementById("editMarks").value =
+      data.totalMarks || "";
+
+
+    document.getElementById("editModal")
+      .classList.add("show");
+
+
+  }catch(error){
+
+    alert(
+      "Unable to edit exam: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   UPDATE EXAM
+===================================================== */
+
+async function updateExam(){
+
+  const id =
+    document.getElementById("editExamId").value;
+
+  const examName =
+    document.getElementById("editExamName")
+      .value.trim();
+
+  const subject =
+    document.getElementById("editSubject").value;
+
+  const examDate =
+    document.getElementById("editExamDate").value;
+
+  const startTime =
+    document.getElementById("editStartTime").value;
+
+  const duration =
+    document.getElementById("editDuration").value;
+
+  const questions =
+    document.getElementById("editQuestions").value;
+
+  const marks =
+    document.getElementById("editMarks").value;
+
+
+  if(!examName)
+    return alert("Please enter exam name.");
+
+  if(!examDate)
+    return alert("Please select exam date.");
+
+  if(!startTime)
+    return alert("Please select start time.");
+
+
+  const updateBtn =
+    document.getElementById("updateBtn");
+
+  updateBtn.disabled = true;
+  updateBtn.textContent = "Saving...";
+
+
+  try{
+
+    await db
+      .collection("exams")
+      .doc(id)
+      .update({
+
+        examName: examName,
+
+        subject: subject,
+
+        examDate: examDate,
+
+        startTime: startTime,
+
+        duration: Number(duration),
+
+        totalQuestions: Number(questions),
+
+        totalMarks: Number(marks),
+
+        updatedAt:
+          firebase.firestore.FieldValue.serverTimestamp()
+
+      });
+
+
+    closeEditModal();
+
+
+    showMessage(
+      "✅ Examination updated successfully.",
+      "success"
+    );
+
+
+    await loadExams();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      "❌ Update failed: " +
+      error.message,
+      "error"
+    );
+
+  }finally{
+
+    updateBtn.disabled = false;
+    updateBtn.textContent = "Save Changes";
+
+  }
+
+}
+
+
+/* =====================================================
+   CHANGE STATUS
+===================================================== */
+
+async function changeExamStatus(id,status){
+
+  const action =
+    status === "published"
+      ? "publish"
+      : "stop";
+
+
+  if(
+    !confirm(
+      `Are you sure you want to ${action} this examination?`
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    await db
+      .collection("exams")
+      .doc(id)
+      .update({
+
+        status: status,
+
+        updatedAt:
+          firebase.firestore.FieldValue.serverTimestamp()
+
+      });
+
+
+    showMessage(
+      status === "published"
+        ? "✅ Examination published successfully."
+        : "🛑 Examination stopped successfully.",
+      "success"
+    );
+
+
+    await loadExams();
+
+
+  }catch(error){
+
+    showMessage(
+      "❌ Status update failed: " +
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   DELETE EXAM
+===================================================== */
+
+async function deleteExam(id){
+
+  if(
+    !confirm(
+      "Delete this examination?\n\nThis action cannot be undone."
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    await db
+      .collection("exams")
+      .doc(id)
+      .delete();
+
+
+    showMessage(
+      "✅ Examination deleted successfully.",
+      "success"
+    );
+
+
+    await loadExams();
+
+
+  }catch(error){
+
+    showMessage(
+      "❌ Delete failed: " +
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   CLOSE MODAL
+===================================================== */
+
+function closeEditModal(){
+
+  document.getElementById("editModal")
+    .classList.remove("show");
+
+}
+
+
+/* =====================================================
+   CLEAR FORM
+===================================================== */
+
+function clearCreateForm(){
+
+  document.getElementById("examName").value = "";
+
+  document.getElementById("subject").value = "";
+
+  document.getElementById("examDate").value = "";
+
+  document.getElementById("startTime").value = "";
+
+  document.getElementById("duration").value = "";
+
+  document.getElementById("totalQuestions").value = "";
+
+  document.getElementById("totalMarks").value = "";
+
+  document.getElementById("examType").value = "Online";
+
+  document.getElementById("instructions").value = "";
+
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(text,type){
+
+  const message =
+    document.getElementById("message");
+
+
+  message.textContent = text;
+
+  message.className =
+    "message " + type;
+
+  message.style.display = "block";
+
+
+  setTimeout(() => {
+
+    message.style.display = "none";
+
+  },6000);
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function goBack(){
+
+  window.location.href =
+    "admin_dashboard.html";
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logout(){
+
+  try{
+
+    await auth.signOut();
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
+
+  sessionStorage.removeItem("adminLoggedIn");
+  sessionStorage.removeItem("adminUID");
+  sessionStorage.removeItem("adminEmail");
+
+
+  window.location.replace(
+    "admin_login.html"
+  );
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadExams();
+
+</script>
+
+</body>
+</html>

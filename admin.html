@@ -1,0 +1,2389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Admin Dashboard | SSC Examination System</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f1f5f9;
+    color:#1e293b;
+}
+
+header{
+    background:#0f4c81;
+    color:white;
+    min-height:70px;
+    padding:12px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    box-shadow:0 3px 12px rgba(0,0,0,.12);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo{
+    width:44px;
+    height:44px;
+    background:white;
+    color:#0f4c81;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    font-size:14px;
+}
+
+.brand h1{
+    font-size:19px;
+}
+
+.brand p{
+    font-size:12px;
+    margin-top:3px;
+    opacity:.85;
+}
+
+.logout-btn{
+    border:none;
+    background:#dc2626;
+    color:white;
+    padding:10px 16px;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.logout-btn:hover{
+    background:#b91c1c;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:25px 18px 50px;
+}
+
+.welcome{
+    background:white;
+    border-radius:14px;
+    padding:23px;
+    margin-bottom:22px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+.welcome h2{
+    color:#0f4c81;
+    margin-bottom:7px;
+}
+
+.welcome p{
+    color:#64748b;
+    font-size:14px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    margin-bottom:22px;
+}
+
+.stat-card{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    border-left:4px solid #2563eb;
+}
+
+.stat-icon{
+    font-size:27px;
+    margin-bottom:8px;
+}
+
+.stat-card h3{
+    color:#64748b;
+    font-size:13px;
+    margin-bottom:6px;
+}
+
+.stat-card strong{
+    font-size:24px;
+    color:#0f172a;
+}
+
+.section{
+    background:white;
+    padding:24px;
+    border-radius:14px;
+    margin-bottom:22px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+.section-title{
+    color:#0f4c81;
+    font-size:20px;
+    margin-bottom:20px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:17px;
+}
+
+.form-group{
+    margin-bottom:2px;
+}
+
+label{
+    display:block;
+    color:#334155;
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:7px;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    min-height:46px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:14px;
+    outline:none;
+    background:white;
+}
+
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.10);
+}
+
+.full{
+    grid-column:1 / -1;
+}
+
+.save-btn{
+    width:100%;
+    min-height:48px;
+    margin-top:8px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.save-btn:hover{
+    background:#1d4ed8;
+}
+
+.save-btn:disabled{
+    opacity:.65;
+    cursor:not-allowed;
+}
+
+.message{
+    display:none;
+    margin-top:15px;
+    padding:12px;
+    border-radius:8px;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.exam-details{
+    display:none;
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    border-radius:10px;
+    padding:18px;
+}
+
+.exam-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.exam-item{
+    background:white;
+    padding:13px;
+    border-radius:8px;
+}
+
+.exam-item small{
+    display:block;
+    color:#64748b;
+    font-size:11px;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+.exam-item strong{
+    font-size:14px;
+}
+
+.no-exam{
+    background:#f8fafc;
+    border:1px dashed #cbd5e1;
+    padding:15px;
+    border-radius:8px;
+    color:#64748b;
+}
+
+.actions-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.action-card{
+    text-decoration:none;
+    color:#1e293b;
+    border:1px solid #e2e8f0;
+    border-radius:11px;
+    padding:20px;
+    text-align:center;
+    transition:.2s;
+}
+
+.action-card:hover{
+    border-color:#2563eb;
+    transform:translateY(-3px);
+    box-shadow:0 8px 20px rgba(37,99,235,.10);
+}
+
+.action-icon{
+    font-size:32px;
+    margin-bottom:10px;
+}
+
+.action-card h3{
+    color:#0f4c81;
+    font-size:15px;
+    margin-bottom:7px;
+}
+
+.action-card p{
+    color:#64748b;
+    font-size:12px;
+    line-height:1.5;
+}
+
+.exam-list{
+    margin-top:20px;
+}
+
+.exam-list-item{
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:18px;
+    margin-bottom:12px;
+}
+
+.exam-list-top{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:center;
+    margin-bottom:12px;
+}
+
+.exam-list-top h3{
+    color:#0f4c81;
+}
+
+.badge{
+    display:inline-block;
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.badge-active{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.badge-upcoming{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.badge-completed{
+    background:#e5e7eb;
+    color:#374151;
+}
+
+.exam-actions{
+    display:flex;
+    gap:8px;
+    margin-top:12px;
+}
+
+.small-btn{
+    border:none;
+    padding:8px 13px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:12px;
+}
+
+.delete-btn{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.active-btn{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.loading{
+    color:#2563eb;
+    font-weight:bold;
+    padding:15px 0;
+}
+
+@media(max-width:900px){
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .exam-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .actions-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+}
+
+@media(max-width:650px){
+
+    header{
+        padding:12px 14px;
+    }
+
+    .brand h1{
+        font-size:16px;
+    }
+
+    .brand p{
+        font-size:11px;
+    }
+
+    .container{
+        padding:18px 12px 40px;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .full{
+        grid-column:auto;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .exam-grid{
+        grid-template-columns:1fr;
+    }
+
+    .actions-grid{
+        grid-template-columns:1fr;
+    }
+
+    .section,
+    .welcome{
+        padding:18px;
+    }
+
+    .exam-list-top{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="brand">
+
+<div class="logo">
+SSC
+</div>
+
+<div>
+
+<h1>
+SSC Examination System
+</h1>
+
+<p>
+Administrator Dashboard
+</p>
+
+</div>
+
+</div>
+
+
+<button
+id="logoutButton"
+class="logout-btn"
+onclick="logout()"
+>
+Logout
+</button>
+
+</header>
+
+
+<main class="container">
+
+
+<!-- WELCOME -->
+
+<section class="welcome">
+
+<h2>
+Welcome, <span id="adminName">Administrator</span>
+</h2>
+
+<p>
+Create and manage examinations, candidates and examination allocation.
+</p>
+
+</section>
+
+
+<!-- STATISTICS -->
+
+<section class="stats">
+
+
+<div class="stat-card">
+
+<div class="stat-icon">
+👥
+</div>
+
+<h3>
+Total Candidates
+</h3>
+
+<strong id="candidateCount">
+0
+</strong>
+
+</div>
+
+
+<div class="stat-card">
+
+<div class="stat-icon">
+📝
+</div>
+
+<h3>
+Active Examination
+</h3>
+
+<strong id="examCount">
+0
+</strong>
+
+</div>
+
+
+<div class="stat-card">
+
+<div class="stat-icon">
+👨‍💼
+</div>
+
+<h3>
+Invigilators
+</h3>
+
+<strong id="invigilatorCount">
+0
+</strong>
+
+</div>
+
+
+</section>
+
+
+<!-- =================================================
+     CREATE EXAMINATION
+================================================= -->
+
+<section class="section">
+
+<h2 class="section-title">
+Create Examination
+</h2>
+
+
+<form id="examForm">
+
+
+<div class="form-grid">
+
+
+<div class="form-group">
+
+<label>
+Examination Name
+</label>
+
+<input
+type="text"
+id="examName"
+placeholder="Example: SSC CGL Tier-I"
+required
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Examination Code
+</label>
+
+<input
+type="text"
+id="examCode"
+placeholder="Example: SSC-CGL-2026"
+required
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Examination Date
+</label>
+
+<input
+type="date"
+id="examDate"
+required
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Examination Time
+</label>
+
+<input
+type="time"
+id="examTime"
+required
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Duration in Minutes
+</label>
+
+<input
+type="number"
+id="duration"
+min="1"
+value="60"
+required
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Total Questions
+</label>
+
+<input
+type="number"
+id="totalQuestions"
+min="1"
+value="100"
+required
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Marks Per Question
+</label>
+
+<input
+type="number"
+id="marksPerQuestion"
+min="0"
+step="0.01"
+value="2"
+required
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Negative Mark Per Wrong Answer
+</label>
+
+<input
+type="number"
+id="negativeMark"
+min="0"
+step="0.01"
+value="0.50"
+required
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Examination Status
+</label>
+
+<select id="examStatus">
+
+<option value="Upcoming">
+Upcoming
+</option>
+
+<option value="Active">
+Active
+</option>
+
+<option value="Completed">
+Completed
+</option>
+
+</select>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Access PIN
+</label>
+
+<input
+type="text"
+id="examPin"
+maxlength="6"
+inputmode="numeric"
+pattern="[0-9]{6}"
+placeholder="Example: 123456"
+required
+>
+
+</div>
+
+
+<div class="form-group full">
+
+<label>
+Examination Instructions
+</label>
+
+<textarea
+id="instructions"
+placeholder="Enter examination instructions..."
+></textarea>
+
+</div>
+
+
+<div class="form-group full">
+
+<button
+type="submit"
+id="saveButton"
+class="save-btn"
+>
+Create Examination
+</button>
+
+</div>
+
+
+</div>
+
+</form>
+
+
+<div id="message"></div>
+
+</section>
+
+
+<!-- =================================================
+     CURRENT ACTIVE EXAM
+================================================= -->
+
+<section class="section">
+
+<h2 class="section-title">
+Current Active Examination
+</h2>
+
+
+<div
+id="examDetails"
+class="exam-details"
+>
+
+<div class="exam-grid">
+
+
+<div class="exam-item">
+
+<small>
+Examination Name
+</small>
+
+<strong id="currentExamName">
+-
+</strong>
+
+</div>
+
+
+<div class="exam-item">
+
+<small>
+Examination Code
+</small>
+
+<strong id="currentExamCode">
+-
+</strong>
+
+</div>
+
+
+<div class="exam-item">
+
+<small>
+Date
+</small>
+
+<strong id="currentExamDate">
+-
+</strong>
+
+</div>
+
+
+<div class="exam-item">
+
+<small>
+Time
+</small>
+
+<strong id="currentExamTime">
+-
+</strong>
+
+</div>
+
+
+<div class="exam-item">
+
+<small>
+Duration
+</small>
+
+<strong id="currentExamDuration">
+-
+</strong>
+
+</div>
+
+
+<div class="exam-item">
+
+<small>
+Total Questions
+</small>
+
+<strong id="currentExamQuestions">
+-
+</strong>
+
+</div>
+
+
+<div class="exam-item">
+
+<small>
+Marks / Question
+</small>
+
+<strong id="currentMarksPerQuestion">
+-
+</strong>
+
+</div>
+
+
+<div class="exam-item">
+
+<small>
+Negative Mark
+</small>
+
+<strong id="currentNegativeMark">
+-
+</strong>
+
+</div>
+
+
+<div class="exam-item">
+
+<small>
+Status
+</small>
+
+<strong id="currentExamStatus">
+-
+</strong>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<div
+id="noExam"
+class="no-exam"
+>
+No active examination found.
+</div>
+
+</section>
+
+
+<!-- =================================================
+     ALL EXAMS
+================================================= -->
+
+<section class="section">
+
+<h2 class="section-title">
+All Examinations
+</h2>
+
+
+<div id="examList">
+
+<div class="loading">
+Loading examinations...
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =================================================
+     ADMINISTRATION
+================================================= -->
+
+<section class="section">
+
+<h2 class="section-title">
+Administration
+</h2>
+
+
+<div class="actions-grid">
+
+
+<a
+href="admin-candidates.html"
+class="action-card"
+>
+
+<div class="action-icon">
+👥
+</div>
+
+<h3>
+Candidate Assignment
+</h3>
+
+<p>
+Assign candidates and automatically generate roll numbers and examination allocation.
+</p>
+
+</a>
+
+
+<a
+href="invigilator-dashboard.html"
+class="action-card"
+>
+
+<div class="action-icon">
+👨‍💼
+</div>
+
+<h3>
+Invigilator Dashboard
+</h3>
+
+<p>
+Verify candidates and manage examination access.
+</p>
+
+</a>
+
+
+<a
+href="admin-exam.html"
+class="action-card"
+>
+
+<div class="action-icon">
+📚
+</div>
+
+<h3>
+Question Management
+</h3>
+
+<p>
+Create and manage examination questions.
+</p>
+
+</a>
+
+
+</div>
+
+</section>
+
+
+</main>
+
+
+<script>
+
+/* =====================================================
+   FIREBASE CONFIG
+===================================================== */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+
+    authDomain:
+        "ssc-exam-project-8af6b.firebaseapp.com",
+
+    projectId:
+        "ssc-exam-project-8af6b",
+
+    storageBucket:
+        "ssc-exam-project-8af6b.firebasestorage.app",
+
+    messagingSenderId:
+        "288245274853",
+
+    appId:
+        "1:288245274853:web:b4d535a08faf305f5e9c0c",
+
+    measurementId:
+        "G-4BTLY67VDS"
+
+};
+
+
+/* =====================================================
+   INITIALIZE FIREBASE
+===================================================== */
+
+if(!firebase.apps.length){
+
+    firebase.initializeApp(firebaseConfig);
+
+}
+
+const auth =
+    firebase.auth();
+
+const db =
+    firebase.firestore();
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const examForm =
+    document.getElementById("examForm");
+
+const saveButton =
+    document.getElementById("saveButton");
+
+const message =
+    document.getElementById("message");
+
+const examList =
+    document.getElementById("examList");
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(text,type){
+
+    message.textContent =
+        text;
+
+    message.style.display =
+        "block";
+
+
+    if(type === "success"){
+
+        message.style.background =
+            "#dcfce7";
+
+        message.style.color =
+            "#166534";
+
+        message.style.border =
+            "1px solid #86efac";
+
+    }
+    else{
+
+        message.style.background =
+            "#fee2e2";
+
+        message.style.color =
+            "#991b1b";
+
+        message.style.border =
+            "1px solid #fca5a5";
+
+    }
+
+}
+
+
+function hideMessage(){
+
+    message.style.display =
+        "none";
+
+}
+
+
+/* =====================================================
+   AUTH CHECK
+===================================================== */
+
+auth.onAuthStateChanged(
+    async function(user){
+
+        if(!user){
+
+            window.location.replace(
+                "login.html"
+            );
+
+            return;
+
+        }
+
+
+        document.getElementById(
+            "adminName"
+        ).textContent =
+            user.displayName ||
+            user.email ||
+            "Administrator";
+
+
+        await loadStatistics();
+
+        await loadExams();
+
+    }
+);
+
+
+/* =====================================================
+   LOAD STATISTICS
+===================================================== */
+
+async function loadStatistics(){
+
+    try{
+
+        const candidates =
+            await db
+                .collection("candidates")
+                .get();
+
+
+        document.getElementById(
+            "candidateCount"
+        ).textContent =
+            candidates.size;
+
+
+    }
+    catch(error){
+
+        console.error(
+            "Candidate count error:",
+            error
+        );
+
+        document.getElementById(
+            "candidateCount"
+        ).textContent =
+            "0";
+
+    }
+
+
+    try{
+
+        const active =
+            await db
+                .collection("exams")
+                .where(
+                    "status",
+                    "==",
+                    "Active"
+                )
+                .get();
+
+
+        document.getElementById(
+            "examCount"
+        ).textContent =
+            active.size;
+
+
+    }
+    catch(error){
+
+        console.error(
+            "Exam count error:",
+            error
+        );
+
+        document.getElementById(
+            "examCount"
+        ).textContent =
+            "0";
+
+    }
+
+
+    try{
+
+        const invigilators =
+            await db
+                .collection("invigilators")
+                .get();
+
+
+        document.getElementById(
+            "invigilatorCount"
+        ).textContent =
+            invigilators.size;
+
+
+    }
+    catch(error){
+
+        document.getElementById(
+            "invigilatorCount"
+        ).textContent =
+            "0";
+
+    }
+
+}
+
+
+/* =====================================================
+   CREATE EXAM
+===================================================== */
+
+examForm.addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
+
+        hideMessage();
+
+
+        const examName =
+            document.getElementById(
+                "examName"
+            ).value.trim();
+
+
+        const examCode =
+            document.getElementById(
+                "examCode"
+            ).value.trim()
+            .toUpperCase();
+
+
+        const examDate =
+            document.getElementById(
+                "examDate"
+            ).value;
+
+
+        const examTime =
+            document.getElementById(
+                "examTime"
+            ).value;
+
+
+        const duration =
+            Number(
+                document.getElementById(
+                    "duration"
+                ).value
+            );
+
+
+        const totalQuestions =
+            Number(
+                document.getElementById(
+                    "totalQuestions"
+                ).value
+            );
+
+
+        const marksPerQuestion =
+            Number(
+                document.getElementById(
+                    "marksPerQuestion"
+                ).value
+            );
+
+
+        const negativeMark =
+            Number(
+                document.getElementById(
+                    "negativeMark"
+                ).value
+            );
+
+
+        const status =
+            document.getElementById(
+                "examStatus"
+            ).value;
+
+
+        const examPin =
+            document.getElementById(
+                "examPin"
+            ).value.trim();
+
+
+        const instructions =
+            document.getElementById(
+                "instructions"
+            ).value.trim();
+
+
+        /* ==========================================
+           VALIDATION
+        ========================================== */
+
+        if(!examName){
+
+            showMessage(
+                "Please enter examination name.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(!examCode){
+
+            showMessage(
+                "Please enter examination code.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(!examDate){
+
+            showMessage(
+                "Please select examination date.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(!examTime){
+
+            showMessage(
+                "Please select examination time.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(duration <= 0){
+
+            showMessage(
+                "Duration must be greater than 0.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(totalQuestions <= 0){
+
+            showMessage(
+                "Total questions must be greater than 0.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(
+            !/^[0-9]{6}$/.test(
+                examPin
+            )
+        ){
+
+            showMessage(
+                "Exam PIN must contain exactly 6 digits.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /* ==========================================
+           BUTTON
+        ========================================== */
+
+        saveButton.disabled =
+            true;
+
+        saveButton.textContent =
+            "Creating Examination...";
+
+
+        try{
+
+            /* ======================================
+               CHECK DUPLICATE EXAM CODE
+            ====================================== */
+
+            const duplicate =
+                await db
+                    .collection("exams")
+                    .where(
+                        "examCode",
+                        "==",
+                        examCode
+                    )
+                    .limit(1)
+                    .get();
+
+
+            if(!duplicate.empty){
+
+                showMessage(
+                    "Examination code already exists. Please use another code.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            /* ======================================
+               IF ACTIVE, CHECK EXISTING ACTIVE EXAM
+            ====================================== */
+
+            if(status === "Active"){
+
+                const active =
+                    await db
+                        .collection("exams")
+                        .where(
+                            "status",
+                            "==",
+                            "Active"
+                        )
+                        .limit(1)
+                        .get();
+
+
+                if(!active.empty){
+
+                    showMessage(
+                        "Another Active examination already exists. Complete or change its status before creating another Active examination.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+            }
+
+
+            /* ======================================
+               CREATE DOCUMENT
+            ====================================== */
+
+            const examData = {
+
+                examName:
+                    examName,
+
+                examCode:
+                    examCode,
+
+                examDate:
+                    examDate,
+
+                examTime:
+                    examTime,
+
+                durationMinutes:
+                    duration,
+
+                totalQuestions:
+                    totalQuestions,
+
+                marksPerQuestion:
+                    marksPerQuestion,
+
+                negativeMark:
+                    negativeMark,
+
+                status:
+                    status,
+
+                examPin:
+                    examPin,
+
+                instructions:
+                    instructions,
+
+                createdBy:
+                    auth.currentUser.uid,
+
+                createdByEmail:
+                    auth.currentUser.email || "",
+
+                createdAt:
+                    firebase.firestore.FieldValue.serverTimestamp(),
+
+                updatedAt:
+                    firebase.firestore.FieldValue.serverTimestamp()
+
+            };
+
+
+            const doc =
+                await db
+                    .collection("exams")
+                    .add(
+                        examData
+                    );
+
+
+            console.log(
+                "Exam created:",
+                doc.id
+            );
+
+
+            showMessage(
+                "Examination created successfully. Exam ID: " + doc.id,
+                "success"
+            );
+
+
+            /* ======================================
+               RESET FORM
+            ====================================== */
+
+            examForm.reset();
+
+
+            document.getElementById(
+                "duration"
+            ).value =
+                60;
+
+
+            document.getElementById(
+                "totalQuestions"
+            ).value =
+                100;
+
+
+            document.getElementById(
+                "marksPerQuestion"
+            ).value =
+                2;
+
+
+            document.getElementById(
+                "negativeMark"
+            ).value =
+                0.50;
+
+
+            document.getElementById(
+                "examStatus"
+            ).value =
+                "Upcoming";
+
+
+            await loadStatistics();
+
+            await loadExams();
+
+
+        }
+        catch(error){
+
+            console.error(
+                "CREATE EXAM ERROR:",
+                error
+            );
+
+
+            showMessage(
+                "Exam creation failed: " +
+                error.message,
+                "error"
+            );
+
+        }
+        finally{
+
+            saveButton.disabled =
+                false;
+
+            saveButton.textContent =
+                "Create Examination";
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   LOAD EXAMS
+===================================================== */
+
+async function loadExams(){
+
+    examList.innerHTML =
+        `<div class="loading">
+            Loading examinations...
+        </div>`;
+
+
+    try{
+
+        const snapshot =
+            await db
+                .collection("exams")
+                .orderBy(
+                    "createdAt",
+                    "desc"
+                )
+                .get();
+
+
+        if(snapshot.empty){
+
+            examList.innerHTML =
+                `<div class="no-exam">
+                    No examinations created yet.
+                </div>`;
+
+            showCurrentExam(null);
+
+            return;
+
+        }
+
+
+        let html = "";
+
+        let activeExam = null;
+
+
+        snapshot.forEach(
+            function(doc){
+
+                const exam =
+                    doc.data();
+
+
+                const status =
+                    exam.status ||
+                    "Upcoming";
+
+
+                if(
+                    status === "Active" &&
+                    !activeExam
+                ){
+
+                    activeExam = {
+
+                        id:doc.id,
+
+                        ...exam
+
+                    };
+
+                }
+
+
+                let badgeClass =
+                    "badge-upcoming";
+
+
+                if(status === "Active"){
+
+                    badgeClass =
+                        "badge-active";
+
+                }
+
+
+                if(status === "Completed"){
+
+                    badgeClass =
+                        "badge-completed";
+
+                }
+
+
+                html += `
+
+                    <div class="exam-list-item">
+
+                        <div class="exam-list-top">
+
+                            <h3>
+                                ${escapeHtml(
+                                    exam.examName || "-"
+                                )}
+                            </h3>
+
+                            <span class="badge ${badgeClass}">
+                                ${escapeHtml(status)}
+                            </span>
+
+                        </div>
+
+
+                        <div class="exam-grid">
+
+                            <div class="exam-item">
+                                <small>Exam Code</small>
+                                <strong>
+                                    ${escapeHtml(
+                                        exam.examCode || "-"
+                                    )}
+                                </strong>
+                            </div>
+
+
+                            <div class="exam-item">
+                                <small>Date</small>
+                                <strong>
+                                    ${escapeHtml(
+                                        exam.examDate || "-"
+                                    )}
+                                </strong>
+                            </div>
+
+
+                            <div class="exam-item">
+                                <small>Time</small>
+                                <strong>
+                                    ${escapeHtml(
+                                        exam.examTime || "-"
+                                    )}
+                                </strong>
+                            </div>
+
+
+                            <div class="exam-item">
+                                <small>Duration</small>
+                                <strong>
+                                    ${exam.durationMinutes || 0}
+                                    minutes
+                                </strong>
+                            </div>
+
+
+                            <div class="exam-item">
+                                <small>Questions</small>
+                                <strong>
+                                    ${exam.totalQuestions || 0}
+                                </strong>
+                            </div>
+
+
+                            <div class="exam-item">
+                                <small>Exam ID</small>
+                                <strong>
+                                    ${doc.id}
+                                </strong>
+                            </div>
+
+                        </div>
+
+
+                        <div class="exam-actions">
+
+                            ${
+                                status !== "Active"
+                                ?
+                                `
+                                <button
+                                    class="small-btn active-btn"
+                                    onclick="makeActive('${doc.id}')"
+                                >
+                                    Make Active
+                                </button>
+                                `
+                                :
+                                ""
+                            }
+
+
+                            ${
+                                status !== "Completed"
+                                ?
+                                `
+                                <button
+                                    class="small-btn"
+                                    style="background:#fef3c7;color:#92400e;"
+                                    onclick="completeExam('${doc.id}')"
+                                >
+                                    Complete
+                                </button>
+                                `
+                                :
+                                ""
+                            }
+
+
+                            <button
+                                class="small-btn delete-btn"
+                                onclick="deleteExam('${doc.id}')"
+                            >
+                                Delete
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+
+        examList.innerHTML =
+            html;
+
+
+        showCurrentExam(
+            activeExam
+        );
+
+
+    }
+    catch(error){
+
+        console.error(
+            "LOAD EXAMS ERROR:",
+            error
+        );
+
+
+        /*
+         If orderBy createdAt fails because
+         old documents don't have createdAt,
+         load again without orderBy.
+        */
+
+        try{
+
+            const snapshot =
+                await db
+                    .collection("exams")
+                    .get();
+
+
+            if(snapshot.empty){
+
+                examList.innerHTML =
+                    `<div class="no-exam">
+                        No examinations created yet.
+                    </div>`;
+
+                return;
+
+            }
+
+
+            let html = "";
+
+
+            snapshot.forEach(
+                function(doc){
+
+                    const exam =
+                        doc.data();
+
+
+                    html += `
+
+                        <div class="exam-list-item">
+
+                            <div class="exam-list-top">
+
+                                <h3>
+                                    ${escapeHtml(
+                                        exam.examName || "-"
+                                    )}
+                                </h3>
+
+                                <span class="badge badge-upcoming">
+                                    ${escapeHtml(
+                                        exam.status || "Upcoming"
+                                    )}
+                                </span>
+
+                            </div>
+
+
+                            <div class="exam-grid">
+
+                                <div class="exam-item">
+                                    <small>Exam Code</small>
+                                    <strong>
+                                        ${escapeHtml(
+                                            exam.examCode || "-"
+                                        )}
+                                    </strong>
+                                </div>
+
+
+                                <div class="exam-item">
+                                    <small>Date</small>
+                                    <strong>
+                                        ${escapeHtml(
+                                            exam.examDate || "-"
+                                        )}
+                                    </strong>
+                                </div>
+
+
+                                <div class="exam-item">
+                                    <small>Time</small>
+                                    <strong>
+                                        ${escapeHtml(
+                                            exam.examTime || "-"
+                                        )}
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            <div class="exam-actions">
+
+                                <button
+                                    class="small-btn delete-btn"
+                                    onclick="deleteExam('${doc.id}')"
+                                >
+                                    Delete
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            );
+
+
+            examList.innerHTML =
+                html;
+
+        }
+        catch(secondError){
+
+            examList.innerHTML =
+                `<div class="no-exam">
+                    Unable to load examinations:
+                    ${escapeHtml(
+                        secondError.message
+                    )}
+                </div>`;
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   CURRENT ACTIVE EXAM
+===================================================== */
+
+function showCurrentExam(exam){
+
+    const details =
+        document.getElementById(
+            "examDetails"
+        );
+
+    const noExam =
+        document.getElementById(
+            "noExam"
+        );
+
+
+    if(!exam){
+
+        details.style.display =
+            "none";
+
+        noExam.style.display =
+            "block";
+
+        return;
+
+    }
+
+
+    details.style.display =
+        "block";
+
+    noExam.style.display =
+        "none";
+
+
+    document.getElementById(
+        "currentExamName"
+    ).textContent =
+        exam.examName || "-";
+
+
+    document.getElementById(
+        "currentExamCode"
+    ).textContent =
+        exam.examCode || "-";
+
+
+    document.getElementById(
+        "currentExamDate"
+    ).textContent =
+        exam.examDate || "-";
+
+
+    document.getElementById(
+        "currentExamTime"
+    ).textContent =
+        exam.examTime || "-";
+
+
+    document.getElementById(
+        "currentExamDuration"
+    ).textContent =
+        (exam.durationMinutes || 0) +
+        " minutes";
+
+
+    document.getElementById(
+        "currentExamQuestions"
+    ).textContent =
+        exam.totalQuestions || "-";
+
+
+    document.getElementById(
+        "currentMarksPerQuestion"
+    ).textContent =
+        exam.marksPerQuestion || "-";
+
+
+    document.getElementById(
+        "currentNegativeMark"
+    ).textContent =
+        exam.negativeMark || "-";
+
+
+    document.getElementById(
+        "currentExamStatus"
+    ).textContent =
+        exam.status || "-";
+
+}
+
+
+/* =====================================================
+   MAKE ACTIVE
+===================================================== */
+
+async function makeActive(examId){
+
+    try{
+
+        const active =
+            await db
+                .collection("exams")
+                .where(
+                    "status",
+                    "==",
+                    "Active"
+                )
+                .get();
+
+
+        if(!active.empty){
+
+            showMessage(
+                "Another examination is already Active. Complete it first.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        await db
+            .collection("exams")
+            .doc(examId)
+            .update({
+
+                status:
+                    "Active",
+
+                updatedAt:
+                    firebase.firestore.FieldValue.serverTimestamp()
+
+            });
+
+
+        showMessage(
+            "Examination is now Active.",
+            "success"
+        );
+
+
+        await loadStatistics();
+
+        await loadExams();
+
+    }
+    catch(error){
+
+        showMessage(
+            "Unable to activate examination: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   COMPLETE EXAM
+===================================================== */
+
+async function completeExam(examId){
+
+    const confirmComplete =
+        confirm(
+            "Are you sure you want to mark this examination as Completed?"
+        );
+
+
+    if(!confirmComplete){
+
+        return;
+
+    }
+
+
+    try{
+
+        await db
+            .collection("exams")
+            .doc(examId)
+            .update({
+
+                status:
+                    "Completed",
+
+                updatedAt:
+                    firebase.firestore.FieldValue.serverTimestamp()
+
+            });
+
+
+        showMessage(
+            "Examination marked as Completed.",
+            "success"
+        );
+
+
+        await loadStatistics();
+
+        await loadExams();
+
+    }
+    catch(error){
+
+        showMessage(
+            "Unable to complete examination: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   DELETE EXAM
+===================================================== */
+
+async function deleteExam(examId){
+
+    const confirmed =
+        confirm(
+            "Delete this examination?\n\nThis action cannot be undone."
+        );
+
+
+    if(!confirmed){
+
+        return;
+
+    }
+
+
+    try{
+
+        await db
+            .collection("exams")
+            .doc(examId)
+            .delete();
+
+
+        showMessage(
+            "Examination deleted successfully.",
+            "success"
+        );
+
+
+        await loadStatistics();
+
+        await loadExams();
+
+    }
+    catch(error){
+
+        showMessage(
+            "Unable to delete examination: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logout(){
+
+    try{
+
+        await auth.signOut();
+
+        window.location.replace(
+            "login.html"
+        );
+
+    }
+    catch(error){
+
+        alert(
+            "Logout failed: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HTML ESCAPE
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="admin-page">
+
+    <header class="admin-header">
+
+        <div>
+            <div class="logo small">SSC</div>
+            <h2>Admin Dashboard</h2>
+        </div>
+
+        <button onclick="clearAllData()"
+                class="btn danger">
+            Reset Demo Data
+        </button>
+
+    </header>
+
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <h3 id="totalCandidates">0</h3>
+            <p>Registered</p>
+        </div>
+
+        <div class="stat-card">
+            <h3 id="verifiedCandidates">0</h3>
+            <p>Entry Verified</p>
+        </div>
+
+        <div class="stat-card">
+            <h3 id="completedCandidates">0</h3>
+            <p>Completed</p>
+        </div>
+
+        <div class="stat-card">
+            <h3 id="exitVerified">0</h3>
+            <p>Exit Verified</p>
+        </div>
+
+    </div>
+
+
+    <div class="admin-card">
+
+        <h3>Candidate Records</h3>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Name</th>
+                        <th>Centre</th>
+                        <th>Seat</th>
+                        <th>Entry</th>
+                        <th>Exam</th>
+                        <th>Exit</th>
+                        <th>Score</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="candidateTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <br>
+
+    <a href="index.html">← Back to Home</a>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

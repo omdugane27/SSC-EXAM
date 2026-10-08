@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Manage Invigilators - SSC Examination System</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f1f5f9;
+  color:#172033;
+}
+
+.header{
+  background:linear-gradient(135deg,#172554,#2563eb);
+  color:white;
+  padding:25px 20px;
+}
+
+.header h1{
+  margin:0;
+  font-size:30px;
+}
+
+.header p{
+  margin:8px 0 0;
+  font-size:16px;
+}
+
+.top-buttons{
+  display:flex;
+  gap:12px;
+  margin-top:25px;
+}
+
+.top-buttons a,
+.top-buttons button{
+  flex:1;
+  border:0;
+  border-radius:12px;
+  padding:16px;
+  font-size:17px;
+  font-weight:bold;
+  text-align:center;
+  text-decoration:none;
+  cursor:pointer;
+}
+
+.dashboard-btn{
+  background:#475569;
+  color:white;
+}
+
+.logout-btn{
+  background:#dc2626;
+  color:white;
+}
+
+.container{
+  max-width:1100px;
+  margin:30px auto;
+  padding:0 18px;
+}
+
+.card{
+  background:white;
+  border-radius:22px;
+  padding:25px;
+  margin-bottom:25px;
+  box-shadow:0 8px 30px rgba(15,23,42,.08);
+}
+
+.card h2{
+  color:#1e3a8a;
+  margin-top:0;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+}
+
+.field label{
+  font-weight:bold;
+  margin-bottom:8px;
+  color:#374151;
+}
+
+.field input,
+.field select{
+  width:100%;
+  padding:15px;
+  border:1px solid #cbd5e1;
+  border-radius:12px;
+  font-size:16px;
+  outline:none;
+}
+
+.field input:focus,
+.field select:focus{
+  border-color:#2563eb;
+  box-shadow:0 0 0 3px rgba(37,99,235,.12);
+}
+
+.full{
+  grid-column:1 / -1;
+}
+
+.create-btn{
+  width:100%;
+  margin-top:22px;
+  border:0;
+  background:#2563eb;
+  color:white;
+  padding:16px;
+  border-radius:12px;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.create-btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.message{
+  display:none;
+  padding:15px;
+  margin-top:18px;
+  border-radius:12px;
+  font-weight:bold;
+}
+
+.success{
+  display:block;
+  background:#dcfce7;
+  color:#166534;
+}
+
+.error{
+  display:block;
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.loading{
+  display:block;
+  background:#dbeafe;
+  color:#1e40af;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:850px;
+}
+
+th,
+td{
+  padding:14px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:left;
+}
+
+th{
+  background:#eff6ff;
+  color:#1e3a8a;
+}
+
+.badge{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.active{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.empty{
+  text-align:center;
+  padding:30px;
+  color:#64748b;
+}
+
+.refresh-btn{
+  background:#0f766e;
+  color:white;
+  border:0;
+  padding:10px 15px;
+  border-radius:9px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+@media(max-width:700px){
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .full{
+    grid-column:auto;
+  }
+
+  .header h1{
+    font-size:25px;
+  }
+
+  .top-buttons{
+    flex-direction:column;
+  }
+
+  .card{
+    padding:20px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+  <h1>👨‍🏫 Manage Invigilators</h1>
+
+  <p>
+    SSC Examination System - Admin Panel
+  </p>
+
+  <div class="top-buttons">
+
+    <a
+      href="admin_dashboard.html"
+      class="dashboard-btn"
+    >
+      ← Dashboard
+    </a>
+
+    <button
+      class="logout-btn"
+      onclick="logoutAdmin()"
+    >
+      Logout
+    </button>
+
+  </div>
+
+</header>
+
+<main class="container">
+
+  <!-- CREATE -->
+  <section class="card">
+
+    <h2>
+      ➕ Create Invigilator Account
+    </h2>
+
+    <form id="invigilatorForm">
+
+      <div class="form-grid">
+
+        <div class="field">
+
+          <label>
+            Full Name
+          </label>
+
+          <input
+            id="fullName"
+            type="text"
+            placeholder="Enter full name"
+            required
+          >
+
+        </div>
+
+        <div class="field">
+
+          <label>
+            Email
+          </label>
+
+          <input
+            id="email"
+            type="email"
+            placeholder="invigilator@example.com"
+            required
+          >
+
+        </div>
+
+        <div class="field">
+
+          <label>
+            Login Password
+          </label>
+
+          <input
+            id="password"
+            type="password"
+            placeholder="Minimum 6 characters"
+            minlength="6"
+            required
+          >
+
+        </div>
+
+        <div class="field">
+
+          <label>
+            Employee ID
+          </label>
+
+          <input
+            id="employeeId"
+            type="text"
+            placeholder="INV-001"
+            required
+          >
+
+        </div>
+
+        <div class="field">
+
+          <label>
+            Centre
+          </label>
+
+          <select id="centre">
+            <option value="Centre-01">Centre-01</option>
+            <option value="Centre-02">Centre-02</option>
+            <option value="Centre-03">Centre-03</option>
+          </select>
+
+        </div>
+
+        <div class="field">
+
+          <label>
+            Lab / Room
+          </label>
+
+          <select id="lab">
+
+            <option value="Lab-01">Lab-01</option>
+            <option value="Lab-02">Lab-02</option>
+            <option value="Lab-03">Lab-03</option>
+            <option value="Lab-04">Lab-04</option>
+            <option value="Lab-05">Lab-05</option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+      <button
+        id="createBtn"
+        type="submit"
+        class="create-btn"
+      >
+        👨‍🏫 Create Invigilator
+      </button>
+
+    </form>
+
+    <div
+      id="message"
+      class="message"
+    ></div>
+
+  </section>
+
+
+  <!-- LIST -->
+  <section class="card">
+
+    <h2>
+      📋 Invigilator List
+    </h2>
+
+    <button
+      class="refresh-btn"
+      onclick="loadInvigilators()"
+    >
+      🔄 Refresh
+    </button>
+
+    <br><br>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Name</th>
+
+            <th>Email</th>
+
+            <th>Employee ID</th>
+
+            <th>Centre</th>
+
+            <th>Lab / Room</th>
+
+            <th>Status</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody id="invigilatorTable">
+
+          <tr>
+
+            <td
+              colspan="6"
+              class="empty"
+            >
+              Loading invigilators...
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   FIREBASE CONFIG
+========================================================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+  authDomain: "ssc-exam-project-8af6b.firebaseapp.com",
+  projectId: "ssc-exam-project-8af6b",
+  storageBucket: "ssc-exam-project-8af6b.firebasestorage.app",
+  messagingSenderId: "288245274853",
+  appId: "1:288245274853:web:b4d535a08faf305f5e9c0c",
+  measurementId: "G-4BTLY67VDS"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth =
+  firebase.auth();
+
+const db =
+  firebase.firestore();
+
+
+/* =========================================================
+   SUPABASE EDGE FUNCTION
+========================================================= */
+
+const FUNCTION_URL =
+  "https://sjvdfvibbdxjtmfmuyci.supabase.co/functions/v1/hyper-function";
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const form =
+  document.getElementById(
+    "invigilatorForm"
+  );
+
+const message =
+  document.getElementById(
+    "message"
+  );
+
+const createBtn =
+  document.getElementById(
+    "createBtn"
+  );
+
+const table =
+  document.getElementById(
+    "invigilatorTable"
+  );
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+function showMessage(
+  text,
+  type
+) {
+  message.textContent =
+    text;
+
+  message.className =
+    "message " + type;
+}
+
+
+/* =========================================================
+   ADMIN AUTH
+========================================================= */
+
+auth.onAuthStateChanged(
+  async (user) => {
+
+    if (!user) {
+
+      window.location.replace(
+        "admin_login.html"
+      );
+
+      return;
+    }
+
+    const isAdmin =
+      sessionStorage.getItem(
+        "adminLoggedIn"
+      );
+
+    if (isAdmin !== "true") {
+
+      window.location.replace(
+        "admin_login.html"
+      );
+
+      return;
+    }
+
+    await loadInvigilators();
+
+  }
+);
+
+
+/* =========================================================
+   CREATE INVIGILATOR
+========================================================= */
+
+form.addEventListener(
+  "submit",
+  async (event) => {
+
+    event.preventDefault();
+
+    try {
+
+      createBtn.disabled = true;
+
+      showMessage(
+        "Creating invigilator account...",
+        "loading"
+      );
+
+      const user =
+        auth.currentUser;
+
+      if (!user) {
+        throw new Error(
+          "Admin is not logged in."
+        );
+      }
+
+      /* Get fresh Firebase ID token */
+
+      const idToken =
+        await user.getIdToken(
+          true
+        );
+
+      const name =
+        document
+          .getElementById("fullName")
+          .value
+          .trim();
+
+      const email =
+        document
+          .getElementById("email")
+          .value
+          .trim()
+          .toLowerCase();
+
+      const password =
+        document
+          .getElementById("password")
+          .value;
+
+      const employeeId =
+        document
+          .getElementById("employeeId")
+          .value
+          .trim();
+
+      const centre =
+        document
+          .getElementById("centre")
+          .value;
+
+      const lab =
+        document
+          .getElementById("lab")
+          .value;
+
+
+      /* ---------------------------------------------------
+         IMPORTANT:
+         Exact backend action
+      --------------------------------------------------- */
+
+      const response =
+        await fetch(
+          FUNCTION_URL,
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+
+              "Authorization":
+                `Bearer ${idToken}`
+            },
+
+            body: JSON.stringify({
+
+              action:
+                "create_invigilator",
+
+              name:
+                name,
+
+              email:
+                email,
+
+              password:
+                password,
+
+              employeeId:
+                employeeId,
+
+              centre:
+                centre,
+
+              lab:
+                lab,
+
+              roomNo:
+                lab
+
+            })
+          }
+        );
+
+
+      const result =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          result.error ||
+          `HTTP ${response.status}`
+        );
+
+      }
+
+
+      if (
+        result.success !== true
+      ) {
+
+        throw new Error(
+          result.message ||
+          result.error ||
+          "Invigilator creation failed."
+        );
+
+      }
+
+
+      showMessage(
+        "✅ Invigilator created successfully.",
+        "success"
+      );
+
+
+      form.reset();
+
+
+      await loadInvigilators();
+
+    }
+
+    catch (error) {
+
+      console.error(
+        "Create invigilator error:",
+        error
+      );
+
+      showMessage(
+        "❌ " +
+        (
+          error.message ||
+          "Failed to create invigilator."
+        ),
+        "error"
+      );
+
+    }
+
+    finally {
+
+      createBtn.disabled =
+        false;
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   LOAD INVIGILATORS
+========================================================= */
+
+async function loadInvigilators() {
+
+  table.innerHTML = `
+    <tr>
+      <td colspan="6" class="empty">
+        Loading...
+      </td>
+    </tr>
+  `;
+
+  try {
+
+    const snapshot =
+      await db
+        .collection(
+          "invigilators"
+        )
+        .orderBy(
+          "createdAt",
+          "desc"
+        )
+        .get();
+
+
+    if (
+      snapshot.empty
+    ) {
+
+      table.innerHTML = `
+        <tr>
+          <td colspan="6" class="empty">
+            No invigilators found.
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+
+    let html = "";
+
+
+    snapshot.forEach(
+      (doc) => {
+
+        const data =
+          doc.data();
+
+
+        html += `
+          <tr>
+
+            <td>
+              <strong>
+                ${
+                  escapeHtml(
+                    data.name ||
+                    data.fullName ||
+                    "-"
+                  )
+                }
+              </strong>
+            </td>
+
+            <td>
+              ${
+                escapeHtml(
+                  data.email ||
+                  "-"
+                )
+              }
+            </td>
+
+            <td>
+              ${
+                escapeHtml(
+                  data.employeeId ||
+                  "-"
+                )
+              }
+            </td>
+
+            <td>
+              ${
+                escapeHtml(
+                  data.centre ||
+                  "-"
+                )
+              }
+            </td>
+
+            <td>
+              ${
+                escapeHtml(
+                  data.lab ||
+                  data.roomNo ||
+                  "-"
+                )
+              }
+            </td>
+
+            <td>
+              <span class="badge active">
+                ${
+                  escapeHtml(
+                    data.status ||
+                    "active"
+                  )
+                }
+              </span>
+            </td>
+
+          </tr>
+        `;
+
+      }
+    );
+
+
+    table.innerHTML =
+      html;
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Load invigilators error:",
+      error
+    );
+
+    table.innerHTML = `
+      <tr>
+        <td colspan="6" class="empty">
+          ❌ Unable to load invigilators.
+          <br><br>
+          ${
+            escapeHtml(
+              error.message ||
+              "Unknown error"
+            )
+          }
+        </td>
+      </tr>
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
+
+function escapeHtml(value) {
+
+  return String(value)
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function logoutAdmin() {
+
+  try {
+
+    await auth.signOut();
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+  }
+
+  sessionStorage.removeItem(
+    "adminLoggedIn"
+  );
+
+  sessionStorage.removeItem(
+    "adminUID"
+  );
+
+  sessionStorage.removeItem(
+    "adminEmail"
+  );
+
+  window.location.replace(
+    "admin_login.html"
+  );
+
+}
+
+</script>
+
+</body>
+</html>

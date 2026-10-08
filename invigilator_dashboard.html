@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Invigilator Dashboard - SSC Examination System</title>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f4f7fb;
+      color: #1f2937;
+    }
+
+    /* HEADER */
+    .header {
+      background: linear-gradient(135deg, #111827, #1e3a8a);
+      color: white;
+      padding: 18px 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.15);
+    }
+
+    .brand h1 {
+      font-size: 21px;
+    }
+
+    .brand p {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+
+    .logout-btn {
+      border: none;
+      background: #ef4444;
+      color: white;
+      padding: 10px 17px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .logout-btn:hover {
+      background: #dc2626;
+    }
+
+    /* MAIN */
+    .container {
+      width: 95%;
+      max-width: 1250px;
+      margin: 25px auto;
+    }
+
+    /* PROFILE */
+    .profile {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+      margin-bottom: 20px;
+    }
+
+    .profile-title {
+      color: #1e3a8a;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .profile-item {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      padding: 13px;
+      border-radius: 9px;
+    }
+
+    .profile-item small {
+      color: #6b7280;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .profile-item strong {
+      color: #111827;
+      word-break: break-word;
+    }
+
+    /* CARDS */
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+    }
+
+    .card-title {
+      font-size: 19px;
+      font-weight: bold;
+      color: #1e3a8a;
+      margin-bottom: 18px;
+    }
+
+    /* SEARCH */
+    .search-box {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .search-box input {
+      flex: 1;
+      min-width: 220px;
+      padding: 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .search-box input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 12px 18px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-success {
+      background: #16a34a;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #15803d;
+    }
+
+    .btn-secondary {
+      background: #64748b;
+      color: white;
+    }
+
+    /* MESSAGE */
+    .message {
+      display: none;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .message.success {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+
+    .message.error {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    .message.info {
+      display: block;
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #93c5fd;
+    }
+
+    /* CANDIDATE */
+    #candidateSection {
+      display: none;
+    }
+
+    .candidate-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .candidate-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .candidate-field {
+      padding: 12px;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .candidate-field span {
+      display: block;
+      color: #64748b;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .candidate-field strong {
+      font-size: 14px;
+      word-break: break-word;
+    }
+
+    /* STATUS */
+    .status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .status-green {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-yellow {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-red {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* EXAM */
+    .exam-area {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #374151;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      outline: none;
+      background: white;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #2563eb;
+    }
+
+    .verify-box {
+      margin-top: 15px;
+      padding: 13px;
+      border-radius: 8px;
+      background: #eff6ff;
+      color: #1e40af;
+      font-size: 14px;
+    }
+
+    /* PIN */
+    .pin-box {
+      display: none;
+      margin-top: 20px;
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      color: white;
+      padding: 22px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .pin-box h3 {
+      margin-bottom: 8px;
+    }
+
+    .pin {
+      font-size: 38px;
+      font-weight: bold;
+      letter-spacing: 8px;
+      margin: 15px 0;
+    }
+
+    .pin-info {
+      font-size: 13px;
+      opacity: 0.85;
+      line-height: 1.6;
+    }
+
+    /* LOADING */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 15px;
+      color: #2563eb;
+      font-weight: bold;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .profile-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .candidate-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .header {
+        padding: 15px;
+      }
+
+      .brand h1 {
+        font-size: 17px;
+      }
+
+      .container {
+        width: 93%;
+        margin: 15px auto;
+      }
+
+      .profile-grid,
+      .candidate-grid,
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card,
+      .profile {
+        padding: 16px;
+      }
+
+      .search-box {
+        flex-direction: column;
+      }
+
+      .search-box input {
+        width: 100%;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .pin {
+        font-size: 30px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="brand">
+      <h1>🛡️ SSC Examination System</h1>
+      <p>Invigilator Control Panel</p>
+    </div>
+
+    <button class="logout-btn" onclick="logout()">
+      Logout
+    </button>
+  </header>
+
+
+  <main class="container">
+
+    <!-- PROFILE -->
+    <section class="profile">
+
+      <div class="profile-title">
+        👨‍🏫 Invigilator Profile
+      </div>
+
+      <div class="profile-grid">
+
+        <div class="profile-item">
+          <small>Name</small>
+          <strong id="profileName">Loading...</strong>
+        </div>
+
+        <div class="profile-item">
+          <small>Email</small>
+          <strong id="profileEmail">Loading...</strong>
+        </div>
+
+        <div class="profile-item">
+          <small>Employee ID</small>
+          <strong id="profileEmployeeId">Loading...</strong>
+        </div>
+
+        <div class="profile-item">
+          <small>Centre</small>
+          <strong id="profileCentre">Loading...</strong>
+        </div>
+
+        <div class="profile-item">
+          <small>Lab / Room</small>
+          <strong id="profileLab">Loading...</strong>
+        </div>
+
+        <div class="profile-item">
+          <small>Role</small>
+          <strong id="profileRole">Invigilator</strong>
+        </div>
+
+        <div class="profile-item">
+          <small>Status</small>
+          <strong id="profileStatus">Loading...</strong>
+        </div>
+
+        <div class="profile-item">
+          <small>System</small>
+          <strong>SSC Online Exam</strong>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- SEARCH CANDIDATE -->
+    <section class="card">
+
+      <div class="card-title">
+        🔎 Search Candidate
+      </div>
+
+      <div class="search-box">
+
+        <input
+          type="text"
+          id="candidateSearch"
+          placeholder="Enter Candidate UID, Email or Roll Number"
+        >
+
+        <button
+          class="btn btn-primary"
+          onclick="searchCandidate()"
+        >
+          Search Candidate
+        </button>
+
+      </div>
+
+      <div id="searchMessage" class="message"></div>
+
+      <div id="searchLoading" class="loading">
+        Searching candidate...
+      </div>
+
+    </section>
+
+
+    <!-- CANDIDATE SECTION -->
+    <section class="card" id="candidateSection">
+
+      <div class="card-title">
+        👤 Candidate Details
+      </div>
+
+      <div class="candidate-box">
+
+        <div class="candidate-grid">
+
+          <div class="candidate-field">
+            <span>Full Name</span>
+            <strong id="candidateName">-</strong>
+          </div>
+
+          <div class="candidate-field">
+            <span>Email</span>
+            <strong id="candidateEmail">-</strong>
+          </div>
+
+          <div class="candidate-field">
+            <span>Mobile</span>
+            <strong id="candidateMobile">-</strong>
+          </div>
+
+          <div class="candidate-field">
+            <span>Roll Number</span>
+            <strong id="candidateRoll">-</strong>
+          </div>
+
+          <div class="candidate-field">
+            <span>Centre</span>
+            <strong id="candidateCentre">-</strong>
+          </div>
+
+          <div class="candidate-field">
+            <span>Room / Lab</span>
+            <strong id="candidateRoom">-</strong>
+          </div>
+
+          <div class="candidate-field">
+            <span>Seat Number</span>
+            <strong id="candidateSeat">-</strong>
+          </div>
+
+          <div class="candidate-field">
+            <span>Assignment Status</span>
+            <strong id="candidateAssignmentStatus">-</strong>
+          </div>
+
+          <div class="candidate-field">
+            <span>Candidate UID</span>
+            <strong id="candidateUid">-</strong>
+          </div>
+
+        </div>
+
+
+        <!-- EXAM ASSIGNMENT -->
+        <div class="exam-area">
+
+          <div class="card-title">
+            📝 Assign Examination
+          </div>
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Select Examination</label>
+
+              <select id="examSelect">
+                <option value="">
+                  Loading exams...
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Exam Code</label>
+
+              <input
+                type="text"
+                id="examCode"
+                readonly
+                placeholder="Exam code"
+              >
+            </div>
+
+          </div>
+
+
+          <div class="verify-box" id="verificationBox">
+            🔐 Centre and Lab verification will appear here.
+          </div>
+
+
+          <br>
+
+          <button
+            class="btn btn-success"
+            id="assignExamBtn"
+            onclick="assignExam()"
+          >
+            ✅ Assign Exam & Generate PIN
+          </button>
+
+
+          <!-- PIN -->
+          <div class="pin-box" id="pinBox">
+
+            <h3>🔑 Exam Access PIN</h3>
+
+            <div class="pin" id="generatedPin">
+              ------
+            </div>
+
+            <div class="pin-info">
+              Give this PIN to the verified candidate.<br>
+              PIN validity: <strong>30 minutes</strong>.
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+<script>
+
+  /* =====================================================
+     FIREBASE CONFIG
+  ===================================================== */
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+    authDomain: "ssc-exam-project-8af6b.firebaseapp.com",
+    projectId: "ssc-exam-project-8af6b",
+    storageBucket: "ssc-exam-project-8af6b.firebasestorage.app",
+    messagingSenderId: "288245274853",
+    appId: "1:288245274853:web:b4d535a08faf305f5e9c0c",
+    measurementId: "G-4BTLY67VDS"
+  };
+
+
+  /* =====================================================
+     FIREBASE INITIALIZATION
+  ===================================================== */
+
+  try {
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Firebase initialization error:",
+      error
+    );
+
+  }
+
+
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+
+  /* =====================================================
+     GLOBAL VARIABLES
+  ===================================================== */
+
+  let currentUser = null;
+  let invigilatorData = null;
+  let selectedCandidate = null;
+  let exams = [];
+
+
+  /* =====================================================
+     SESSION CHECK
+  ===================================================== */
+
+  auth.onAuthStateChanged(async (user) => {
+
+    if (!user) {
+
+      window.location.href =
+        "invigilator_login.html";
+
+      return;
+    }
+
+    currentUser = user;
+
+    await loadInvigilator();
+
+    await loadExams();
+
+  });
+
+
+  /* =====================================================
+     LOAD INVIGILATOR
+  ===================================================== */
+
+  async function loadInvigilator() {
+
+    try {
+
+      const doc = await db
+        .collection("invigilators")
+        .doc(currentUser.uid)
+        .get();
+
+      if (!doc.exists) {
+
+        showMessage(
+          "searchMessage",
+          "Invigilator profile not found.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      invigilatorData = doc.data();
+
+
+      const name =
+        invigilatorData.name ||
+        invigilatorData.fullName ||
+        "Invigilator";
+
+
+      const centre =
+        invigilatorData.centre ||
+        invigilatorData.center ||
+        "-";
+
+
+      const lab =
+        invigilatorData.roomNo ||
+        invigilatorData.lab ||
+        invigilatorData.room ||
+        "-";
+
+
+      document.getElementById(
+        "profileName"
+      ).textContent = name;
+
+
+      document.getElementById(
+        "profileEmail"
+      ).textContent =
+        invigilatorData.email ||
+        currentUser.email ||
+        "-";
+
+
+      document.getElementById(
+        "profileEmployeeId"
+      ).textContent =
+        invigilatorData.employeeId ||
+        invigilatorData.invigilatorId ||
+        "-";
+
+
+      document.getElementById(
+        "profileCentre"
+      ).textContent = centre;
+
+
+      document.getElementById(
+        "profileLab"
+      ).textContent = lab;
+
+
+      document.getElementById(
+        "profileRole"
+      ).textContent =
+        invigilatorData.role ||
+        "invigilator";
+
+
+      const status =
+        invigilatorData.status ||
+        "active";
+
+
+      document.getElementById(
+        "profileStatus"
+      ).innerHTML =
+        `<span class="status status-green">${escapeHtml(status)}</span>`;
+
+
+      /* Save session details */
+
+      sessionStorage.setItem(
+        "invigilatorName",
+        name
+      );
+
+      sessionStorage.setItem(
+        "invigilatorCentre",
+        centre
+      );
+
+      sessionStorage.setItem(
+        "invigilatorLab",
+        lab
+      );
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      showMessage(
+        "searchMessage",
+        "Unable to load invigilator profile: " +
+        error.message,
+        "error"
+      );
+
+    }
+
+  }
+
+
+  /* =====================================================
+     LOAD EXAMS
+  ===================================================== */
+
+  async function loadExams() {
+
+    const select =
+      document.getElementById(
+        "examSelect"
+      );
+
+
+    try {
+
+      const snapshot = await db
+        .collection("exams")
+        .get();
+
+
+      exams = [];
+
+
+      snapshot.forEach(doc => {
+
+        exams.push({
+          id: doc.id,
+          ...doc.data()
+        });
+
+      });
+
+
+      exams.sort((a, b) => {
+
+        const aDate =
+          a.examDate || "";
+
+        const bDate =
+          b.examDate || "";
+
+        return aDate.localeCompare(bDate);
+
+      });
+
+
+      select.innerHTML =
+        `<option value="">-- Select Examination --</option>`;
+
+
+      if (exams.length === 0) {
+
+        select.innerHTML =
+          `<option value="">No examinations available</option>`;
+
+        return;
+      }
+
+
+      exams.forEach(exam => {
+
+        const option =
+          document.createElement("option");
+
+        option.value = exam.id;
+
+        option.textContent =
+          `${exam.examName || "Untitled Exam"}${exam.examCode ? " (" + exam.examCode + ")" : ""}`;
+
+        select.appendChild(option);
+
+      });
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      select.innerHTML =
+        `<option value="">Unable to load exams</option>`;
+
+      showMessage(
+        "searchMessage",
+        "Exam loading failed: " +
+        error.message,
+        "error"
+      );
+
+    }
+
+  }
+
+
+  /* =====================================================
+     EXAM SELECT CHANGE
+  ===================================================== */
+
+  document
+    .getElementById("examSelect")
+    .addEventListener(
+      "change",
+      function() {
+
+        const examId =
+          this.value;
+
+
+        const exam =
+          exams.find(
+            item => item.id === examId
+          );
+
+
+        document.getElementById(
+          "examCode"
+        ).value =
+          exam
+            ? (exam.examCode || "")
+            : "";
+
+
+        if (selectedCandidate && exam) {
+
+          verifyCentreAndLab();
+
+        }
+
+      }
+    );
+
+
+  /* =====================================================
+     SEARCH CANDIDATE
+  ===================================================== */
+
+  async function searchCandidate() {
+
+    const searchValue =
+      document
+        .getElementById("candidateSearch")
+        .value
+        .trim();
+
+
+    if (!searchValue) {
+
+      showMessage(
+        "searchMessage",
+        "Please enter Candidate UID, Email or Roll Number.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    document.getElementById(
+      "searchLoading"
+    ).style.display = "block";
+
+
+    document.getElementById(
+      "candidateSection"
+    ).style.display = "none";
+
+
+    hideMessage("searchMessage");
+
+
+    try {
+
+      let candidateDoc = null;
+
+
+      /* Search by UID */
+
+      if (
+        searchValue.length >= 20
+      ) {
+
+        const uidDoc =
+          await db
+            .collection("candidates")
+            .doc(searchValue)
+            .get();
+
+
+        if (uidDoc.exists) {
+
+          candidateDoc =
+            uidDoc;
+
+        }
+
+      }
+
+
+      /* Search by Email */
+
+      if (!candidateDoc) {
+
+        const emailSnapshot =
+          await db
+            .collection("candidates")
+            .where(
+              "email",
+              "==",
+              searchValue
+            )
+            .limit(1)
+            .get();
+
+
+        if (!emailSnapshot.empty) {
+
+          candidateDoc =
+            emailSnapshot.docs[0];
+
+        }
+
+      }
+
+
+      /* Search by Roll Number */
+
+      if (!candidateDoc) {
+
+        const rollSnapshot =
+          await db
+            .collection("candidates")
+            .where(
+              "rollNumber",
+              "==",
+              searchValue
+            )
+            .limit(1)
+            .get();
+
+
+        if (!rollSnapshot.empty) {
+
+          candidateDoc =
+            rollSnapshot.docs[0];
+
+        }
+
+      }
+
+
+      if (!candidateDoc) {
+
+        selectedCandidate = null;
+
+        showMessage(
+          "searchMessage",
+          "Candidate not found.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      selectedCandidate = {
+
+        uid: candidateDoc.id,
+
+        ...candidateDoc.data()
+
+      };
+
+
+      displayCandidate(
+        selectedCandidate
+      );
+
+
+      document.getElementById(
+        "candidateSection"
+      ).style.display = "block";
+
+
+      verifyCentreAndLab();
+
+
+    } catch (error) {
+  
+      console.error(error);
+
+      showMessage(
+        "searchMessage",
+        "Search failed: " +
+        error.message,
+        "error"
+      );
+
+    } finally {
+
+      document.getElementById(
+        "searchLoading"
+      ).style.display = "none";
+
+    }
+
+  }
+
+
+  /* =====================================================
+     DISPLAY CANDIDATE
+  ===================================================== */
+
+  function displayCandidate(candidate) {
+
+    document.getElementById(
+      "candidateName"
+    ).textContent =
+      candidate.fullName ||
+      candidate.name ||
+      "-";
+
+
+    document.getElementById(
+      "candidateEmail"
+    ).textContent =
+      candidate.email ||
+      "-";
+
+
+    document.getElementById(
+      "candidateMobile"
+    ).textContent =
+      candidate.mobile ||
+      "-";
+
+
+    document.getElementById(
+      "candidateRoll"
+    ).textContent =
+      candidate.rollNumber ||
+      "-";
+
+
+    document.getElementById(
+      "candidateCentre"
+    ).textContent =
+      candidate.centre ||
+      "-";
+
+
+    document.getElementById(
+      "candidateRoom"
+    ).textContent =
+      candidate.roomNo ||
+      candidate.lab ||
+      "-";
+
+
+    document.getElementById(
+      "candidateSeat"
+    ).textContent =
+      candidate.seatNumber ||
+      "-";
+
+
+    document.getElementById(
+      "candidateUid"
+    ).textContent =
+      candidate.uid ||
+      "-";
+
+
+    const status =
+      candidate.assignmentStatus ||
+      "Not Assigned";
+
+
+    let statusClass =
+      "status-yellow";
+
+
+    if (
+      status.toLowerCase() ===
+      "allocated"
+    ) {
+
+      statusClass =
+        "status-green";
+
+    }
+
+
+    if (
+      status.toLowerCase() ===
+      "blocked"
+    ) {
+
+      statusClass =
+        "status-red";
+
+    }
+
+
+    document.getElementById(
+      "candidateAssignmentStatus"
+    ).innerHTML =
+      `<span class="status ${statusClass}">${escapeHtml(status)}</span>`;
+
+  }
+
+
+  /* =====================================================
+     VERIFY CENTRE + LAB
+  ===================================================== */
+
+  function verifyCentreAndLab() {
+
+    const box =
+      document.getElementById(
+        "verificationBox"
+      );
+
+
+    const assignButton =
+      document.getElementById(
+        "assignExamBtn"
+      );
+
+
+    if (!selectedCandidate) {
+
+      box.innerHTML =
+        "🔐 Search a candidate first.";
+
+      assignButton.disabled =
+        true;
+
+      return;
+
+    }
+
+
+    const invCentre =
+      String(
+        invigilatorData?.centre ||
+        invigilatorData?.center ||
+        ""
+      ).trim()
+      .toLowerCase();
+
+
+    const invLab =
+      String(
+        invigilatorData?.roomNo ||
+        invigilatorData?.lab ||
+        invigilatorData?.room ||
+        ""
+      ).trim()
+      .toLowerCase();
+
+
+    const candidateCentre =
+      String(
+        selectedCandidate.centre ||
+        ""
+      ).trim()
+      .toLowerCase();
+
+
+    const candidateLab =
+      String(
+        selectedCandidate.roomNo ||
+        selectedCandidate.lab ||
+        ""
+      ).trim()
+      .toLowerCase();
+
+
+    if (
+      !invCentre ||
+      !invLab
+    ) {
+
+      box.innerHTML =
+        "⚠️ Invigilator centre/lab information is incomplete.";
+
+      box.style.background =
+        "#fef3c7";
+
+      box.style.color =
+        "#92400e";
+
+      assignButton.disabled =
+        true;
+
+      return;
+
+    }
+
+
+    if (
+      invCentre !== candidateCentre ||
+      invLab !== candidateLab
+    ) {
+
+      box.innerHTML =
+        `❌ Verification failed.<br>
+        Invigilator: <strong>${escapeHtml(invCentre)} / ${escapeHtml(invLab)}</strong><br>
+        Candidate: <strong>${escapeHtml(candidateCentre)} / ${escapeHtml(candidateLab)}</strong>`;
+
+      box.style.background =
+        "#fee2e2";
+
+      box.style.color =
+        "#991b1b";
+
+      assignButton.disabled =
+        true;
+
+      return;
+
+    }
+
+
+    box.innerHTML =
+      `✅ Candidate verified.<br>
+      Centre: <strong>${escapeHtml(candidateCentre)}</strong> |
+      Lab: <strong>${escapeHtml(candidateLab)}</strong>`;
+
+
+    box.style.background =
+      "#dcfce7";
+
+    box.style.color =
+      "#166534";
+
+
+    assignButton.disabled =
+      false;
+
+  }
+
+
+  /* =====================================================
+     ASSIGN EXAM
+  ===================================================== */
+
+  async function assignExam() {
+
+    if (!selectedCandidate) {
+
+      showMessage(
+        "searchMessage",
+        "Please search a candidate first.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const examId =
+      document
+        .getElementById("examSelect")
+        .value;
+
+
+    if (!examId) {
+
+      showMessage(
+        "searchMessage",
+        "Please select an examination.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const exam =
+      exams.find(
+        item => item.id === examId
+      );
+
+
+    if (!exam) {
+
+      showMessage(
+        "searchMessage",
+        "Selected examination not found.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    /* Verify centre/lab again */
+
+    const invCentre =
+      String(
+        invigilatorData?.centre ||
+        invigilatorData?.center ||
+        ""
+      ).trim()
+      .toLowerCase();
+
+
+    const invLab =
+      String(
+        invigilatorData?.roomNo ||
+        invigilatorData?.lab ||
+        invigilatorData?.room ||
+        ""
+      ).trim()
+      .toLowerCase();
+
+
+    const candidateCentre =
+      String(
+        selectedCandidate.centre ||
+        ""
+      ).trim()
+      .toLowerCase();
+
+
+    const candidateLab =
+      String(
+        selectedCandidate.roomNo ||
+        selectedCandidate.lab ||
+        ""
+      ).trim()
+      .toLowerCase();
+
+
+    if (
+      invCentre !== candidateCentre ||
+      invLab !== candidateLab
+    ) {
+
+      showMessage(
+        "searchMessage",
+        "Centre/Lab verification failed. Exam cannot be assigned.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const assignButton =
+      document.getElementById(
+        "assignExamBtn"
+      );
+
+
+    assignButton.disabled =
+      true;
+
+    assignButton.textContent =
+      "Assigning...";
+
+
+    try {
+
+      /* Generate 6 digit PIN */
+
+      const examPin =
+        generateExamPin();
+
+
+      const now =
+        new Date();
+
+
+      const expiry =
+        new Date(
+          now.getTime() +
+          30 * 60 * 1000
+        );
+
+
+      /* Candidate update */
+
+      await db
+        .collection("candidates")
+        .doc(selectedCandidate.uid)
+        .set({
+
+          assignedExamId:
+            exam.id,
+
+          assignedExamName:
+            exam.examName ||
+            "Examination",
+
+          assignedExamCode:
+            exam.examCode ||
+            "",
+
+          assignmentStatus:
+            "Assigned",
+
+          assignedBy:
+            currentUser.uid,
+
+          assignedAt:
+            firebase.firestore.FieldValue.serverTimestamp(),
+
+          examPin:
+            examPin,
+
+          examPinGeneratedFor:
+            selectedCandidate.uid,
+
+          examPinGeneratedBy:
+            currentUser.uid,
+
+          examPinCreatedAt:
+            firebase.firestore.FieldValue.serverTimestamp(),
+
+          examPinExpiresAt:
+            firebase.firestore.Timestamp.fromDate(
+              expiry
+            )
+
+        }, {
+          merge: true
+        });
+
+
+      /* Exam assignment record */
+
+      await db
+        .collection("examAssignments")
+        .add({
+
+          candidateUid:
+            selectedCandidate.uid,
+
+          candidateName:
+            selectedCandidate.fullName ||
+            selectedCandidate.name ||
+            "",
+
+          candidateEmail:
+            selectedCandidate.email ||
+            "",
+
+          rollNumber:
+            selectedCandidate.rollNumber ||
+            "",
+
+          centre:
+            selectedCandidate.centre ||
+            "",
+
+          roomNo:
+            selectedCandidate.roomNo ||
+            selectedCandidate.lab ||
+            "",
+
+          seatNumber:
+            selectedCandidate.seatNumber ||
+            "",
+
+          examId:
+            exam.id,
+
+          examName:
+            exam.examName ||
+            "",
+
+          examCode:
+            exam.examCode ||
+            "",
+
+          assignmentStatus:
+            "Assigned",
+
+          assignedBy:
+            currentUser.uid,
+
+          assignedByEmail:
+            currentUser.email ||
+            "",
+
+          assignedAt:
+            firebase.firestore.FieldValue.serverTimestamp(),
+
+          examPin:
+            examPin,
+
+          examPinCreatedAt:
+            firebase.firestore.FieldValue.serverTimestamp(),
+
+          examPinExpiresAt:
+            firebase.firestore.Timestamp.fromDate(
+              expiry
+            )
+
+        });
+
+
+      /* Show PIN */
+
+      document.getElementById(
+        "generatedPin"
+      ).textContent =
+        examPin;
+
+
+      document.getElementById(
+        "pinBox"
+      ).style.display =
+        "block";
+
+
+      showMessage(
+        "searchMessage",
+        "Exam assigned successfully. Access PIN generated.",
+        "success"
+      );
+
+
+      /* Update local candidate */
+
+      selectedCandidate.assignedExamId =
+        exam.id;
+
+      selectedCandidate.assignedExamName =
+        exam.examName || "";
+
+      selectedCandidate.assignmentStatus =
+        "Assigned";
+
+      displayCandidate(
+        selectedCandidate
+      );
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      showMessage(
+        "searchMessage",
+        "Exam assignment failed: " +
+        error.message,
+        "error"
+      );
+
+    } finally {
+
+      assignButton.disabled =
+        false;
+
+      assignButton.textContent =
+        "✅ Assign Exam & Generate PIN";
+
+    }
+
+  }
+
+
+  /* =====================================================
+     GENERATE 6 DIGIT PIN
+  ===================================================== */
+
+  function generateExamPin() {
+
+    return Math.floor(
+      100000 +
+      Math.random() * 900000
+    ).toString();
+
+  }
+
+
+  /* =====================================================
+     MESSAGE
+  ===================================================== */
+
+  function showMessage(
+    elementId,
+    text,
+    type
+  ) {
+
+    const element =
+      document.getElementById(
+        elementId
+      );
+
+
+    element.textContent =
+      text;
+
+
+    element.className =
+      "message " + type;
+
+  }
+
+
+  function hideMessage(elementId) {
+
+    const element =
+      document.getElementById(
+        elementId
+      );
+
+
+    element.style.display =
+      "none";
+
+    element.className =
+      "message";
+
+  }
+
+
+  /* =====================================================
+     ESCAPE HTML
+  ===================================================== */
+
+  function escapeHtml(value) {
+
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  /* =====================================================
+     LOGOUT
+  ===================================================== */
+
+  async function logout() {
+
+    try {
+
+      sessionStorage.removeItem(
+        "userRole"
+      );
+
+      sessionStorage.removeItem(
+        "invigilatorUid"
+      );
+
+      sessionStorage.removeItem(
+        "invigilatorEmail"
+      );
+
+      sessionStorage.removeItem(
+        "invigilatorName"
+      );
+
+      sessionStorage.removeItem(
+        "invigilatorId"
+      );
+
+      sessionStorage.removeItem(
+        "invigilatorCentre"
+      );
+
+      sessionStorage.removeItem(
+        "invigilatorLab"
+      );
+
+
+      await auth.signOut();
+
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+
+    window.location.href =
+      "invigilator_login.html";
+
+  }
+
+
+  /* =====================================================
+     ENTER KEY SEARCH
+  ===================================================== */
+
+  document
+    .getElementById("candidateSearch")
+    .addEventListener(
+      "keydown",
+      function(event) {
+
+        if (event.key === "Enter") {
+
+          searchCandidate();
+
+        }
+
+      }
+    );
+
+</script>
+
+</body>
+</html>

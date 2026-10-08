@@ -1,0 +1,3292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Candidate Panel | SSC Examination System</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f3f6fb;
+    color:#1f2937;
+}
+
+/* HEADER */
+
+header{
+    background:linear-gradient(135deg,#1557c0,#2563eb);
+    color:white;
+    padding:14px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:sticky;
+    top:0;
+    z-index:1000;
+    box-shadow:0 3px 12px rgba(0,0,0,.15);
+}
+
+.logo h1{
+    font-size:21px;
+}
+
+.logo p{
+    font-size:11px;
+    margin-top:3px;
+    opacity:.9;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.candidate-mini{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+}
+
+.avatar{
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    background:white;
+    color:#1557c0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+.logout{
+    border:0;
+    background:white;
+    color:#1557c0;
+    padding:9px 16px;
+    border-radius:7px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* LAYOUT */
+
+.layout{
+    display:flex;
+    min-height:calc(100vh - 70px);
+}
+
+.sidebar{
+    width:245px;
+    background:white;
+    border-right:1px solid #e5e7eb;
+    padding:20px 12px;
+    flex-shrink:0;
+}
+
+.profile-mini{
+    text-align:center;
+    padding:10px 5px 20px;
+    border-bottom:1px solid #e5e7eb;
+    margin-bottom:15px;
+}
+
+.profile-avatar{
+    width:70px;
+    height:70px;
+    margin:auto;
+    border-radius:50%;
+    background:#dbeafe;
+    color:#1d4ed8;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.profile-mini h3{
+    margin-top:10px;
+    font-size:15px;
+}
+
+.profile-mini p{
+    font-size:11px;
+    color:#64748b;
+    margin-top:4px;
+}
+
+.menu-title{
+    font-size:11px;
+    color:#94a3b8;
+    font-weight:bold;
+    padding:10px 12px;
+    text-transform:uppercase;
+}
+
+.menu-btn{
+    width:100%;
+    border:0;
+    background:transparent;
+    padding:12px;
+    border-radius:8px;
+    text-align:left;
+    cursor:pointer;
+    color:#475569;
+    font-size:14px;
+    margin-bottom:4px;
+}
+
+.menu-btn:hover,
+.menu-btn.active{
+    background:#dbeafe;
+    color:#1d4ed8;
+    font-weight:bold;
+}
+
+.menu-btn span{
+    margin-right:8px;
+}
+
+/* CONTENT */
+
+.content{
+    flex:1;
+    padding:25px;
+    max-width:1400px;
+    margin:auto;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+.page-title{
+    margin-bottom:20px;
+}
+
+.page-title h2{
+    color:#1d4ed8;
+    font-size:22px;
+}
+
+.page-title p{
+    color:#64748b;
+    font-size:13px;
+    margin-top:5px;
+}
+
+/* CARD */
+
+.card{
+    background:white;
+    border-radius:14px;
+    padding:22px;
+    box-shadow:0 3px 15px rgba(0,0,0,.06);
+    margin-bottom:20px;
+}
+
+.card-title{
+    font-size:17px;
+    color:#1d4ed8;
+    padding-bottom:13px;
+    margin-bottom:18px;
+    border-bottom:1px solid #e5e7eb;
+}
+
+/* WELCOME */
+
+.welcome{
+    background:linear-gradient(135deg,#1557c0,#2563eb);
+    color:white;
+    border-radius:15px;
+    padding:25px;
+    margin-bottom:22px;
+}
+
+.welcome h2{
+    font-size:23px;
+}
+
+.welcome p{
+    margin-top:8px;
+    font-size:13px;
+    opacity:.9;
+}
+
+/* STATS */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:22px;
+}
+
+.stat{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 3px 15px rgba(0,0,0,.05);
+}
+
+.stat small{
+    color:#64748b;
+    font-size:12px;
+}
+
+.stat h2{
+    margin-top:8px;
+    color:#1d4ed8;
+}
+
+/* EXAM */
+
+.exam-card{
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:20px;
+    margin-bottom:15px;
+}
+
+.exam-card h3{
+    color:#1d4ed8;
+    margin-bottom:12px;
+}
+
+.exam-info{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.exam-info div{
+    background:#f8fafc;
+    padding:12px;
+    border-radius:8px;
+}
+
+.exam-info small{
+    display:block;
+    color:#64748b;
+    font-size:11px;
+    margin-bottom:5px;
+}
+
+.exam-info strong{
+    font-size:13px;
+    word-break:break-word;
+}
+
+/* STATUS */
+
+.status{
+    display:inline-block;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status.upcoming{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status.completed{
+    background:#e0e7ff;
+    color:#3730a3;
+}
+
+/* BUTTON */
+
+.btn{
+    border:0;
+    background:#2563eb;
+    color:white;
+    padding:11px 18px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+    margin-top:15px;
+}
+
+.btn:hover{
+    background:#1d4ed8;
+}
+
+.btn.success{
+    background:#16a34a;
+}
+
+/* DETAILS */
+
+.details-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.detail{
+    border:1px solid #e5e7eb;
+    border-radius:9px;
+    padding:14px;
+    background:#fafafa;
+}
+
+.detail label{
+    display:block;
+    color:#64748b;
+    font-size:11px;
+    margin-bottom:6px;
+}
+
+.detail strong{
+    font-size:14px;
+    word-break:break-word;
+}
+
+/* EMPTY */
+
+.empty{
+    text-align:center;
+    padding:40px 20px;
+    color:#64748b;
+}
+
+.empty-icon{
+    font-size:40px;
+    margin-bottom:10px;
+}
+
+/* ALLOCATION */
+
+.assignment-box{
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    border-radius:10px;
+    padding:16px;
+    margin-top:15px;
+}
+
+.assignment-box h4{
+    color:#1d4ed8;
+    margin-bottom:12px;
+}
+
+.assignment-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.assignment-item{
+    background:white;
+    padding:12px;
+    border-radius:8px;
+}
+
+.assignment-item small{
+    display:block;
+    color:#64748b;
+    font-size:10px;
+    margin-bottom:5px;
+}
+
+.assignment-item strong{
+    font-size:13px;
+}
+
+/* NOTIFICATION */
+
+.notification{
+    border-left:4px solid #2563eb;
+    background:#eff6ff;
+    padding:15px;
+    border-radius:7px;
+    margin-bottom:12px;
+}
+
+.notification h4{
+    color:#1d4ed8;
+    margin-bottom:5px;
+}
+
+.notification p{
+    font-size:13px;
+    color:#475569;
+}
+
+/* RESULT */
+
+.result-box{
+    text-align:center;
+    padding:35px;
+    background:#f8fafc;
+    border-radius:12px;
+}
+
+.result-box h1{
+    color:#1d4ed8;
+    font-size:40px;
+}
+
+/* LOADING */
+
+#loading{
+    position:fixed;
+    inset:0;
+    background:white;
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+}
+
+.loader{
+    width:45px;
+    height:45px;
+    border:5px solid #e5e7eb;
+    border-top-color:#2563eb;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin-bottom:15px;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+.loading-error{
+    color:#991b1b;
+    text-align:center;
+    padding:20px;
+    max-width:400px;
+}
+
+/* MOBILE */
+
+.mobile-menu{
+    display:none;
+    border:0;
+    background:transparent;
+    color:white;
+    font-size:23px;
+    cursor:pointer;
+}
+
+@media(max-width:850px){
+
+    .sidebar{
+        position:fixed;
+        left:-260px;
+        top:0;
+        bottom:0;
+        z-index:2000;
+        transition:.3s;
+    }
+
+    .sidebar.open{
+        left:0;
+    }
+
+    .mobile-menu{
+        display:block;
+    }
+
+    header{
+        padding:12px 15px;
+    }
+
+    .logo h1{
+        font-size:16px;
+    }
+
+    .candidate-mini{
+        display:none;
+    }
+
+    .content{
+        padding:15px;
+    }
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .exam-info{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .assignment-grid{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:500px){
+
+    .exam-info{
+        grid-template-columns:1fr;
+    }
+
+    .assignment-grid{
+        grid-template-columns:1fr;
+    }
+
+    .welcome h2{
+        font-size:19px;
+    }
+
+    .page-title h2{
+        font-size:19px;
+    }
+
+    .details-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     LOADING
+===================================================== -->
+
+<div id="loading">
+
+    <div class="loader"></div>
+
+    <strong id="loadingText">
+        Checking candidate login...
+    </strong>
+
+</div>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header>
+
+    <div style="display:flex;align-items:center;gap:10px;">
+
+        <button
+            class="mobile-menu"
+            onclick="toggleSidebar()"
+        >
+            ☰
+        </button>
+
+        <div class="logo">
+
+            <h1>
+                SSC Examination System
+            </h1>
+
+            <p>
+                Candidate Panel
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <div class="candidate-mini">
+
+            <div
+                class="avatar"
+                id="headerAvatar"
+            >
+                C
+            </div>
+
+            <span id="headerName">
+                Candidate
+            </span>
+
+        </div>
+
+
+        <button
+            class="logout"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     MAIN LAYOUT
+===================================================== -->
+
+<div class="layout">
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside
+    class="sidebar"
+    id="sidebar"
+>
+
+    <div class="profile-mini">
+
+        <div
+            class="profile-avatar"
+            id="profileAvatar"
+        >
+            C
+        </div>
+
+        <h3 id="sideName">
+            Candidate
+        </h3>
+
+        <p id="sideEmail">
+            -
+        </p>
+
+    </div>
+
+
+    <div class="menu-title">
+        My Account
+    </div>
+
+
+    <button
+        class="menu-btn active"
+        onclick="showPage('dashboard',this)"
+    >
+        <span>🏠</span>
+        Dashboard
+    </button>
+
+
+    <button
+        class="menu-btn"
+        onclick="showPage('personal',this)"
+    >
+        <span>👤</span>
+        Personal Details
+    </button>
+
+
+    <div class="menu-title">
+        My Tests
+    </div>
+
+
+    <button
+        class="menu-btn"
+        onclick="showPage('tests',this)"
+    >
+        <span>📝</span>
+        My Tests
+    </button>
+
+
+    <div class="menu-title">
+        Examination
+    </div>
+
+
+    <button
+        class="menu-btn"
+        onclick="showPage('instructions',this)"
+    >
+        <span>📖</span>
+        Exam Instructions
+    </button>
+
+
+    <button
+        class="menu-btn"
+        onclick="openOnlineExamPage()"
+    >
+        <span>💻</span>
+        Online Examination
+    </button>
+
+
+    <div class="menu-title">
+        Other
+    </div>
+
+
+    <button
+        class="menu-btn"
+        onclick="showPage('notifications',this)"
+    >
+        <span>🔔</span>
+        Notifications
+    </button>
+
+
+    <button
+        class="menu-btn"
+        onclick="showPage('result',this)"
+    >
+        <span>📊</span>
+        Result
+    </button>
+
+</aside>
+
+
+<!-- =====================================================
+     CONTENT
+===================================================== -->
+
+<main class="content">
+
+
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
+
+<section
+    id="dashboard"
+    class="page active"
+>
+
+    <div class="welcome">
+
+        <h2>
+
+            Welcome,
+            <span id="welcomeName">
+                Candidate
+            </span>
+
+        </h2>
+
+        <p>
+            Your examination centre allocation and
+            assigned examination are displayed below.
+        </p>
+
+    </div>
+
+
+    <div class="stats">
+
+        <div class="stat">
+
+            <small>
+                Exam Status
+            </small>
+
+            <h2 id="examStatus">
+                Not Assigned
+            </h2>
+
+        </div>
+
+
+        <div class="stat">
+
+            <small>
+                Roll Number
+            </small>
+
+            <h2
+                id="dashboardRoll"
+                style="font-size:18px;"
+            >
+                -
+            </h2>
+
+        </div>
+
+
+        <div class="stat">
+
+            <small>
+                Centre
+            </small>
+
+            <h2
+                id="dashboardCentre"
+                style="font-size:18px;"
+            >
+                -
+            </h2>
+
+        </div>
+
+
+        <div class="stat">
+
+            <small>
+                Seat
+            </small>
+
+            <h2
+                id="dashboardSeat"
+                style="font-size:18px;"
+            >
+                -
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <!-- ALLOCATION -->
+
+    <div class="card">
+
+        <div class="card-title">
+            My Centre Allocation
+        </div>
+
+        <div id="allocationBox">
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    🏫
+                </div>
+
+                <p>
+                    Loading allocation...
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ASSIGNED EXAM -->
+
+    <div class="card">
+
+        <div class="card-title">
+            My Assigned Examination
+        </div>
+
+        <div id="dashboardExam">
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    📝
+                </div>
+
+                <p>
+                    Loading examination assignment...
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     TESTS
+===================================================== -->
+
+<section
+    id="tests"
+    class="page"
+>
+
+    <div class="page-title">
+
+        <h2>
+            My Tests
+        </h2>
+
+        <p>
+            Examination assigned by your Invigilator.
+        </p>
+
+    </div>
+
+
+    <div id="testsContainer">
+
+        <div class="empty">
+
+            <div class="empty-icon">
+                📝
+            </div>
+
+            <p>
+                Loading tests...
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     PERSONAL DETAILS
+===================================================== -->
+
+<section
+    id="personal"
+    class="page"
+>
+
+    <div class="page-title">
+
+        <h2>
+            Personal Details
+        </h2>
+
+        <p>
+            Candidate registration information.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="details-grid">
+
+            <div class="detail">
+                <label>Full Name</label>
+                <strong id="pFullName">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>Email</label>
+                <strong id="pEmail">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>Mobile</label>
+                <strong id="pMobile">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>Date of Birth</label>
+                <strong id="pDOB">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>Gender</label>
+                <strong id="pGender">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>Father's Name</label>
+                <strong id="pFatherName">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>Mother's Name</label>
+                <strong id="pMotherName">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>Category</label>
+                <strong id="pCategory">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>Disability / PwD</label>
+                <strong id="pDisability">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>Address</label>
+                <strong id="pAddress">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>City</label>
+                <strong id="pCity">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>District</label>
+                <strong id="pDistrict">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>State</label>
+                <strong id="pState">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>PIN Code</label>
+                <strong id="pPincode">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>Registration Number</label>
+                <strong id="pRegistrationNumber">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>Roll Number</label>
+                <strong id="pRollNumber">-</strong>
+            </div>
+
+            <div class="detail">
+                <label>Exam Name</label>
+                <strong id="pExamName">-</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     INSTRUCTIONS
+===================================================== -->
+
+<section
+    id="instructions"
+    class="page"
+>
+
+    <div class="page-title">
+
+        <h2>
+            Exam Instructions
+        </h2>
+
+    </div>
+
+
+    <div class="card">
+
+        <div id="examInstructions">
+
+            <ol>
+
+                <li>
+                    Verify your Roll Number,
+                    Centre, Lab and Seat.
+                </li>
+
+                <li>
+                    Follow the instructions given
+                    by the Invigilator.
+                </li>
+
+                <li>
+                    Do not share your examination PIN.
+                </li>
+
+                <li>
+                    Do not refresh the examination
+                    page unnecessarily.
+                </li>
+
+                <li>
+                    Submit your examination before
+                    the time expires.
+                </li>
+
+            </ol>
+
+        </div>
+
+
+        <button
+            class="btn"
+            onclick="openOnlineExamPage()"
+        >
+            Start Online Examination
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     ONLINE EXAMINATION
+===================================================== -->
+
+<section
+    id="onlineExam"
+    class="page"
+>
+
+    <div class="page-title">
+
+        <h2>
+            Online Examination
+        </h2>
+
+        <p>
+            Examination access.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <div id="onlineExamBox">
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    🔒
+                </div>
+
+                <h3>
+                    Examination Not Assigned
+                </h3>
+
+                <p style="margin-top:8px;">
+                    Wait for the Invigilator to assign
+                    your examination.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     NOTIFICATIONS
+===================================================== -->
+
+<section
+    id="notifications"
+    class="page"
+>
+
+    <div class="page-title">
+
+        <h2>
+            Notifications
+        </h2>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="notification">
+
+            <h4>
+                Candidate Account
+            </h4>
+
+            <p>
+                Your candidate account is active.
+            </p>
+
+        </div>
+
+
+        <div class="notification">
+
+            <h4>
+                Examination Assignment
+            </h4>
+
+            <p id="assignmentNotification">
+                Waiting for Invigilator assignment.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     RESULT
+===================================================== -->
+
+<section
+    id="result"
+    class="page"
+>
+
+    <div class="page-title">
+
+        <h2>
+            Result
+        </h2>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="result-box">
+
+            <h1>
+                -
+            </h1>
+
+            <p>
+                Result will appear here after evaluation.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</main>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   FIREBASE CONFIG
+========================================================= */
+
+const firebaseConfig = {
+
+    apiKey:
+    "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+
+    authDomain:
+    "ssc-exam-project-8af6b.firebaseapp.com",
+
+    projectId:
+    "ssc-exam-project-8af6b",
+
+    storageBucket:
+    "ssc-exam-project-8af6b.firebasestorage.app",
+
+    messagingSenderId:
+    "288245274853",
+
+    appId:
+    "1:288245274853:web:b4d535a08faf305f5e9c0c",
+
+    measurementId:
+    "G-4BTLY67VDS"
+
+};
+
+
+/* =========================================================
+   FIREBASE INITIALIZE
+========================================================= */
+
+if(!firebase.apps.length){
+
+    firebase.initializeApp(
+        firebaseConfig
+    );
+
+}
+
+
+const auth =
+    firebase.auth();
+
+const db =
+    firebase.firestore();
+
+
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
+
+let currentUser = null;
+
+let candidateData = {};
+
+let assignedExam = null;
+
+let allTests = [];
+
+
+/* =========================================================
+   VALUE HELPER
+========================================================= */
+
+function getValue(
+    data,
+    keys
+){
+
+    if(!data){
+        return "-";
+    }
+
+
+    for(
+        const key of keys
+    ){
+
+        if(
+            data[key] !== undefined &&
+            data[key] !== null &&
+            String(
+                data[key]
+            ).trim() !== ""
+        ){
+
+            return data[key];
+
+        }
+
+    }
+
+
+    return "-";
+
+}
+
+
+/* =========================================================
+   SET TEXT
+========================================================= */
+
+function setText(
+    id,
+    value
+){
+
+    const element =
+        document.getElementById(id);
+
+
+    if(!element){
+        return;
+    }
+
+
+    if(
+        value === undefined ||
+        value === null ||
+        value === ""
+    ){
+
+        element.textContent =
+            "-";
+
+    }
+    else{
+
+        element.textContent =
+            value;
+
+    }
+
+}
+
+
+/* =========================================================
+   SAFE HTML
+========================================================= */
+
+function safe(value){
+
+    return String(
+        value ?? "-"
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =========================================================
+   PAGE NAVIGATION
+========================================================= */
+
+function showPage(
+    pageId,
+    button
+){
+
+    document
+        .querySelectorAll(
+            ".page"
+        )
+        .forEach(
+            function(page){
+
+                page.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    const page =
+        document.getElementById(
+            pageId
+        );
+
+
+    if(page){
+
+        page.classList.add(
+            "active"
+        );
+
+    }
+
+
+    document
+        .querySelectorAll(
+            ".menu-btn"
+        )
+        .forEach(
+            function(btn){
+
+                btn.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    if(button){
+
+        button.classList.add(
+            "active"
+        );
+
+    }
+
+
+    document
+        .getElementById(
+            "sidebar"
+        )
+        .classList.remove(
+            "open"
+        );
+
+}
+
+
+/* =========================================================
+   MOBILE SIDEBAR
+========================================================= */
+
+function toggleSidebar(){
+
+    document
+        .getElementById(
+            "sidebar"
+        )
+        .classList.toggle(
+            "open"
+        );
+
+}
+
+
+/* =========================================================
+   LOAD CANDIDATE
+========================================================= */
+
+async function loadCandidate(
+    user
+){
+
+    currentUser =
+        user;
+
+
+    /*
+    IMPORTANT:
+    Candidate document ID = Firebase Auth UID
+    */
+
+    const candidateRef =
+        db
+        .collection(
+            "candidates"
+        )
+        .doc(
+            user.uid
+        );
+
+
+    const candidateSnap =
+        await candidateRef.get();
+
+
+    if(
+        !candidateSnap.exists
+    ){
+
+        showCandidateDocumentError();
+
+        return;
+
+    }
+
+
+    candidateData =
+        candidateSnap.data() || {};
+
+
+    /*
+    ---------------------------------------------------------
+    NAME
+    ---------------------------------------------------------
+    */
+
+    const name =
+        getValue(
+            candidateData,
+            [
+                "fullName",
+                "name",
+                "candidateName"
+            ]
+        );
+
+
+    const finalName =
+        name !== "-"
+        ?
+        name
+        :
+        (
+            user.displayName ||
+            "Candidate"
+        );
+
+
+    /*
+    ---------------------------------------------------------
+    EMAIL
+    ---------------------------------------------------------
+    */
+
+    const email =
+        getValue(
+            candidateData,
+            [
+                "email"
+            ]
+        );
+
+
+    const finalEmail =
+        email !== "-"
+        ?
+        email
+        :
+        (
+            user.email ||
+            "-"
+        );
+
+
+    /*
+    ---------------------------------------------------------
+    HEADER
+    ---------------------------------------------------------
+    */
+
+    setText(
+        "headerName",
+        finalName
+    );
+
+    setText(
+        "sideName",
+        finalName
+    );
+
+    setText(
+        "welcomeName",
+        finalName
+    );
+
+    setText(
+        "sideEmail",
+        finalEmail
+    );
+
+
+    const letter =
+        String(
+            finalName
+        )
+        .charAt(0)
+        .toUpperCase() ||
+        "C";
+
+
+    setText(
+        "headerAvatar",
+        letter
+    );
+
+    setText(
+        "profileAvatar",
+        letter
+    );
+
+
+    /*
+    ---------------------------------------------------------
+    PERSONAL DETAILS
+    ---------------------------------------------------------
+    */
+
+    setText(
+        "pFullName",
+        finalName
+    );
+
+    setText(
+        "pEmail",
+        finalEmail
+    );
+
+    setText(
+        "pMobile",
+        getValue(
+            candidateData,
+            [
+                "mobile",
+                "phone",
+                "mobileNumber"
+            ]
+        )
+    );
+
+    setText(
+        "pDOB",
+        getValue(
+            candidateData,
+            [
+                "dateOfBirth",
+                "dob",
+                "birthDate"
+            ]
+        )
+    );
+
+    setText(
+        "pGender",
+        getValue(
+            candidateData,
+            [
+                "gender"
+            ]
+        )
+    );
+
+    setText(
+        "pFatherName",
+        getValue(
+            candidateData,
+            [
+                "fatherName",
+                "father",
+                "fatherFullName"
+            ]
+        )
+    );
+
+    setText(
+        "pMotherName",
+        getValue(
+            candidateData,
+            [
+                "motherName",
+                "mother",
+                "motherFullName"
+            ]
+        )
+    );
+
+    setText(
+        "pCategory",
+        getValue(
+            candidateData,
+            [
+                "category",
+                "caste"
+            ]
+        )
+    );
+
+    setText(
+        "pDisability",
+        getValue(
+            candidateData,
+            [
+                "disability",
+                "pwd",
+                "disabilityStatus"
+            ]
+        )
+    );
+
+    setText(
+        "pAddress",
+        getValue(
+            candidateData,
+            [
+                "address",
+                "fullAddress"
+            ]
+        )
+    );
+
+    setText(
+        "pCity",
+        getValue(
+            candidateData,
+            [
+                "city"
+            ]
+        )
+    );
+
+    setText(
+        "pDistrict",
+        getValue(
+            candidateData,
+            [
+                "district"
+            ]
+        )
+    );
+
+    setText(
+        "pState",
+        getValue(
+            candidateData,
+            [
+                "state"
+            ]
+        )
+    );
+
+    setText(
+        "pPincode",
+        getValue(
+            candidateData,
+            [
+                "pincode",
+                "pinCode",
+                "zipCode"
+            ]
+        )
+    );
+
+    setText(
+        "pRegistrationNumber",
+        getValue(
+            candidateData,
+            [
+                "registrationNumber",
+                "registrationNo",
+                "regNumber"
+            ]
+        )
+    );
+
+
+    /*
+    ---------------------------------------------------------
+    ADMIN ALLOCATION
+    ---------------------------------------------------------
+    */
+
+    loadAllocation();
+
+
+    /*
+    ---------------------------------------------------------
+    EXAM ASSIGNMENT
+    ---------------------------------------------------------
+    */
+
+    if(
+        candidateData.assignedExamId
+    ){
+
+        await loadAssignedExam(
+            candidateData.assignedExamId
+        );
+
+    }
+    else{
+
+        assignedExam =
+            null;
+
+        setText(
+            "pExamName",
+            getValue(
+                candidateData,
+                [
+                    "assignedExamName"
+                ]
+            )
+        );
+
+        renderNoExam();
+
+    }
+
+
+    /*
+    ---------------------------------------------------------
+    NOTIFICATION
+    ---------------------------------------------------------
+    */
+
+    updateNotification();
+
+}
+
+
+/* =========================================================
+   CANDIDATE DOCUMENT ERROR
+========================================================= */
+
+function showCandidateDocumentError(){
+
+    setText(
+        "loadingText",
+        "Candidate account record not found."
+    );
+
+
+    document
+        .getElementById(
+            "loadingText"
+        )
+        .className =
+            "loading-error";
+
+
+    setTimeout(
+        function(){
+
+            document
+                .getElementById(
+                    "loading"
+                )
+                .style.display =
+                    "none";
+
+
+            document
+                .getElementById(
+                    "allocationBox"
+                )
+                .innerHTML = `
+
+                    <div class="empty">
+
+                        <div class="empty-icon">
+                            ⚠️
+                        </div>
+
+                        <h3>
+                            Candidate record not found
+                        </h3>
+
+                        <p style="margin-top:8px;">
+                            Your Firebase candidate document
+                            does not exist for this login UID.
+                        </p>
+
+                    </div>
+
+                `;
+
+        },
+        1200
+    );
+
+}
+
+
+/* =========================================================
+   LOAD ADMIN ALLOCATION
+========================================================= */
+
+function loadAllocation(){
+
+    const roll =
+        getValue(
+            candidateData,
+            [
+                "rollNumber",
+                "rollNo"
+            ]
+        );
+
+
+    const centre =
+        getValue(
+            candidateData,
+            [
+                "centre",
+                "center",
+                "examCentre"
+            ]
+        );
+
+
+    const lab =
+        getValue(
+            candidateData,
+            [
+                "roomNo",
+                "lab",
+                "room",
+                "labNo"
+            ]
+        );
+
+
+    const seat =
+        getValue(
+            candidateData,
+            [
+                "seatNumber",
+                "seatNo",
+                "seat"
+            ]
+        );
+
+
+    const status =
+        getValue(
+            candidateData,
+            [
+                "assignmentStatus"
+            ]
+        );
+
+
+    setText(
+        "pRollNumber",
+        roll
+    );
+
+
+    setText(
+        "dashboardRoll",
+        roll
+    );
+
+
+    setText(
+        "dashboardCentre",
+        centre
+    );
+
+
+    setText(
+        "dashboardSeat",
+        seat
+    );
+
+
+    const box =
+        document.getElementById(
+            "allocationBox"
+        );
+
+
+    if(
+        roll === "-" &&
+        centre === "-" &&
+        lab === "-" &&
+        seat === "-"
+    ){
+
+        box.innerHTML = `
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    🏫
+                </div>
+
+                <h3>
+                    Centre Not Allocated
+                </h3>
+
+                <p style="margin-top:8px;">
+                    Admin has not allocated your
+                    examination centre yet.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    box.innerHTML = `
+
+        <div class="assignment-box">
+
+            <h4>
+                ✅ Admin Allocation
+            </h4>
+
+            <div class="assignment-grid">
+
+                <div class="assignment-item">
+
+                    <small>
+                        Roll Number
+                    </small>
+
+                    <strong>
+                        ${safe(roll)}
+                    </strong>
+
+                </div>
+
+
+                <div class="assignment-item">
+
+                    <small>
+                        Centre
+                    </small>
+
+                    <strong>
+                        ${safe(centre)}
+                    </strong>
+
+                </div>
+
+
+                <div class="assignment-item">
+
+                    <small>
+                        Lab / Room
+                    </small>
+
+                    <strong>
+                        ${safe(lab)}
+                    </strong>
+
+                </div>
+
+
+                <div class="assignment-item">
+
+                    <small>
+                        Seat Number
+                    </small>
+
+                    <strong>
+                        ${safe(seat)}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div style="
+                margin-top:12px;
+                font-size:12px;
+                color:#475569;
+            ">
+
+                Allocation Status:
+
+                <strong>
+                    ${safe(
+                        status === "-"
+                        ?
+                        "Allocated"
+                        :
+                        status
+                    )}
+                </strong>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   LOAD ASSIGNED EXAM
+========================================================= */
+
+async function loadAssignedExam(
+    examId
+){
+
+    try{
+
+        const examSnap =
+            await db
+            .collection(
+                "exams"
+            )
+            .doc(
+                examId
+            )
+            .get();
+
+
+        if(
+            !examSnap.exists
+        ){
+
+            assignedExam =
+                null;
+
+            renderNoExam();
+
+            return;
+
+        }
+
+
+        assignedExam =
+            examSnap.data() || {};
+
+
+        assignedExam.id =
+            examId;
+
+
+        const examName =
+            getValue(
+                assignedExam,
+                [
+                    "examName",
+                    "name"
+                ]
+            );
+
+
+        const examCode =
+            getValue(
+                assignedExam,
+                [
+                    "examCode",
+                    "code"
+                ]
+            );
+
+
+        const examDate =
+            getValue(
+                assignedExam,
+                [
+                    "examDate",
+                    "date"
+                ]
+            );
+
+
+        const examTime =
+            getValue(
+                assignedExam,
+                [
+                    "examTime",
+                    "time"
+                ]
+            );
+
+
+        const duration =
+            getValue(
+                assignedExam,
+                [
+                    "durationMinutes",
+                    "duration"
+                ]
+            );
+
+
+        const questions =
+            getValue(
+                assignedExam,
+                [
+                    "totalQuestions",
+                    "questions"
+                ]
+            );
+
+
+        const status =
+            getValue(
+                assignedExam,
+                [
+                    "status"
+                ]
+            );
+
+
+        setText(
+            "pExamName",
+            examName
+        );
+
+
+        setText(
+            "examStatus",
+            "Assigned"
+        );
+
+
+        /*
+        -----------------------------------------------------
+        EXAM INSTRUCTIONS
+        -----------------------------------------------------
+        */
+
+        if(
+            assignedExam.instructions
+        ){
+
+            const lines =
+                String(
+                    assignedExam.instructions
+                )
+                .split(/\n+/)
+                .map(
+                    function(line){
+
+                        return line.trim();
+
+                    }
+                )
+                .filter(Boolean);
+
+
+            document
+                .getElementById(
+                    "examInstructions"
+                )
+                .innerHTML = `
+
+                    <ol>
+
+                        ${
+                            lines
+                            .map(
+                                function(line){
+
+                                    return `
+                                        <li>
+                                            ${safe(
+                                                line.replace(
+                                                    /^\d+[\.\)]\s*/,
+                                                    ""
+                                                )
+                                            )}
+                                        </li>
+                                    `;
+
+                                }
+                            )
+                            .join("")
+                        }
+
+                    </ol>
+
+                `;
+
+        }
+
+
+        renderAssignedExam(
+            examName,
+            examCode,
+            examDate,
+            examTime,
+            duration,
+            questions,
+            status
+        );
+
+
+        allTests = [
+
+            {
+                ...assignedExam,
+                category:
+                    getTestCategory(
+                        status
+                    )
+            }
+
+        ];
+
+
+        renderTests();
+
+
+        updateOnlineExam();
+
+    }
+    catch(error){
+
+        console.error(
+            "Exam loading error:",
+            error
+        );
+
+        renderNoExam();
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER ASSIGNED EXAM
+========================================================= */
+
+function renderAssignedExam(
+    examName,
+    examCode,
+    examDate,
+    examTime,
+    duration,
+    questions,
+    status
+){
+
+    const roll =
+        getValue(
+            candidateData,
+            [
+                "rollNumber",
+                "rollNo"
+            ]
+        );
+
+
+    const centre =
+        getValue(
+            candidateData,
+            [
+                "centre",
+                "center",
+                "examCentre"
+            ]
+        );
+
+
+    const lab =
+        getValue(
+            candidateData,
+            [
+                "roomNo",
+                "lab",
+                "room"
+            ]
+        );
+
+
+    const seat =
+        getValue(
+            candidateData,
+            [
+                "seatNumber",
+                "seatNo",
+                "seat"
+            ]
+        );
+
+
+    document
+        .getElementById(
+            "dashboardExam"
+        )
+        .innerHTML = `
+
+            <div class="exam-card">
+
+                <h3>
+                    ${safe(examName)}
+                </h3>
+
+
+                <span class="status">
+                    Assigned
+                </span>
+
+
+                <div class="exam-info">
+
+                    <div>
+
+                        <small>
+                            Exam Code
+                        </small>
+
+                        <strong>
+                            ${safe(examCode)}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <small>
+                            Date
+                        </small>
+
+                        <strong>
+                            ${safe(examDate)}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <small>
+                            Time
+                        </small>
+
+                        <strong>
+                            ${safe(examTime)}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <small>
+                            Duration
+                        </small>
+
+                        <strong>
+                            ${safe(duration)}
+                            minutes
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <small>
+                            Questions
+                        </small>
+
+                        <strong>
+                            ${safe(questions)}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <small>
+                            Roll Number
+                        </small>
+
+                        <strong>
+                            ${safe(roll)}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="assignment-box">
+
+                    <h4>
+                        Examination Centre
+                    </h4>
+
+
+                    <div class="assignment-grid">
+
+                        <div class="assignment-item">
+
+                            <small>
+                                Centre
+                            </small>
+
+                            <strong>
+                                ${safe(centre)}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="assignment-item">
+
+                            <small>
+                                Lab
+                            </small>
+
+                            <strong>
+                                ${safe(lab)}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="assignment-item">
+
+                            <small>
+                                Seat
+                            </small>
+
+                            <strong>
+                                ${safe(seat)}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="assignment-item">
+
+                            <small>
+                                Status
+                            </small>
+
+                            <strong>
+                                Assigned
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="btn"
+                    onclick="openOnlineExamPage()"
+                >
+                    💻 Start Examination
+                </button>
+
+            </div>
+
+        `;
+
+}
+
+
+/* =========================================================
+   NO EXAM
+========================================================= */
+
+function renderNoExam(){
+
+    assignedExam =
+        null;
+
+
+    setText(
+        "examStatus",
+        "Not Assigned"
+    );
+
+
+    document
+        .getElementById(
+            "dashboardExam"
+        )
+        .innerHTML = `
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    📝
+                </div>
+
+                <h3>
+                    Examination Not Assigned
+                </h3>
+
+                <p style="margin-top:8px;">
+                    Your Admin allocation is shown above.
+                    The Invigilator will assign your examination.
+                </p>
+
+            </div>
+
+        `;
+
+
+    document
+        .getElementById(
+            "onlineExamBox"
+        )
+        .innerHTML = `
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    🔒
+                </div>
+
+                <h3>
+                    Examination Not Assigned
+                </h3>
+
+                <p style="margin-top:8px;">
+                    Wait for the Invigilator to assign
+                    your examination.
+                </p>
+
+            </div>
+
+        `;
+
+
+    allTests = [];
+
+    renderTests();
+
+}
+
+
+/* =========================================================
+   TEST CATEGORY
+========================================================= */
+
+function getTestCategory(
+    status
+){
+
+    const s =
+        String(
+            status || ""
+        )
+        .toLowerCase();
+
+
+    if(
+        s.includes("completed")
+    ){
+
+        return "Completed";
+
+    }
+
+
+    if(
+        s.includes("upcoming") ||
+        s.includes("scheduled")
+    ){
+
+        return "Upcoming";
+
+    }
+
+
+    return "Active";
+
+}
+
+
+/* =========================================================
+   RENDER TESTS
+========================================================= */
+
+function renderTests(){
+
+    const container =
+        document.getElementById(
+            "testsContainer"
+        );
+
+
+    if(
+        !allTests.length
+    ){
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    📝
+                </div>
+
+                <h3>
+                    No Examination Assigned
+                </h3>
+
+                <p style="margin-top:8px;">
+                    Your assigned examination will
+                    appear here.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        allTests
+        .map(
+            function(test){
+
+                const category =
+                    test.category ||
+                    "Active";
+
+
+                return `
+
+                    <div class="exam-card">
+
+                        <h3>
+                            ${safe(
+                                getValue(
+                                    test,
+                                    [
+                                        "examName",
+                                        "name"
+                                    ]
+                                )
+                            )}
+                        </h3>
+
+
+                        <span class="status">
+                            ${safe(category)}
+                        </span>
+
+
+                        <div class="exam-info">
+
+                            <div>
+
+                                <small>
+                                    Exam Code
+                                </small>
+
+                                <strong>
+                                    ${safe(
+                                        getValue(
+                                            test,
+                                            [
+                                                "examCode",
+                                                "code"
+                                            ]
+                                        )
+                                    )}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <small>
+                                    Date
+                                </small>
+
+                                <strong>
+                                    ${safe(
+                                        getValue(
+                                            test,
+                                            [
+                                                "examDate",
+                                                "date"
+                                            ]
+                                        )
+                                    )}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <small>
+                                    Time
+                                </small>
+
+                                <strong>
+                                    ${safe(
+                                        getValue(
+                                            test,
+                                            [
+                                                "examTime",
+                                                "time"
+                                            ]
+                                        )
+                                    )}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            class="btn"
+                            onclick="openOnlineExamPage()"
+                        >
+                            Start Examination
+                        </button>
+
+                    </div>
+
+                `;
+
+            }
+        )
+        .join("");
+
+}
+
+
+/* =========================================================
+   ONLINE EXAM PAGE
+========================================================= */
+
+function openOnlineExamPage(){
+
+    showPage(
+        "onlineExam",
+        null
+    );
+
+
+    updateOnlineExam();
+
+}
+
+
+/* =========================================================
+   UPDATE ONLINE EXAM
+========================================================= */
+
+function updateOnlineExam(){
+
+    const box =
+        document.getElementById(
+            "onlineExamBox"
+        );
+
+
+    if(
+        !assignedExam ||
+        !assignedExam.id
+    ){
+
+        box.innerHTML = `
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    🔒
+                </div>
+
+                <h3>
+                    Examination Not Assigned
+                </h3>
+
+                <p style="margin-top:8px;">
+                    Wait for the Invigilator to assign
+                    your examination.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    box.innerHTML = `
+
+        <div class="exam-card">
+
+            <h3>
+                ${safe(
+                    getValue(
+                        assignedExam,
+                        [
+                            "examName",
+                            "name"
+                        ]
+                    )
+                )}
+            </h3>
+
+
+            <p style="
+                color:#64748b;
+                font-size:13px;
+                margin-top:8px;
+            ">
+
+                Your examination has been assigned
+                by the Invigilator.
+
+            </p>
+
+
+            <div class="assignment-box">
+
+                <h4>
+                    Exam Access
+                </h4>
+
+                <p style="
+                    color:#475569;
+                    font-size:13px;
+                    line-height:1.6;
+                ">
+
+                    Click the button below to open
+                    the Exam Access page.
+
+                    <br>
+
+                    You will need the PIN provided
+                    by your Invigilator.
+
+                </p>
+
+            </div>
+
+
+            <button
+                class="btn success"
+                onclick="startExam()"
+            >
+                🔐 Continue to Exam Access
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   START EXAM
+========================================================= */
+
+function startExam(){
+
+    /*
+    IMPORTANT:
+    No automatic redirect.
+    This function runs ONLY when user clicks button.
+    */
+
+    if(!currentUser){
+
+        alert(
+            "Candidate login session not found."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        !assignedExam ||
+        !assignedExam.id
+    ){
+
+        alert(
+            "Examination is not assigned yet."
+        );
+
+        return;
+
+    }
+
+
+    window.location.href =
+        "exam_access.html?examId=" +
+        encodeURIComponent(
+            assignedExam.id
+        );
+
+}
+
+
+/* =========================================================
+   NOTIFICATION
+========================================================= */
+
+function updateNotification(){
+
+    const element =
+        document.getElementById(
+            "assignmentNotification"
+        );
+
+
+    if(!element){
+        return;
+    }
+
+
+    const examName =
+        getValue(
+            candidateData,
+            [
+                "assignedExamName"
+            ]
+        );
+
+
+    if(
+        examName !== "-"
+    ){
+
+        element.textContent =
+            "Your examination \"" +
+            examName +
+            "\" has been assigned by the Invigilator.";
+
+    }
+    else{
+
+        element.textContent =
+            "Your examination has not been assigned yet.";
+
+    }
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function logout(){
+
+    try{
+
+        await auth.signOut();
+
+
+        /*
+        Only logout redirects to login page.
+        */
+
+        window.location.replace(
+            "login.html"
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "Logout error:",
+            error
+        );
+
+
+        alert(
+            "Logout failed: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
+auth.onAuthStateChanged(
+async function(user){
+
+    try{
+
+        /*
+        -----------------------------------------------------
+        NO USER
+        -----------------------------------------------------
+        */
+
+        if(!user){
+
+            window.location.replace(
+                "login.html"
+            );
+
+            return;
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        USER EXISTS
+        -----------------------------------------------------
+        */
+
+        await loadCandidate(
+            user
+        );
+
+
+        /*
+        -----------------------------------------------------
+        HIDE LOADING
+        -----------------------------------------------------
+        */
+
+        document
+            .getElementById(
+                "loading"
+            )
+            .style.display =
+                "none";
+
+
+    }
+    catch(error){
+
+        console.error(
+            "Candidate dashboard error:",
+            error
+        );
+
+
+        document
+            .getElementById(
+                "loadingText"
+            )
+            .textContent =
+                "Unable to load candidate data.";
+
+
+        setTimeout(
+            function(){
+
+                document
+                    .getElementById(
+                        "loading"
+                    )
+                    .style.display =
+                        "none";
+
+            },
+            1200
+        );
+
+    }
+
+});
+
+
+</script>
+
+</body>
+</html>

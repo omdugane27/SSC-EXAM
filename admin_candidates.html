@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin - Candidate Allocation</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f4f7fb;
+    color:#172033;
+}
+
+header{
+    background:linear-gradient(135deg,#123b72,#2563eb);
+    color:white;
+    padding:22px;
+}
+
+header h1{
+    margin:0;
+    font-size:25px;
+}
+
+header p{
+    margin:7px 0;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    padding:22px;
+    border-radius:16px;
+    margin-bottom:20px;
+    box-shadow:0 4px 18px rgba(0,0,0,.08);
+}
+
+h2{
+    color:#123b72;
+    margin-top:0;
+}
+
+label{
+    display:block;
+    margin-top:15px;
+    margin-bottom:7px;
+    font-weight:bold;
+}
+
+input,select{
+    width:100%;
+    padding:13px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    font-size:15px;
+    background:white;
+}
+
+button{
+    border:0;
+    padding:13px 18px;
+    border-radius:9px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:bold;
+    margin-top:15px;
+}
+
+button:disabled{
+    background:#999!important;
+    cursor:not-allowed;
+}
+
+.btn-primary{
+    background:#123b72;
+    color:white;
+}
+
+.btn-success{
+    background:#16a34a;
+    color:white;
+}
+
+.logout{
+    float:right;
+    background:#dc2626;
+    color:white;
+    margin-top:-5px;
+}
+
+.info{
+    background:#eff6ff;
+    color:#1e3a8a;
+    padding:15px;
+    border-radius:10px;
+    line-height:1.6;
+}
+
+.success{
+    background:#dcfce7;
+    color:#166534;
+    padding:15px;
+    border-radius:10px;
+    margin-top:15px;
+    line-height:1.6;
+}
+
+.error{
+    background:#fee2e2;
+    color:#991b1b;
+    padding:15px;
+    border-radius:10px;
+    margin-top:15px;
+    line-height:1.6;
+}
+
+.warning{
+    background:#fef3c7;
+    color:#92400e;
+    padding:15px;
+    border-radius:10px;
+    margin-top:15px;
+    line-height:1.6;
+}
+
+.loading{
+    background:#e0f2fe;
+    color:#075985;
+    padding:15px;
+    border-radius:10px;
+}
+
+.hidden{
+    display:none!important;
+}
+
+.candidate-box{
+    background:#f8fafc;
+    border:1px solid #e5e7eb;
+    padding:17px;
+    border-radius:10px;
+    margin-top:15px;
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    padding:11px 0;
+    border-bottom:1px solid #eee;
+}
+
+.row:last-child{
+    border-bottom:0;
+}
+
+.badge{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    background:#dcfce7;
+    color:#166534;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+}
+
+.full{
+    grid-column:1/-1;
+}
+
+.actions{
+    display:flex;
+    gap:10px;
+}
+
+.actions button{
+    flex:1;
+}
+
+@media(max-width:700px){
+
+    .container{
+        padding:14px;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .full{
+        grid-column:auto;
+    }
+
+    .row{
+        flex-direction:column;
+        gap:4px;
+    }
+
+    .actions{
+        flex-direction:column;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<button class="logout" onclick="logout()">
+Logout
+</button>
+
+<h1>SSC Examination System</h1>
+
+<p>Admin - Candidate Allocation</p>
+
+<div id="adminInfo">
+Checking Admin Login...
+</div>
+
+</header>
+
+<div class="container">
+
+<!-- AUTH -->
+
+<div class="card" id="authLoading">
+
+<div class="loading">
+🔐 Checking Admin Login...
+</div>
+
+</div>
+
+
+<div id="mainContent" class="hidden">
+
+<!-- INFORMATION -->
+
+<div class="card">
+
+<h2>👨‍🎓 Candidate Allocation</h2>
+
+<div class="info">
+
+<b>Admin Responsibility</b>
+
+<p>
+Admin can assign:
+<b>
+Examination + Roll Number + Centre + Lab + Seat Number
+</b>
+</p>
+
+<p>
+After saving the allocation, the candidate will be able to see the assigned examination.
+</p>
+
+</div>
+
+</div>
+
+
+<!-- SEARCH -->
+
+<div class="card">
+
+<h2>🔍 Search Candidate</h2>
+
+<label>
+Email / Firebase UID / Roll Number
+</label>
+
+<input
+id="searchInput"
+type="text"
+placeholder="Enter email, UID or roll number"
+>
+
+<button
+id="searchBtn"
+class="btn-primary"
+onclick="searchCandidate()"
+>
+🔍 Search Candidate
+</button>
+
+<div id="message"></div>
+
+</div>
+
+
+<!-- CANDIDATE -->
+
+<div
+id="candidateSection"
+class="card hidden"
+>
+
+<h2>👤 Candidate Details</h2>
+
+<div
+id="candidateDetails"
+class="candidate-box"
+>
+</div>
+
+</div>
+
+
+<!-- ALLOCATION -->
+
+<div
+id="allocationSection"
+class="card hidden"
+>
+
+<h2>🎯 Exam Allocation</h2>
+
+<div class="warning">
+
+Select the examination and allocation details.
+
+</div>
+
+<div class="grid">
+
+<div class="full">
+
+<label>
+Examination
+</label>
+
+<select id="examSelect">
+
+<option value="">
+Loading examinations...
+</option>
+
+</select>
+
+<div
+id="examStatus"
+style="margin-top:8px;color:#64748b"
+>
+Loading exams...
+</div>
+
+</div>
+
+
+<div>
+
+<label>
+Roll Number
+</label>
+
+<input
+id="rollNumber"
+type="text"
+placeholder="Auto generated"
+>
+
+</div>
+
+
+<div>
+
+<label>
+Centre
+</label>
+
+<select id="centre">
+
+<option value="Centre-01">
+Centre-01
+</option>
+
+<option value="Centre-02">
+Centre-02
+</option>
+
+<option value="Centre-03">
+Centre-03
+</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>
+Lab / Room
+</label>
+
+<select id="roomNo">
+
+<option value="Lab-01">
+Lab-01
+</option>
+
+<option value="Lab-02">
+Lab-02
+</option>
+
+<option value="Lab-03">
+Lab-03
+</option>
+
+<option value="Lab-04">
+Lab-04
+</option>
+
+<option value="Lab-05">
+Lab-05
+</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>
+Seat Number
+</label>
+
+<input
+id="seatNumber"
+type="text"
+placeholder="Auto generated"
+>
+
+</div>
+
+</div>
+
+
+<div
+id="allocationPreview"
+class="candidate-box"
+>
+Click Generate Allocation.
+</div>
+
+
+<div class="actions">
+
+<button
+id="generateBtn"
+class="btn-primary"
+onclick="generateAllocation()"
+>
+⚙️ Generate Allocation
+</button>
+
+<button
+id="saveBtn"
+class="btn-success"
+onclick="saveAllocation()"
+disabled
+>
+💾 Save Allocation
+</button>
+
+</div>
+
+</div>
+
+
+<!-- RESULT -->
+
+<div
+id="resultSection"
+class="card hidden"
+>
+
+<h2>
+✅ Allocation Completed
+</h2>
+
+<div
+id="resultBox"
+class="success"
+>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   FIREBASE
+========================================= */
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+
+authDomain:
+"ssc-exam-project-8af6b.firebaseapp.com",
+
+projectId:
+"ssc-exam-project-8af6b",
+
+storageBucket:
+"ssc-exam-project-8af6b.firebasestorage.app",
+
+messagingSenderId:
+"288245274853",
+
+appId:
+"1:288245274853:web:b4d535a08faf305f5e9c0c",
+
+measurementId:
+"G-4BTLY67VDS"
+
+};
+
+
+if(!firebase.apps.length){
+
+firebase.initializeApp(firebaseConfig);
+
+}
+
+
+const auth=firebase.auth();
+
+const db=firebase.firestore();
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let currentUser=null;
+
+let selectedCandidate=null;
+
+let generatedAllocation=null;
+
+let exams=[];
+
+
+/* =========================================
+   SAFE
+========================================= */
+
+function safe(value){
+
+return String(
+value ?? ""
+)
+
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+function showMessage(
+message,
+type="success"
+){
+
+document.getElementById(
+"message"
+).innerHTML=`
+
+<div class="${type}">
+${safe(message)}
+</div>
+
+`;
+
+}
+
+
+/* =========================================
+   ADMIN SESSION
+========================================= */
+
+function checkAdminSession(){
+
+const loggedIn=
+sessionStorage.getItem(
+"adminLoggedIn"
+);
+
+const uid=
+sessionStorage.getItem(
+"adminUID"
+);
+
+const email=
+sessionStorage.getItem(
+"adminEmail"
+);
+
+
+if(
+loggedIn!=="true" ||
+!uid
+){
+
+document.getElementById(
+"authLoading"
+).innerHTML=`
+
+<div class="error">
+
+❌ Admin login session not found.
+
+<br><br>
+
+Please login first.
+
+<br><br>
+
+<button
+class="btn-primary"
+onclick="goToLogin()"
+>
+Go to Admin Login
+</button>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+currentUser={
+
+uid:uid,
+
+email:email||""
+
+};
+
+
+document.getElementById(
+"adminInfo"
+).innerText=
+"Admin: "+
+(
+email||uid
+);
+
+
+document.getElementById(
+"authLoading"
+).classList.add(
+"hidden"
+);
+
+
+document.getElementById(
+"mainContent"
+).classList.remove(
+"hidden"
+);
+
+
+loadExams();
+
+}
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+function goToLogin(){
+
+window.location.replace(
+"admin_login.html"
+);
+
+}
+
+
+/* =========================================
+   LOAD EXAMS
+========================================= */
+
+async function loadExams(){
+
+const select=
+document.getElementById(
+"examSelect"
+);
+
+const status=
+document.getElementById(
+"examStatus"
+);
+
+
+try{
+
+const snapshot=
+await db
+.collection("exams")
+.get();
+
+
+exams=[];
+
+
+snapshot.forEach(
+doc=>{
+
+exams.push({
+
+id:doc.id,
+
+...doc.data()
+
+});
+
+});
+
+
+select.innerHTML=`
+
+<option value="">
+-- Select Examination --
+</option>
+
+`;
+
+
+if(!exams.length){
+
+status.innerText=
+"❌ No examinations found.";
+
+return;
+
+}
+
+
+/* Sort latest first */
+
+exams.sort(
+(a,b)=>{
+
+const aTime=
+a.createdAt?.seconds||
+0;
+
+const bTime=
+b.createdAt?.seconds||
+0;
+
+return bTime-aTime;
+
+}
+);
+
+
+exams.forEach(
+exam=>{
+
+const option=
+document.createElement(
+"option"
+);
+
+option.value=
+exam.id;
+
+option.textContent=
+`${exam.examName||"Untitled Exam"} — ${exam.subject||"General"} [${String(exam.status||"draft").toUpperCase()}]`;
+
+select.appendChild(
+option
+);
+
+}
+);
+
+
+status.innerText=
+`✅ ${exams.length} examination(s) found.`;
+
+
+}catch(error){
+
+console.error(error);
+
+status.innerText=
+"❌ "+error.message;
+
+}
+
+}
+
+
+/* =========================================
+   SEARCH CANDIDATE
+========================================= */
+
+async function searchCandidate(){
+
+const value=
+document.getElementById(
+"searchInput"
+).value.trim();
+
+
+if(!value){
+
+showMessage(
+"Enter candidate Email, UID or Roll Number.",
+"error"
+);
+
+return;
+
+}
+
+
+const btn=
+document.getElementById(
+"searchBtn"
+);
+
+btn.disabled=true;
+
+btn.innerText=
+"Searching...";
+
+
+hideCandidate();
+
+
+try{
+
+let candidateDoc=null;
+
+let candidateData=null;
+
+
+/* UID */
+
+try{
+
+const doc=
+await db
+.collection("candidates")
+.doc(value)
+.get();
+
+
+if(doc.exists){
+
+candidateDoc=doc;
+
+candidateData=
+doc.data();
+
+}
+
+}catch(e){
+
+console.log(
+"UID search skipped",
+e.message
+);
+
+}
+
+
+/* EMAIL */
+
+if(!candidateDoc){
+
+const snap=
+await db
+.collection("candidates")
+.where(
+"email",
+"==",
+value
+)
+.limit(1)
+.get();
+
+
+if(!snap.empty){
+
+candidateDoc=
+snap.docs[0];
+
+candidateData=
+candidateDoc.data();
+
+}
+
+}
+
+
+/* ROLL */
+
+if(!candidateDoc){
+
+const snap=
+await db
+.collection("candidates")
+.where(
+"rollNumber",
+"==",
+value
+)
+.limit(1)
+.get();
+
+
+if(!snap.empty){
+
+candidateDoc=
+snap.docs[0];
+
+candidateData=
+candidateDoc.data();
+
+}
+
+}
+
+
+/* NOT FOUND */
+
+if(!candidateDoc){
+
+showMessage(
+"❌ Candidate not found.",
+"error"
+);
+
+return;
+
+}
+
+
+selectedCandidate={
+
+uid:candidateDoc.id,
+
+...candidateData
+
+};
+
+
+showMessage(
+"✅ Candidate found.",
+"success"
+);
+
+
+displayCandidate();
+
+
+document.getElementById(
+"allocationSection"
+).classList.remove(
+"hidden"
+);
+
+
+fillExisting();
+
+
+}catch(error){
+
+console.error(error);
+
+showMessage(
+"❌ "+error.message,
+"error"
+);
+
+}finally{
+
+btn.disabled=false;
+
+btn.innerText=
+"🔍 Search Candidate";
+
+}
+
+}
+
+
+/* =========================================
+   DISPLAY
+========================================= */
+
+function displayCandidate(){
+
+const c=
+selectedCandidate;
+
+
+document.getElementById(
+"candidateSection"
+).classList.remove(
+"hidden"
+);
+
+
+document.getElementById(
+"candidateDetails"
+).innerHTML=`
+
+<div class="row">
+
+<b>Name</b>
+
+<span>
+${safe(
+c.fullName||
+c.name||
+"N/A"
+)}
+</span>
+
+</div>
+
+
+<div class="row">
+
+<b>Email</b>
+
+<span>
+${safe(
+c.email||
+"N/A"
+)}
+</span>
+
+</div>
+
+
+<div class="row">
+
+<b>Mobile</b>
+
+<span>
+${safe(
+c.mobile||
+c.phone||
+"N/A"
+)}
+</span>
+
+</div>
+
+
+<div class="row">
+
+<b>Firebase UID</b>
+
+<span
+style="font-size:12px;word-break:break-all"
+>
+${safe(
+c.uid
+)}
+</span>
+
+</div>
+
+
+<div class="row">
+
+<b>Current Examination</b>
+
+<span>
+${safe(
+c.assignedExamName||
+"Not Assigned"
+)}
+</span>
+
+</div>
+
+
+<div class="row">
+
+<b>Roll Number</b>
+
+<span>
+${safe(
+c.rollNumber||
+"Not Allocated"
+)}
+</span>
+
+</div>
+
+
+<div class="row">
+
+<b>Centre</b>
+
+<span>
+${safe(
+c.centre||
+"Not Allocated"
+)}
+</span>
+
+</div>
+
+
+<div class="row">
+
+<b>Lab</b>
+
+<span>
+${safe(
+c.roomNo||
+"Not Allocated"
+)}
+</span>
+
+</div>
+
+
+<div class="row">
+
+<b>Seat</b>
+
+<span>
+${safe(
+c.seatNumber||
+"Not Allocated"
+)}
+</span>
+
+</div>
+
+`;
+
+}
+
+
+/* =========================================
+   EXISTING DATA
+========================================= */
+
+function fillExisting(){
+
+const c=
+selectedCandidate;
+
+
+document.getElementById(
+"rollNumber"
+).value=
+c.rollNumber||"";
+
+
+document.getElementById(
+"seatNumber"
+).value=
+c.seatNumber||"";
+
+
+if(c.centre){
+
+document.getElementById(
+"centre"
+).value=
+c.centre;
+
+}
+
+
+if(c.roomNo){
+
+document.getElementById(
+"roomNo"
+).value=
+c.roomNo;
+
+}
+
+
+if(c.assignedExamId){
+
+document.getElementById(
+"examSelect"
+).value=
+c.assignedExamId;
+
+}
+
+}
+
+
+/* =========================================
+   GENERATE
+========================================= */
+
+async function generateAllocation(){
+
+if(!selectedCandidate){
+
+showMessage(
+"Search candidate first.",
+"error"
+);
+
+return;
+
+}
+
+
+const examId=
+document.getElementById(
+"examSelect"
+).value;
+
+
+if(!examId){
+
+showMessage(
+"Select examination.",
+"error"
+);
+
+return;
+
+}
+
+
+const exam=
+exams.find(
+x=>x.id===examId
+);
+
+
+if(!exam){
+
+showMessage(
+"Exam not found.",
+"error"
+);
+
+return;
+
+}
+
+
+const btn=
+document.getElementById(
+"generateBtn"
+);
+
+btn.disabled=true;
+
+btn.innerText=
+"Generating...";
+
+
+try{
+
+/* Roll */
+
+const roll=
+selectedCandidate.rollNumber||
+await generateRoll();
+
+
+/* Centre */
+
+const centre=
+document.getElementById(
+"centre"
+).value;
+
+
+/* Lab */
+
+const room=
+document.getElementById(
+"roomNo"
+).value;
+
+
+/* Seat */
+
+const seat=
+selectedCandidate.seatNumber||
+await generateSeat(
+centre,
+room
+);
+
+
+generatedAllocation={
+
+examId:exam.id,
+
+examName:
+exam.examName||"Untitled Exam",
+
+subject:
+exam.subject||"",
+
+rollNumber:roll,
+
+centre:centre,
+
+roomNo:room,
+
+seatNumber:seat
+
+};
+
+
+document.getElementById(
+"rollNumber"
+).value=
+roll;
+
+
+document.getElementById(
+"seatNumber"
+).value=
+seat;
+
+
+document.getElementById(
+"allocationPreview"
+).innerHTML=`
+
+<b>✅ Allocation Generated</b>
+
+<br><br>
+
+📝 Examination:
+<b>
+${safe(
+exam.examName
+)}
+</b>
+
+<br>
+
+📚 Subject:
+<b>
+${safe(
+exam.subject||
+"-"
+)}
+</b>
+
+<br>
+
+🔢 Roll Number:
+<b>
+${safe(
+roll
+)}
+</b>
+
+<br>
+
+🏢 Centre:
+<b>
+${safe(
+centre
+)}
+</b>
+
+<br>
+
+🖥️ Lab:
+<b>
+${safe(
+room
+)}
+</b>
+
+<br>
+
+💺 Seat:
+<b>
+${safe(
+seat
+)}
+</b>
+
+`;
+
+document.getElementById(
+"saveBtn"
+).disabled=false;
+
+
+showMessage(
+"✅ Allocation generated. Now click Save.",
+"success"
+);
+
+
+}catch(error){
+
+showMessage(
+"❌ "+error.message,
+"error"
+);
+
+}finally{
+
+btn.disabled=false;
+
+btn.innerText=
+"⚙️ Generate Allocation";
+
+}
+
+}
+
+
+/* =========================================
+   ROLL
+========================================= */
+
+async function generateRoll(){
+
+const snap=
+await db
+.collection("candidates")
+.get();
+
+
+let max=1000;
+
+
+snap.forEach(
+doc=>{
+
+const value=
+parseInt(
+String(
+doc.data().rollNumber||""
+)
+.replace(
+/\D/g,
+""
+),
+10
+);
+
+
+if(
+Number.isFinite(value) &&
+value>max
+){
+
+max=value;
+
+}
+
+});
+
+
+return String(
+max+1
+);
+
+}
+
+
+/* =========================================
+   SEAT
+========================================= */
+
+async function generateSeat(
+centre,
+room
+){
+
+const snap=
+await db
+.collection("candidates")
+.where(
+"centre",
+"==",
+centre
+)
+.where(
+"roomNo",
+"==",
+room
+)
+.get();
+
+
+const used=
+new Set();
+
+
+snap.forEach(
+doc=>{
+
+const seat=
+doc.data().seatNumber;
+
+if(seat){
+
+used.add(
+String(seat)
+);
+
+}
+
+});
+
+
+for(
+let i=1;
+i<=30;
+i++
+){
+
+const seat=
+`Seat-${String(i).padStart(2,"0")}`;
+
+
+if(
+!used.has(seat)
+){
+
+return seat;
+
+}
+
+}
+
+
+throw new Error(
+"No seat available in this lab."
+);
+
+}
+
+
+/* =========================================
+   SAVE
+========================================= */
+
+async function saveAllocation(){
+
+if(!selectedCandidate){
+
+showMessage(
+"Search candidate first.",
+"error"
+);
+
+return;
+
+}
+
+
+if(!generatedAllocation){
+
+showMessage(
+"Generate allocation first.",
+"error"
+);
+
+return;
+
+}
+
+
+const exam=
+exams.find(
+x=>x.id===
+generatedAllocation.examId
+);
+
+
+const roll=
+document.getElementById(
+"rollNumber"
+).value.trim();
+
+
+const centre=
+document.getElementById(
+"centre"
+).value;
+
+
+const room=
+document.getElementById(
+"roomNo"
+).value;
+
+
+const seat=
+document.getElementById(
+"seatNumber"
+).value.trim();
+
+
+if(
+!exam||
+!roll||
+!centre||
+!room||
+!seat
+){
+
+showMessage(
+"Complete all fields.",
+"error"
+);
+
+return;
+
+}
+
+
+const btn=
+document.getElementById(
+"saveBtn"
+);
+
+btn.disabled=true;
+
+btn.innerText=
+"Saving...";
+
+
+try{
+
+const now=
+firebase.firestore.Timestamp.now();
+
+
+await db
+.collection("candidates")
+.doc(
+selectedCandidate.uid
+)
+.set({
+
+fullName:
+selectedCandidate.fullName||
+selectedCandidate.name||
+"",
+
+email:
+selectedCandidate.email||
+"",
+
+mobile:
+selectedCandidate.mobile||
+selectedCandidate.phone||
+"",
+
+dateOfBirth:
+selectedCandidate.dateOfBirth||
+"",
+
+
+/* EXAM */
+
+assignedExamId:
+exam.id,
+
+assignedExamName:
+exam.examName||
+"Untitled Exam",
+
+assignedExamSubject:
+exam.subject||
+"",
+
+assignmentStatus:
+"allocated",
+
+assignedBy:
+currentUser.uid,
+
+assignedByEmail:
+currentUser.email||
+"",
+
+assignedAt:
+now,
+
+
+/* ALLOCATION */
+
+rollNumber:
+roll,
+
+centre:
+centre,
+
+roomNo:
+room,
+
+seatNumber:
+seat,
+
+
+updatedAt:
+now
+
+},{
+merge:true
+});
+
+
+selectedCandidate={
+
+...selectedCandidate,
+
+assignedExamId:
+exam.id,
+
+assignedExamName:
+exam.examName,
+
+assignedExamSubject:
+exam.subject||"",
+
+assignmentStatus:
+"allocated",
+
+rollNumber:
+roll,
+
+centre:
+centre,
+
+roomNo:
+room,
+
+seatNumber:
+seat
+
+};
+
+
+displayCandidate();
+
+
+document.getElementById(
+"resultSection"
+).classList.remove(
+"hidden"
+);
+
+
+document.getElementById(
+"resultBox"
+).innerHTML=`
+
+<b>
+✅ Candidate allocation saved successfully.
+</b>
+
+<br><br>
+
+👤 Candidate:
+<b>
+${safe(
+selectedCandidate.fullName||
+selectedCandidate.name||
+"-"
+)}
+</b>
+
+<br>
+
+📝 Examination:
+<b>
+${safe(
+exam.examName||
+"-"
+)}
+</b>
+
+<br>
+
+📚 Subject:
+<b>
+${safe(
+exam.subject||
+"-"
+)}
+</b>
+
+<br>
+
+🔢 Roll Number:
+<b>
+${safe(
+roll
+)}
+</b>
+
+<br>
+
+🏢 Centre:
+<b>
+${safe(
+centre
+)}
+</b>
+
+<br>
+
+🖥️ Lab:
+<b>
+${safe(
+room
+)}
+</b>
+
+<br>
+
+💺 Seat:
+<b>
+${safe(
+seat
+)}
+</b>
+
+<br><br>
+
+<span class="badge">
+Exam Assigned
+</span>
+
+`;
+
+
+generatedAllocation=null;
+
+
+showMessage(
+"✅ Exam assignment saved successfully.",
+"success"
+);
+
+
+}catch(error){
+
+console.error(error);
+
+showMessage(
+"❌ Save failed: "+
+error.message,
+"error"
+);
+
+}finally{
+
+btn.disabled=false;
+
+btn.innerText=
+"💾 Save Allocation";
+
+}
+
+}
+
+
+/* =========================================
+   HIDE
+========================================= */
+
+function hideCandidate(){
+
+selectedCandidate=null;
+
+generatedAllocation=null;
+
+
+document.getElementById(
+"candidateSection"
+).classList.add(
+"hidden"
+);
+
+
+document.getElementById(
+"allocationSection"
+).classList.add(
+"hidden"
+);
+
+
+document.getElementById(
+"resultSection"
+).classList.add(
+"hidden"
+);
+
+
+document.getElementById(
+"saveBtn"
+).disabled=true;
+
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+async function logout(){
+
+try{
+
+await auth.signOut();
+
+}catch(e){
+
+console.log(e);
+
+}
+
+
+sessionStorage.removeItem(
+"adminLoggedIn"
+);
+
+sessionStorage.removeItem(
+"adminUID"
+);
+
+sessionStorage.removeItem(
+"adminEmail"
+);
+
+
+window.location.replace(
+"admin_login.html"
+);
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+checkAdminSession();
+
+</script>
+
+</body>
+</html>

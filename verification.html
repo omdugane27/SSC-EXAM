@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>SSC Entry Verification</title>
+
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="verification-card">
+
+        <div class="logo small">
+            SSC
+        </div>
+
+
+        <h2>
+            Candidate Entry Verification
+        </h2>
+
+        <p>
+            Examination Centre Verification
+        </p>
+
+
+        <div class="result-info">
+
+            <div>
+                <b>Candidate Name:</b>
+                <span id="name">Loading...</span>
+            </div>
+
+            <div>
+                <b>Roll Number:</b>
+                <span id="roll">Loading...</span>
+            </div>
+
+            <div>
+                <b>Examination:</b>
+                <span id="exam">Loading...</span>
+            </div>
+
+            <div>
+                <b>Examination Centre:</b>
+                <span id="centre">Loading...</span>
+            </div>
+
+        </div>
+
+
+        <div class="verification-box">
+
+            <h3>
+                Entry Verification Checklist
+            </h3>
+
+
+            <label class="check">
+                <input type="checkbox" id="photo">
+                Photograph Verified
+            </label>
+
+
+            <label class="check">
+                <input type="checkbox" id="idProof">
+                Original ID Proof Verified
+            </label>
+
+
+            <label class="check">
+                <input type="checkbox" id="details">
+                Candidate Details Verified
+            </label>
+
+
+            <label class="check">
+                <input type="checkbox" id="attendance">
+                Attendance Marked
+            </label>
+
+        </div>
+
+
+        <div class="seat-box">
+
+            <h3>
+                Seat Allocation
+            </h3>
+
+            <p>
+                Examination Room:
+                <b>ROOM A-101</b>
+            </p>
+
+            <p>
+                Computer Number:
+                <b id="computer">PC-001</b>
+            </p>
+
+        </div>
+
+
+        <button
+            id="verify"
+            class="btn full">
+
+            Complete Entry Verification
+
+        </button>
+
+
+        <div id="message"></div>
+
+
+        <a href="index.html">
+            ← Back to Home
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const saved =
+    localStorage.getItem("sscCandidate");
+
+
+if (!saved) {
+
+    document.getElementById("message").innerHTML = `
+        <p style="color:red;">
+            Candidate data not found.
+            Please register again.
+        </p>
+    `;
+
+}
+else {
+
+    const candidate =
+        JSON.parse(saved);
+
+
+    document.getElementById("name").innerText =
+        candidate.name;
+
+    document.getElementById("roll").innerText =
+        candidate.rollNumber;
+
+    document.getElementById("exam").innerText =
+        candidate.exam;
+
+    document.getElementById("centre").innerText =
+        candidate.centre;
+
+
+    const seat =
+        "PC-" +
+        String(
+            Math.floor(
+                1 + Math.random() * 999
+            )
+        ).padStart(3, "0");
+
+
+    document.getElementById("computer").innerText =
+        seat;
+
+
+    localStorage.setItem(
+        "sscSeat",
+        seat
+    );
+
+
+    document.getElementById("verify").addEventListener(
+        "click",
+        function() {
+
+            const photo =
+                document.getElementById("photo").checked;
+
+            const idProof =
+                document.getElementById("idProof").checked;
+
+            const details =
+                document.getElementById("details").checked;
+
+            const attendance =
+                document.getElementById("attendance").checked;
+
+
+            if (
+                !photo ||
+                !idProof ||
+                !details ||
+                !attendance
+            ) {
+
+                document.getElementById("message").innerHTML = `
+                    <p style="color:red;">
+                        ❌ Please complete all verification checks.
+                    </p>
+                `;
+
+                return;
+            }
+
+
+            localStorage.setItem(
+                "entryVerified",
+                "true"
+            );
+
+
+            localStorage.setItem(
+                "entryTime",
+                new Date().toLocaleString()
+            );
+
+
+            document.getElementById("message").innerHTML = `
+
+                <div class="notice">
+
+                    <h3>
+                        Entry Verification Successful ✓
+                    </h3>
+
+                    <p>
+                        Candidate verified successfully.
+                    </p>
+
+                    <p>
+                        Room:
+                        <b>ROOM A-101</b>
+                    </p>
+
+                    <p>
+                        Computer:
+                        <b>${seat}</b>
+                    </p>
+
+                    <a href="instructions.html"
+                       class="btn full">
+
+                        Continue to Examination
+
+                    </a>
+
+                </div>
+
+            `;
+
+
+            document.getElementById("verify").style.display =
+                "none";
+
+        }
+    );
+
+}
+
+</script>
+
+</body>
+
+</html>

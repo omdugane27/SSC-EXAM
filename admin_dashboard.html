@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Dashboard - SSC Examination System</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  background:#f4f7fb;
+  color:#1e293b;
+}
+
+/* HEADER */
+
+.header{
+  background:linear-gradient(135deg,#0f172a,#1e3a8a);
+  color:white;
+  padding:18px 25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  box-shadow:0 3px 15px rgba(0,0,0,.15);
+}
+
+.header-left h1{
+  font-size:22px;
+}
+
+.header-left p{
+  margin-top:5px;
+  font-size:12px;
+  opacity:.75;
+}
+
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.admin-badge{
+  background:rgba(255,255,255,.12);
+  padding:9px 12px;
+  border-radius:8px;
+  font-size:12px;
+}
+
+.logout{
+  background:#ef4444;
+  border:0;
+  color:white;
+  padding:10px 16px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+/* CONTAINER */
+
+.container{
+  width:95%;
+  max-width:1250px;
+  padding:25px 0;
+  margin:auto;
+}
+
+/* WELCOME */
+
+.welcome{
+  margin-bottom:25px;
+}
+
+.welcome h2{
+  font-size:25px;
+  margin-bottom:6px;
+}
+
+.welcome p{
+  color:#64748b;
+  font-size:14px;
+}
+
+/* STATS */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:15px;
+  margin-bottom:30px;
+}
+
+.stat-card{
+  background:white;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 4px 15px rgba(0,0,0,.07);
+  border-left:4px solid #2563eb;
+}
+
+.stat-card:nth-child(2){
+  border-left-color:#7c3aed;
+}
+
+.stat-card:nth-child(3){
+  border-left-color:#16a34a;
+}
+
+.stat-card:nth-child(4){
+  border-left-color:#059669;
+}
+
+.stat-card:nth-child(5){
+  border-left-color:#ea580c;
+}
+
+.stat-card h3{
+  font-size:13px;
+  color:#64748b;
+  margin-bottom:10px;
+}
+
+.stat-card p{
+  font-size:28px;
+  font-weight:bold;
+  color:#0f172a;
+}
+
+/* SECTION */
+
+.section-title{
+  margin-bottom:15px;
+  font-size:20px;
+}
+
+/* MENU */
+
+.menu{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+
+.menu-card{
+  background:white;
+  border-radius:14px;
+  padding:22px;
+  box-shadow:0 4px 15px rgba(0,0,0,.07);
+  transition:.2s;
+}
+
+.menu-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 22px rgba(0,0,0,.10);
+}
+
+.menu-icon{
+  width:48px;
+  height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  background:#eff6ff;
+  font-size:24px;
+  margin-bottom:15px;
+}
+
+.menu-card h3{
+  margin-bottom:8px;
+  font-size:17px;
+}
+
+.menu-card p{
+  color:#64748b;
+  font-size:13px;
+  line-height:1.5;
+  min-height:40px;
+  margin-bottom:17px;
+}
+
+.menu-card a,
+.menu-card button{
+  display:block;
+  width:100%;
+  padding:11px;
+  border:0;
+  border-radius:8px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+  font-size:14px;
+  text-align:center;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.invigilator .menu-icon{
+  background:#f5f3ff;
+}
+
+.invigilator a{
+  background:#7c3aed;
+}
+
+.exam .menu-icon{
+  background:#ecfdf5;
+}
+
+.exam a{
+  background:#059669;
+}
+
+.monitoring .menu-icon{
+  background:#eff6ff;
+}
+
+.monitoring button{
+  background:#2563eb;
+}
+
+.results .menu-icon{
+  background:#fff7ed;
+}
+
+.results button{
+  background:#ea580c;
+}
+
+.reports .menu-icon{
+  background:#ecfeff;
+}
+
+.reports button{
+  background:#0891b2;
+}
+
+/* RECENT */
+
+.recent{
+  margin-top:30px;
+  background:white;
+  padding:22px;
+  border-radius:14px;
+  box-shadow:0 4px 15px rgba(0,0,0,.07);
+}
+
+.recent-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.recent-header h2{
+  font-size:19px;
+}
+
+.refresh-btn{
+  border:0;
+  background:#e0e7ff;
+  color:#3730a3;
+  padding:8px 12px;
+  border-radius:7px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.recent-item{
+  padding:13px 0;
+  border-bottom:1px solid #e5e7eb;
+  font-size:13px;
+  line-height:1.7;
+}
+
+.recent-item:last-child{
+  border-bottom:0;
+}
+
+.recent-item strong{
+  color:#0f172a;
+}
+
+.meta{
+  color:#64748b;
+}
+
+.empty{
+  color:#64748b;
+  padding:15px 0;
+  text-align:center;
+}
+
+.loading{
+  color:#2563eb;
+  padding:15px 0;
+  text-align:center;
+  font-weight:bold;
+}
+
+/* STATUS */
+
+.status-pill{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:20px;
+  font-size:10px;
+  font-weight:bold;
+  margin-left:5px;
+}
+
+.status-published{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.status-draft{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+/* TOAST */
+
+.toast{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  background:#0f172a;
+  color:white;
+  padding:13px 17px;
+  border-radius:9px;
+  display:none;
+  z-index:9999;
+  box-shadow:0 5px 20px rgba(0,0,0,.2);
+  font-size:13px;
+}
+
+.toast.show{
+  display:block;
+}
+
+/* MOBILE */
+
+@media(max-width:1000px){
+
+  .stats{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .menu{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+}
+
+@media(max-width:650px){
+
+  .header{
+    padding:15px;
+    align-items:flex-start;
+  }
+
+  .header-left h1{
+    font-size:18px;
+  }
+
+  .header-right{
+    flex-direction:column;
+    align-items:flex-end;
+  }
+
+  .admin-badge{
+    display:none;
+  }
+
+  .container{
+    width:93%;
+    padding:18px 0;
+  }
+
+  .welcome h2{
+    font-size:21px;
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+  }
+
+  .stat-card{
+    padding:16px;
+  }
+
+  .stat-card p{
+    font-size:24px;
+  }
+
+  .menu{
+    grid-template-columns:1fr;
+  }
+
+  .recent-header{
+    align-items:flex-start;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<header class="header">
+
+  <div class="header-left">
+
+    <h1>
+      🛡️ SSC Examination System
+    </h1>
+
+    <p>
+      Super Admin Control Panel
+    </p>
+
+  </div>
+
+  <div class="header-right">
+
+    <div class="admin-badge">
+      🔐 Administrator
+    </div>
+
+    <button
+      class="logout"
+      onclick="logout()">
+
+      Logout
+
+    </button>
+
+  </div>
+
+</header>
+
+
+<main class="container">
+
+  <!-- WELCOME -->
+
+  <section class="welcome">
+
+    <h2>
+      Admin Dashboard
+    </h2>
+
+    <p>
+      Manage candidates, invigilators, examinations and system operations.
+    </p>
+
+  </section>
+
+
+  <!-- STATS -->
+
+  <section class="stats">
+
+    <div class="stat-card">
+
+      <h3>
+        👨‍🎓 Total Candidates
+      </h3>
+
+      <p id="candidateCount">
+        0
+      </p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <h3>
+        👨‍🏫 Total Invigilators
+      </h3>
+
+      <p id="invigilatorCount">
+        0
+      </p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <h3>
+        🟢 Active Invigilators
+      </h3>
+
+      <p id="activeInvigilatorCount">
+        0
+      </p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <h3>
+        📝 Total Exams
+      </h3>
+
+      <p id="examCount">
+        0
+      </p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <h3>
+        📢 Published Exams
+      </h3>
+
+      <p id="publishedExamCount">
+        0
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- ADMINISTRATION -->
+
+  <h2 class="section-title">
+    Administration
+  </h2>
+
+
+  <section class="menu">
+
+
+    <!-- CANDIDATES -->
+
+    <div class="menu-card">
+
+      <div class="menu-icon">
+        👨‍🎓
+      </div>
+
+      <h3>
+        Candidate Management
+      </h3>
+
+      <p>
+        Search candidates and allocate centre,
+        lab, room and seat numbers.
+      </p>
+
+      <a href="admin_candidates.html">
+        Open Candidate Management
+      </a>
+
+    </div>
+
+
+    <!-- INVIGILATORS -->
+
+    <div class="menu-card invigilator">
+
+      <div class="menu-icon">
+        👨‍🏫
+      </div>
+
+      <h3>
+        Invigilator Management
+      </h3>
+
+      <p>
+        Create and manage examination
+        invigilator accounts and assignments.
+      </p>
+
+      <a href="admin_invigilators.html">
+        Open Invigilator Management
+      </a>
+
+    </div>
+
+
+    <!-- EXAMS -->
+
+    <div class="menu-card exam">
+
+      <div class="menu-icon">
+        📝
+      </div>
+
+      <h3>
+        Exam Management
+      </h3>
+
+      <p>
+        Create exams, subjects, schedules,
+        duration, marks and publish status.
+      </p>
+
+      <a href="admin_exams.html">
+        Open Exam Management
+      </a>
+      
+      <a href="admin-questions.html" class="menu-btn">
+    📝 Question Bank
+      </a>
+
+    </div>
+
+
+    <!-- MONITORING -->
+
+    <div class="menu-card monitoring">
+
+      <div class="menu-icon">
+        🖥️
+      </div>
+
+      <h3>
+        Examination Monitoring
+      </h3>
+
+      <p>
+        Monitor centres, labs, candidates,
+        invigilators and examination activity.
+      </p>
+
+      <button
+        onclick="comingSoon('Examination Monitoring')">
+
+        Open Monitoring
+
+      </button>
+
+    </div>
+
+
+    <!-- RESULTS -->
+
+    <div class="menu-card results">
+
+      <div class="menu-icon">
+        🏆
+      </div>
+
+      <h3>
+        Results
+      </h3>
+
+      <p>
+        View candidate results, pass/fail
+        information and result data.
+      </p>
+
+      <button
+        onclick="comingSoon('Results')">
+
+        View Results
+
+      </button>
+
+    </div>
+
+
+    <!-- REPORTS -->
+
+    <div class="menu-card reports">
+
+      <div class="menu-icon">
+        📄
+      </div>
+
+      <h3>
+        Reports
+      </h3>
+
+      <p>
+        Candidate, attendance, exam,
+        centre and result reports.
+      </p>
+
+      <button
+        onclick="comingSoon('Reports')">
+
+        View Reports
+
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- RECENT CANDIDATES -->
+
+  <section class="recent">
+
+    <div class="recent-header">
+
+      <h2>
+        Recent Candidates
+      </h2>
+
+      <button
+        class="refresh-btn"
+        onclick="loadDashboardData()">
+
+        ↻ Refresh
+
+      </button>
+
+    </div>
+
+
+    <div id="recentCandidates">
+
+      <div class="loading">
+        Loading candidates...
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<!-- TOAST -->
+
+<div
+  id="toast"
+  class="toast">
+</div>
+
+
+<!-- FIREBASE -->
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+
+<script>
+
+/* =====================================================
+   FIREBASE CONFIG
+===================================================== */
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+
+  authDomain:
+    "ssc-exam-project-8af6b.firebaseapp.com",
+
+  projectId:
+    "ssc-exam-project-8af6b",
+
+  storageBucket:
+    "ssc-exam-project-8af6b.firebasestorage.app",
+
+  messagingSenderId:
+    "288245274853",
+
+  appId:
+    "1:288245274853:web:b4d535a08faf305f5e9c0c",
+
+  measurementId:
+    "G-4BTLY67VDS"
+
+};
+
+
+/* =====================================================
+   FIREBASE INITIALIZATION
+===================================================== */
+
+if(!firebase.apps.length){
+
+  firebase.initializeApp(
+    firebaseConfig
+  );
+
+}
+
+const auth =
+  firebase.auth();
+
+const db =
+  firebase.firestore();
+
+
+/* =====================================================
+   SESSION CHECK
+===================================================== */
+
+if(
+  sessionStorage.getItem(
+    "adminLoggedIn"
+  ) !== "true"
+){
+
+  window.location.replace(
+    "admin_login.html"
+  );
+
+}
+
+
+/* =====================================================
+   COMING SOON
+===================================================== */
+
+function comingSoon(name){
+
+  showToast(
+    name +
+    " module is coming next."
+  );
+
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function showToast(message){
+
+  const toast =
+    document.getElementById(
+      "toast"
+    );
+
+  toast.textContent =
+    message;
+
+  toast.classList.add(
+    "show"
+  );
+
+  setTimeout(
+    function(){
+
+      toast.classList.remove(
+        "show"
+      );
+
+    },
+    3000
+  );
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logout(){
+
+  try{
+
+    await auth.signOut();
+
+  }catch(error){
+
+    console.error(
+      "Logout Error:",
+      error
+    );
+
+  }
+
+  sessionStorage.clear();
+
+  window.location.replace(
+    "admin-login.html"
+  );
+
+}
+
+
+/* =====================================================
+   AUTH STATE
+===================================================== */
+
+auth.onAuthStateChanged(
+  function(user){
+
+    const logged =
+      sessionStorage.getItem(
+        "adminLoggedIn"
+      );
+
+    if(
+      !user &&
+      logged !== "true"
+    ){
+
+      window.location.replace(
+        "admin_login.html"
+      );
+
+      return;
+
+    }
+
+    loadDashboardData();
+
+  }
+);
+
+
+/* =====================================================
+   DASHBOARD DATA
+===================================================== */
+
+async function loadDashboardData(){
+
+  const recent =
+    document.getElementById(
+      "recentCandidates"
+    );
+
+  recent.innerHTML =
+    '<div class="loading">Loading dashboard data...</div>';
+
+
+  try{
+
+    /* -----------------------------------------------
+       CANDIDATES
+    ------------------------------------------------ */
+
+    const candidatesSnapshot =
+      await db
+        .collection("candidates")
+        .get();
+
+
+    document.getElementById(
+      "candidateCount"
+    ).textContent =
+      candidatesSnapshot.size;
+
+
+    /* -----------------------------------------------
+       INVIGILATORS
+    ------------------------------------------------ */
+
+    const invigilatorsSnapshot =
+      await db
+        .collection("invigilators")
+        .get();
+
+
+    document.getElementById(
+      "invigilatorCount"
+    ).textContent =
+      invigilatorsSnapshot.size;
+
+
+    let activeInvigilators = 0;
+
+
+    invigilatorsSnapshot.forEach(
+      function(doc){
+
+        const data =
+          doc.data();
+
+
+        if(
+          data.status === "active"
+        ){
+
+          activeInvigilators++;
+
+        }
+
+      }
+    );
+
+
+    document.getElementById(
+      "activeInvigilatorCount"
+    ).textContent =
+      activeInvigilators;
+
+
+    /* -----------------------------------------------
+       EXAMS
+    ------------------------------------------------ */
+
+    let examCount = 0;
+    let publishedExamCount = 0;
+
+    try{
+
+      const examsSnapshot =
+        await db
+          .collection("exams")
+          .get();
+
+
+      examCount =
+        examsSnapshot.size;
+
+
+      examsSnapshot.forEach(
+        function(doc){
+
+          const data =
+            doc.data();
+
+
+          if(
+            data.status === "published"
+          ){
+
+            publishedExamCount++;
+
+          }
+
+        }
+      );
+
+    }catch(examError){
+
+      console.warn(
+        "Exam collection unavailable:",
+        examError
+      );
+
+    }
+
+
+    document.getElementById(
+      "examCount"
+    ).textContent =
+      examCount;
+
+
+    document.getElementById(
+      "publishedExamCount"
+    ).textContent =
+      publishedExamCount;
+
+
+    /* -----------------------------------------------
+       RECENT CANDIDATES
+    ------------------------------------------------ */
+
+    recent.innerHTML =
+      "";
+
+
+    if(
+      candidatesSnapshot.empty
+    ){
+
+      recent.innerHTML =
+        '<div class="empty">No candidates found.</div>';
+
+      return;
+
+    }
+
+
+    let candidateNumber = 0;
+
+
+    candidatesSnapshot.forEach(
+      function(doc){
+
+        if(candidateNumber >= 10)
+          return;
+
+
+        const data =
+          doc.data();
+
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+
+        div.className =
+          "recent-item";
+
+
+        const name =
+          escapeHtml(
+            data.fullName ||
+            "Candidate"
+          );
+
+        const roll =
+          escapeHtml(
+            data.rollNumber ||
+            "-"
+          );
+
+        const centre =
+          escapeHtml(
+            data.centre ||
+            "-"
+          );
+
+        const lab =
+          escapeHtml(
+            data.roomNo ||
+            data.lab ||
+            "-"
+          );
+
+        const seat =
+          escapeHtml(
+            data.seatNumber ||
+            "-"
+          );
+
+
+        div.innerHTML = `
+
+          <strong>
+            👤 ${name}
+          </strong>
+
+          <div class="meta">
+
+            Roll No:
+            ${roll}
+
+            &nbsp; | &nbsp;
+
+            Centre:
+            ${centre}
+
+            &nbsp; | &nbsp;
+
+            Lab:
+            ${lab}
+
+            &nbsp; | &nbsp;
+
+            Seat:
+            ${seat}
+
+          </div>
+
+        `;
+
+
+        recent.appendChild(
+          div
+        );
+
+
+        candidateNumber++;
+
+      }
+    );
+
+
+    if(
+      candidateNumber === 0
+    ){
+
+      recent.innerHTML =
+        '<div class="empty">No candidates found.</div>';
+
+    }
+
+
+  }catch(error){
+
+    console.error(
+      "Dashboard Error:",
+      error
+    );
+
+
+    recent.innerHTML =
+      '<div class="empty">Dashboard data unavailable.</div>';
+
+  }
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+  return String(value)
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+</script>
+
+</body>
+</html>

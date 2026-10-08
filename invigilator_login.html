@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Invigilator Login | SSC Examination System</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    background:linear-gradient(135deg,#064e3b,#059669);
+}
+
+.container{
+    width:100%;
+    max-width:430px;
+}
+
+.logo{
+    width:75px;
+    height:75px;
+    margin:0 auto 15px;
+    border-radius:50%;
+    background:#fff;
+    color:#047857;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    font-weight:bold;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+.heading{
+    text-align:center;
+    color:white;
+    margin-bottom:20px;
+}
+
+.heading h1{
+    font-size:23px;
+    margin-bottom:6px;
+}
+
+.heading p{
+    font-size:13px;
+}
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:30px;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+}
+
+.card h2{
+    text-align:center;
+    color:#065f46;
+    margin-bottom:8px;
+}
+
+.subtitle{
+    text-align:center;
+    color:#64748b;
+    font-size:13px;
+    margin-bottom:24px;
+}
+
+.group{
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+    margin-bottom:7px;
+    font-size:13px;
+    font-weight:bold;
+    color:#334155;
+}
+
+input{
+    width:100%;
+    height:49px;
+    padding:0 13px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    font-size:15px;
+    outline:none;
+}
+
+input:focus{
+    border-color:#059669;
+    box-shadow:0 0 0 3px rgba(5,150,105,.12);
+}
+
+.password-box{
+    position:relative;
+}
+
+.password-box input{
+    padding-right:50px;
+}
+
+.eye{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    border:0;
+    background:none;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.login-button{
+    width:100%;
+    height:49px;
+    border:0;
+    border-radius:9px;
+    background:#059669;
+    color:white;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.login-button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+#message{
+    display:none;
+    margin-top:15px;
+    padding:12px;
+    border-radius:9px;
+    font-size:13px;
+    line-height:1.5;
+    text-align:center;
+}
+
+.info{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.success{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.error{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.back{
+    display:block;
+    text-align:center;
+    margin-top:20px;
+    color:#059669;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.security{
+    text-align:center;
+    margin-top:18px;
+    color:#94a3b8;
+    font-size:11px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">
+        SSC
+    </div>
+
+    <div class="heading">
+        <h1>SSC Examination System</h1>
+        <p>Secure Invigilator Portal</p>
+    </div>
+
+    <div class="card">
+
+        <h2>Invigilator Login</h2>
+
+        <p class="subtitle">
+            Sign in using credentials provided by the administrator.
+        </p>
+
+        <div class="group">
+
+            <label for="email">
+                Invigilator Email
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                autocomplete="username"
+            >
+
+        </div>
+
+        <div class="group">
+
+            <label for="password">
+                Password
+            </label>
+
+            <div class="password-box">
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                >
+
+                <button
+                    type="button"
+                    class="eye"
+                    id="eyeButton"
+                >
+                    👁️
+                </button>
+
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            id="loginButton"
+            class="login-button"
+        >
+            Sign In
+        </button>
+
+        <div id="message"></div>
+
+        <a
+            href="index.html"
+            class="back"
+        >
+            Back to Main Portal
+        </a>
+
+        <div class="security">
+            Registration is controlled by the administrator
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* =====================================================
+   FIREBASE CONFIGURATION
+===================================================== */
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+    authDomain: "ssc-exam-project-8af6b.firebaseapp.com",
+    projectId: "ssc-exam-project-8af6b",
+    storageBucket: "ssc-exam-project-8af6b.firebasestorage.app",
+    messagingSenderId: "288245274853",
+    appId: "1:288245274853:web:b4d535a08faf305f5e9c0c",
+    measurementId: "G-4BTLY67VDS"
+};
+
+
+/* =====================================================
+   FIREBASE INITIALIZATION
+===================================================== */
+
+try{
+
+    if(!firebase.apps.length){
+        firebase.initializeApp(firebaseConfig);
+    }
+
+}
+catch(error){
+
+    console.error(
+        "Firebase initialization error:",
+        error
+    );
+
+}
+
+
+/* =====================================================
+   FIREBASE SERVICES
+===================================================== */
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+
+/* =====================================================
+   HTML ELEMENTS
+===================================================== */
+
+const emailInput =
+    document.getElementById("email");
+
+const passwordInput =
+    document.getElementById("password");
+
+const loginButton =
+    document.getElementById("loginButton");
+
+const eyeButton =
+    document.getElementById("eyeButton");
+
+const message =
+    document.getElementById("message");
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(text,type){
+
+    message.textContent = text;
+
+    message.className = type;
+
+    message.style.display = "block";
+}
+
+
+/* =====================================================
+   RESET BUTTON
+===================================================== */
+
+function resetButton(){
+
+    loginButton.disabled = false;
+
+    loginButton.textContent = "Sign In";
+}
+
+
+/* =====================================================
+   PASSWORD SHOW / HIDE
+===================================================== */
+
+eyeButton.addEventListener(
+    "click",
+    function(){
+
+        if(passwordInput.type === "password"){
+
+            passwordInput.type = "text";
+
+            eyeButton.textContent = "🙈";
+
+        }
+        else{
+
+            passwordInput.type = "password";
+
+            eyeButton.textContent = "👁️";
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   LOGIN BUTTON
+===================================================== */
+
+loginButton.addEventListener(
+    "click",
+    invigilatorLogin
+);
+
+
+/* =====================================================
+   LOGIN FUNCTION
+===================================================== */
+
+async function invigilatorLogin(){
+
+    const email =
+        emailInput.value
+        .trim()
+        .toLowerCase();
+
+    const password =
+        passwordInput.value;
+
+
+    if(!email){
+
+        showMessage(
+            "Please enter your email.",
+            "error"
+        );
+
+        emailInput.focus();
+
+        return;
+    }
+
+
+    if(!password){
+
+        showMessage(
+            "Please enter your password.",
+            "error"
+        );
+
+        passwordInput.focus();
+
+        return;
+    }
+
+
+    loginButton.disabled = true;
+
+    loginButton.textContent = "Signing In...";
+
+
+    try{
+
+        showMessage(
+            "Connecting to Firebase...",
+            "info"
+        );
+
+
+        /* =============================================
+           AUTH LOGIN
+        ============================================= */
+
+        const result =
+            await auth.signInWithEmailAndPassword(
+                email,
+                password
+            );
+
+
+        const user =
+            result.user;
+
+
+        console.log(
+            "Firebase Auth UID:",
+            user.uid
+        );
+
+
+        /* =============================================
+           GET INVIGILATOR PROFILE
+        ============================================= */
+
+        showMessage(
+            "Login successful. Checking profile...",
+            "info"
+        );
+
+
+        const profile =
+            await db
+            .collection("invigilators")
+            .doc(user.uid)
+            .get();
+
+
+        if(!profile.exists){
+
+            await auth.signOut();
+
+            showMessage(
+                "Invigilator profile not found for this Firebase UID: " +
+                user.uid,
+                "error"
+            );
+
+            resetButton();
+
+            return;
+        }
+
+
+        const data =
+            profile.data() || {};
+
+
+        /* =============================================
+           ROLE CHECK
+        ============================================= */
+
+        const role =
+            String(
+                data.role || "invigilator"
+            )
+            .trim()
+            .toLowerCase();
+
+
+        if(role !== "invigilator"){
+
+            await auth.signOut();
+
+            showMessage(
+                "This account is not registered as an invigilator.",
+                "error"
+            );
+
+            resetButton();
+
+            return;
+        }
+
+
+        /* =============================================
+           STATUS CHECK
+        ============================================= */
+
+        const status =
+            String(
+                data.status || "active"
+            )
+            .trim()
+            .toLowerCase();
+
+
+        if(
+            status === "inactive" ||
+            status === "disabled" ||
+            status === "blocked"
+        ){
+
+            await auth.signOut();
+
+            showMessage(
+                "Your invigilator account is inactive. Contact administrator.",
+                "error"
+            );
+
+            resetButton();
+
+            return;
+        }
+
+
+        /* =============================================
+           SAVE SESSION
+        ============================================= */
+
+        sessionStorage.setItem(
+            "userRole",
+            "invigilator"
+        );
+
+        sessionStorage.setItem(
+            "invigilatorUid",
+            user.uid
+        );
+
+        sessionStorage.setItem(
+            "invigilatorEmail",
+            user.email || email
+        );
+
+        sessionStorage.setItem(
+            "invigilatorName",
+            data.fullName ||
+            data.name ||
+            "Invigilator"
+        );
+
+        sessionStorage.setItem(
+            "invigilatorId",
+            data.employeeId ||
+            data.invigilatorId ||
+            ""
+        );
+
+        sessionStorage.setItem(
+            "invigilatorCentre",
+            data.centre ||
+            data.center ||
+            ""
+        );
+
+        sessionStorage.setItem(
+            "invigilatorLab",
+            data.roomNo ||
+            data.lab ||
+            data.room ||
+            ""
+        );
+
+
+        /* =============================================
+           SUCCESS
+        ============================================= */
+
+        showMessage(
+            "✅ Login successful. Opening dashboard...",
+            "success"
+        );
+
+
+        loginButton.textContent =
+            "Opening Dashboard...";
+
+
+        setTimeout(
+            function(){
+
+                window.location.replace(
+                    "invigilator_dashboard.html"
+                );
+
+            },
+            700
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "INVIGILATOR LOGIN ERROR:",
+            error
+        );
+
+
+        let msg =
+            "Login failed.";
+
+
+        switch(error.code){
+
+            case "auth/invalid-api-key":
+
+            case "auth/api-key-not-valid":
+
+                msg =
+                    "Firebase API key is not valid. Please check Firebase Web App configuration.";
+
+                break;
+
+
+            case "auth/invalid-credential":
+
+                msg =
+                    "Incorrect email or password.";
+
+                break;
+
+
+            case "auth/user-not-found":
+
+                msg =
+                    "Invigilator account not found.";
+
+                break;
+
+
+            case "auth/wrong-password":
+
+                msg =
+                    "Incorrect password.";
+
+                break;
+
+
+            case "auth/invalid-email":
+
+                msg =
+                    "Invalid email address.";
+
+                break;
+
+
+            case "auth/network-request-failed":
+
+                msg =
+                    "Network error. Check your internet connection.";
+
+                break;
+
+
+            case "auth/too-many-requests":
+
+                msg =
+                    "Too many login attempts. Try again later.";
+
+                break;
+
+
+            default:
+
+                msg =
+                    error.message ||
+                    msg;
+
+        }
+
+
+        showMessage(
+            "❌ " + msg,
+            "error"
+        );
+
+
+        resetButton();
+
+    }
+
+}
+
+
+/* =====================================================
+   ENTER KEY
+===================================================== */
+
+passwordInput.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+
+            invigilatorLogin();
+
+        }
+
+    }
+);
+
+
+emailInput.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+
+            passwordInput.focus();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
