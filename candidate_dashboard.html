@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -340,8 +341,8 @@ header{
     border-radius:20px;
     font-size:11px;
     font-weight:bold;
-    background:#dcfce7;
-    color:#166534;
+    background:#dbeafe;
+    color:#1d4ed8;
 }
 
 .status-submitted{
@@ -716,6 +717,7 @@ header{
     <div class="header-right">
 
         <button
+            type="button"
             class="notification-button"
             onclick="openNotifications()"
             title="Notifications"
@@ -796,6 +798,7 @@ header{
 
 
     <button
+        type="button"
         class="menu-btn active"
         onclick="showPage('dashboard',this)"
     >
@@ -805,6 +808,7 @@ header{
 
 
     <button
+        type="button"
         class="menu-btn"
         onclick="showPage('personal',this)"
     >
@@ -819,6 +823,7 @@ header{
 
 
     <button
+        type="button"
         class="menu-btn"
         onclick="showPage('tests',this)"
     >
@@ -833,6 +838,7 @@ header{
 
 
     <button
+        type="button"
         class="menu-btn"
         id="instructionsMenuButton"
         onclick="showPage('instructions',this)"
@@ -843,6 +849,7 @@ header{
 
 
     <button
+        type="button"
         class="menu-btn"
         id="onlineExamMenuButton"
         onclick="openOnlineExamPage()"
@@ -858,6 +865,7 @@ header{
 
 
     <button
+        type="button"
         class="menu-btn"
         id="notificationMenuButton"
         onclick="openNotifications()"
@@ -887,6 +895,7 @@ header{
 
 
     <button
+        type="button"
         class="menu-btn"
         onclick="openResultFromMenu(this)"
     >
@@ -1101,108 +1110,90 @@ header{
 
         <div class="details-grid">
 
-
             <div class="detail">
                 <label>Full Name</label>
                 <strong id="pFullName">-</strong>
             </div>
-
 
             <div class="detail">
                 <label>Email</label>
                 <strong id="pEmail">-</strong>
             </div>
 
-
             <div class="detail">
                 <label>Mobile</label>
                 <strong id="pMobile">-</strong>
             </div>
-
 
             <div class="detail">
                 <label>Date of Birth</label>
                 <strong id="pDOB">-</strong>
             </div>
 
-
             <div class="detail">
                 <label>Gender</label>
                 <strong id="pGender">-</strong>
             </div>
-
 
             <div class="detail">
                 <label>Father's Name</label>
                 <strong id="pFatherName">-</strong>
             </div>
 
-
             <div class="detail">
                 <label>Mother's Name</label>
                 <strong id="pMotherName">-</strong>
             </div>
-
 
             <div class="detail">
                 <label>Category</label>
                 <strong id="pCategory">-</strong>
             </div>
 
-
             <div class="detail">
                 <label>Disability / PwD</label>
                 <strong id="pDisability">-</strong>
             </div>
-
 
             <div class="detail">
                 <label>Address</label>
                 <strong id="pAddress">-</strong>
             </div>
 
-
             <div class="detail">
                 <label>City</label>
                 <strong id="pCity">-</strong>
             </div>
-
 
             <div class="detail">
                 <label>District</label>
                 <strong id="pDistrict">-</strong>
             </div>
 
-
             <div class="detail">
                 <label>State</label>
                 <strong id="pState">-</strong>
             </div>
-
 
             <div class="detail">
                 <label>PIN Code</label>
                 <strong id="pPincode">-</strong>
             </div>
 
-
             <div class="detail">
                 <label>Registration Number</label>
                 <strong id="pRegistrationNumber">-</strong>
             </div>
-
 
             <div class="detail">
                 <label>Roll Number</label>
                 <strong id="pRollNumber">-</strong>
             </div>
 
-
             <div class="detail">
                 <label>Exam Name</label>
                 <strong id="pExamName">-</strong>
             </div>
-
 
         </div>
 
@@ -1267,6 +1258,7 @@ header{
         <div id="instructionExamButtonArea">
 
             <button
+                type="button"
                 class="btn success"
                 onclick="openExamAccess()"
             >
@@ -1512,8 +1504,7 @@ function hideLoading(){
 
     if(loading){
 
-        loading.style.display =
-            "none";
+        loading.style.display = "none";
 
     }
 
@@ -1533,21 +1524,18 @@ function setText(id,value){
         return;
     }
 
-
     if(
         value === undefined ||
         value === null ||
         String(value).trim() === ""
     ){
 
-        element.textContent =
-            "-";
+        element.textContent = "-";
 
     }
     else{
 
-        element.textContent =
-            value;
+        element.textContent = value;
 
     }
 
@@ -1559,7 +1547,6 @@ function getValue(data,keys){
     if(!data){
         return "-";
     }
-
 
     for(const key of keys){
 
@@ -1574,7 +1561,6 @@ function getValue(data,keys){
         }
 
     }
-
 
     return "-";
 
@@ -1618,10 +1604,8 @@ function showToast(message,isError){
         return;
     }
 
-
     toast.textContent =
         message;
-
 
     toast.className =
         isError
@@ -1630,15 +1614,12 @@ function showToast(message,isError){
         :
         "toast-success";
 
-
     toast.style.display =
         "block";
-
 
     clearTimeout(
         window.toastTimer
     );
-
 
     window.toastTimer =
         setTimeout(function(){
@@ -1750,35 +1731,29 @@ function renderBasicCandidate(user){
         user.displayName ||
         "Candidate";
 
-
     const email =
         user.email ||
         "-";
-
 
     setText(
         "headerName",
         name
     );
 
-
     setText(
         "sideName",
         name
     );
-
 
     setText(
         "welcomeName",
         name
     );
 
-
     setText(
         "sideEmail",
         email
     );
-
 
     const letter =
         String(name)
@@ -1787,24 +1762,20 @@ function renderBasicCandidate(user){
         ||
         "C";
 
-
     setText(
         "headerAvatar",
         letter
     );
-
 
     setText(
         "profileAvatar",
         letter
     );
 
-
     setText(
         "pFullName",
         name
     );
-
 
     setText(
         "pEmail",
@@ -1830,7 +1801,6 @@ function renderCandidate(data,user){
             ]
         );
 
-
     const finalName =
         name !== "-"
         ?
@@ -1841,15 +1811,11 @@ function renderCandidate(data,user){
             "Candidate"
         );
 
-
     const email =
         getValue(
             data,
-            [
-                "email"
-            ]
+            ["email"]
         );
-
 
     const finalEmail =
         email !== "-"
@@ -1861,30 +1827,25 @@ function renderCandidate(data,user){
             "-"
         );
 
-
     setText(
         "headerName",
         finalName
     );
-
 
     setText(
         "sideName",
         finalName
     );
 
-
     setText(
         "welcomeName",
         finalName
     );
 
-
     setText(
         "sideEmail",
         finalEmail
     );
-
 
     const letter =
         String(finalName)
@@ -1893,30 +1854,25 @@ function renderCandidate(data,user){
         ||
         "C";
 
-
     setText(
         "headerAvatar",
         letter
     );
-
 
     setText(
         "profileAvatar",
         letter
     );
 
-
     setText(
         "pFullName",
         finalName
     );
 
-
     setText(
         "pEmail",
         finalEmail
     );
-
 
     setText(
         "pMobile",
@@ -1930,7 +1886,6 @@ function renderCandidate(data,user){
         )
     );
 
-
     setText(
         "pDOB",
         getValue(
@@ -1943,17 +1898,13 @@ function renderCandidate(data,user){
         )
     );
 
-
     setText(
         "pGender",
         getValue(
             data,
-            [
-                "gender"
-            ]
+            ["gender"]
         )
     );
-
 
     setText(
         "pFatherName",
@@ -1967,7 +1918,6 @@ function renderCandidate(data,user){
         )
     );
 
-
     setText(
         "pMotherName",
         getValue(
@@ -1980,7 +1930,6 @@ function renderCandidate(data,user){
         )
     );
 
-
     setText(
         "pCategory",
         getValue(
@@ -1991,7 +1940,6 @@ function renderCandidate(data,user){
             ]
         )
     );
-
 
     setText(
         "pDisability",
@@ -2005,7 +1953,6 @@ function renderCandidate(data,user){
         )
     );
 
-
     setText(
         "pAddress",
         getValue(
@@ -2017,39 +1964,29 @@ function renderCandidate(data,user){
         )
     );
 
-
     setText(
         "pCity",
         getValue(
             data,
-            [
-                "city"
-            ]
+            ["city"]
         )
     );
-
 
     setText(
         "pDistrict",
         getValue(
             data,
-            [
-                "district"
-            ]
+            ["district"]
         )
     );
-
 
     setText(
         "pState",
         getValue(
             data,
-            [
-                "state"
-            ]
+            ["state"]
         )
     );
-
 
     setText(
         "pPincode",
@@ -2063,7 +2000,6 @@ function renderCandidate(data,user){
         )
     );
 
-
     setText(
         "pRegistrationNumber",
         getValue(
@@ -2076,7 +2012,6 @@ function renderCandidate(data,user){
         )
     );
 
-
     setText(
         "pRollNumber",
         getValue(
@@ -2088,80 +2023,48 @@ function renderCandidate(data,user){
         )
     );
 
+}
+
+
+/* =====================================================
+   IMPORTANT:
+   SUBMITTED STATUS IS NOW CHECKED ONLY FROM
+   ACTUAL examResults FOR THE CURRENT ASSIGNED EXAM.
+   
+   candidateData.examStatus = completed
+   WILL NOT ALONE MAKE THE EXAM SUBMITTED.
+===================================================== */
+
+function resetExamState(){
+
+    examSubmitted = false;
 
     setText(
-        "pExamName",
-        getValue(
-            data,
-            [
-                "assignedExamName",
-                "examName"
-            ]
-        )
+        "examStatus",
+        assignedExam
+        ?
+        "Assigned"
+        :
+        "Not Assigned"
     );
 
 }
 
 
 /* =====================================================
-   SUBMITTED STATUS
+   SUBMITTED EXAM UI
 ===================================================== */
-
-function checkCandidateSubmittedStatus(){
-
-    const status =
-        String(
-            candidateData.examStatus ||
-            candidateData.examResultStatus ||
-            candidateData.testStatus ||
-            ""
-        )
-        .toLowerCase()
-        .trim();
-
-
-    if(
-        status === "submitted" ||
-        status === "completed" ||
-        status === "finished" ||
-        status === "attempted"
-    ){
-
-        return true;
-
-    }
-
-
-    if(
-        candidateData.examSubmitted === true ||
-        candidateData.examCompleted === true ||
-        candidateData.testSubmitted === true
-    ){
-
-        return true;
-
-    }
-
-
-    return false;
-
-}
-
 
 function setExamSubmitted(){
 
-    examSubmitted =
-        true;
-
+    examSubmitted = true;
 
     setText(
         "examStatus",
         "Submitted"
     );
 
-
     hideExamAccessOptions();
-
 
     if(assignedExam){
 
@@ -2174,10 +2077,6 @@ function setExamSubmitted(){
 }
 
 
-/* =====================================================
-   SUBMITTED EXAM UI
-===================================================== */
-
 function renderSubmittedExam(exam){
 
     const container =
@@ -2185,11 +2084,9 @@ function renderSubmittedExam(exam){
             "dashboardExam"
         );
 
-
     if(!container){
         return;
     }
-
 
     const examName =
         getValue(
@@ -2199,7 +2096,6 @@ function renderSubmittedExam(exam){
                 "name"
             ]
         );
-
 
     container.innerHTML = `
 
@@ -2248,11 +2144,9 @@ function renderSubmittedExam(exam){
 
     `;
 
-
     renderSubmittedTests(
         examName
     );
-
 
     renderSubmittedOnlineExam();
 
@@ -2265,7 +2159,6 @@ function hideExamAccessOptions(){
         document.getElementById(
             "instructionExamButtonArea"
         );
-
 
     if(instructionArea){
 
@@ -2298,12 +2191,10 @@ function hideExamAccessOptions(){
 
     }
 
-
     const onlineMenu =
         document.getElementById(
             "onlineExamMenuButton"
         );
-
 
     if(onlineMenu){
 
@@ -2312,17 +2203,73 @@ function hideExamAccessOptions(){
 
     }
 
+    const instructionMenu =
+        document.getElementById(
+            "instructionsMenuButton"
+        );
+
+    if(instructionMenu){
+
+        instructionMenu.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* =====================================================
+   RESTORE NORMAL EXAM ACCESS
+===================================================== */
+
+function showExamAccessOptions(){
+
+    const instructionArea =
+        document.getElementById(
+            "instructionExamButtonArea"
+        );
+
+    if(
+        instructionArea &&
+        assignedExam &&
+        assignedExam.id
+    ){
+
+        instructionArea.innerHTML = `
+
+            <button
+                type="button"
+                class="btn success"
+                onclick="openExamAccess()"
+            >
+                🔐 Continue to Exam Access
+            </button>
+
+        `;
+
+    }
+
+    const onlineMenu =
+        document.getElementById(
+            "onlineExamMenuButton"
+        );
+
+    if(onlineMenu){
+
+        onlineMenu.style.display =
+            "block";
+
+    }
 
     const instructionMenu =
         document.getElementById(
             "instructionsMenuButton"
         );
 
-
     if(instructionMenu){
 
         instructionMenu.style.display =
-            "none";
+            "block";
 
     }
 
@@ -2337,7 +2284,6 @@ async function loadCandidate(user){
 
     currentUser =
         user;
-
 
     let candidateSnap =
         null;
@@ -2354,7 +2300,6 @@ async function loadCandidate(user){
                 user.uid
             )
             .get();
-
 
         if(snap.exists){
 
@@ -2376,15 +2321,12 @@ async function loadCandidate(user){
 
     /* STORED DOCUMENT */
 
-    if(
-        !candidateSnap
-    ){
+    if(!candidateSnap){
 
         const storedDocId =
             sessionStorage.getItem(
                 "candidateDocId"
             );
-
 
         if(storedDocId){
 
@@ -2397,7 +2339,6 @@ async function loadCandidate(user){
                         storedDocId
                     )
                     .get();
-
 
                 if(snap.exists){
 
@@ -2437,7 +2378,6 @@ async function loadCandidate(user){
                 .trim()
                 .toLowerCase();
 
-
             const query =
                 await db
                 .collection("candidates")
@@ -2448,7 +2388,6 @@ async function loadCandidate(user){
                 )
                 .limit(1)
                 .get();
-
 
             if(!query.empty){
 
@@ -2472,9 +2411,7 @@ async function loadCandidate(user){
 
     /* UID FIELD */
 
-    if(
-        !candidateSnap
-    ){
+    if(!candidateSnap){
 
         try{
 
@@ -2488,7 +2425,6 @@ async function loadCandidate(user){
                 )
                 .limit(1)
                 .get();
-
 
             if(!query.empty){
 
@@ -2510,19 +2446,12 @@ async function loadCandidate(user){
     }
 
 
-    /*
-     * Candidate record not found is NOT an auth failure.
-     *
-     * No popup.
-     * No logout.
-     * No redirect.
-     */
+    /* CANDIDATE NOT FOUND */
 
     if(!candidateSnap){
 
         candidateDocId =
             null;
-
 
         candidateData = {
 
@@ -2539,11 +2468,15 @@ async function loadCandidate(user){
 
         };
 
-
         renderBasicCandidate(
             user
         );
 
+        assignedExam =
+            null;
+
+        examSubmitted =
+            false;
 
         renderNoExam();
 
@@ -2557,7 +2490,6 @@ async function loadCandidate(user){
     candidateDocId =
         candidateSnap.id;
 
-
     candidateData =
         candidateSnap.data() ||
         {};
@@ -2568,12 +2500,10 @@ async function loadCandidate(user){
         candidateDocId
     );
 
-
     sessionStorage.setItem(
         "candidateUID",
         user.uid
     );
-
 
     sessionStorage.setItem(
         "candidateEmail",
@@ -2590,13 +2520,23 @@ async function loadCandidate(user){
     loadAllocation();
 
 
+    /*
+     * IMPORTANT:
+     * Do NOT use candidateData.examStatus here.
+     *
+     * Even if Firestore says:
+     * examStatus = completed
+     *
+     * the dashboard will remain Assigned until
+     * an actual matching examResults document
+     * exists for this exam.
+     */
+
     examSubmitted =
-        checkCandidateSubmittedStatus();
+        false;
 
 
-    if(
-        candidateData.assignedExamId
-    ){
+    if(candidateData.assignedExamId){
 
         await loadAssignedExam(
             candidateData.assignedExamId
@@ -2605,25 +2545,32 @@ async function loadCandidate(user){
     }
     else{
 
+        assignedExam =
+            null;
+
         renderNoExam();
 
     }
 
 
-    if(examSubmitted){
+    /*
+     * Check only actual result for the
+     * currently assigned exam.
+     */
 
-        setExamSubmitted();
+    if(
+        assignedExam &&
+        assignedExam.id
+    ){
 
-    }
-    else{
-
-        await detectSubmittedResult();
+        await detectSubmittedResult(
+            assignedExam.id
+        );
 
     }
 
 
     loadNotifications();
-
 
     loadCandidateResultStatus();
 
@@ -2645,7 +2592,6 @@ function loadAllocation(){
             ]
         );
 
-
     const centre =
         getValue(
             candidateData,
@@ -2655,7 +2601,6 @@ function loadAllocation(){
                 "examCentre"
             ]
         );
-
 
     const room =
         getValue(
@@ -2668,7 +2613,6 @@ function loadAllocation(){
             ]
         );
 
-
     const seat =
         getValue(
             candidateData,
@@ -2679,18 +2623,15 @@ function loadAllocation(){
             ]
         );
 
-
     setText(
         "dashboardRoll",
         roll
     );
 
-
     setText(
         "dashboardCentre",
         centre
     );
-
 
     setText(
         "dashboardSeat",
@@ -2702,7 +2643,6 @@ function loadAllocation(){
         document.getElementById(
             "allocationBox"
         );
-
 
     if(!box){
         return;
@@ -2731,7 +2671,6 @@ function loadAllocation(){
 
                 </div>
 
-
                 <div class="assignment-item">
 
                     <small>
@@ -2744,7 +2683,6 @@ function loadAllocation(){
 
                 </div>
 
-
                 <div class="assignment-item">
 
                     <small>
@@ -2756,7 +2694,6 @@ function loadAllocation(){
                     </strong>
 
                 </div>
-
 
                 <div class="assignment-item">
 
@@ -2780,7 +2717,7 @@ function loadAllocation(){
 
 
 /* =====================================================
-   LOAD EXAM
+   LOAD ASSIGNED EXAM
 ===================================================== */
 
 async function loadAssignedExam(examId){
@@ -2832,6 +2769,16 @@ async function loadAssignedExam(examId){
         );
 
 
+        /*
+         * At this point always show Assigned.
+         * Submission will be checked separately
+         * using examResults + exact examId.
+         */
+
+        examSubmitted =
+            false;
+
+
         renderAssignedExam(
             assignedExam
         );
@@ -2864,6 +2811,10 @@ async function loadAssignedExam(examId){
         };
 
 
+        examSubmitted =
+            false;
+
+
         renderAssignedExam(
             assignedExam
         );
@@ -2888,7 +2839,6 @@ function renderAssignedExam(exam){
             ]
         );
 
-
     const examCode =
         getValue(
             exam,
@@ -2898,7 +2848,6 @@ function renderAssignedExam(exam){
             ]
         );
 
-
     const examDate =
         getValue(
             exam,
@@ -2907,7 +2856,6 @@ function renderAssignedExam(exam){
                 "date"
             ]
         );
-
 
     const examTime =
         getValue(
@@ -2919,7 +2867,6 @@ function renderAssignedExam(exam){
             ]
         );
 
-
     const duration =
         getValue(
             exam,
@@ -2928,7 +2875,6 @@ function renderAssignedExam(exam){
                 "duration"
             ]
         );
-
 
     const questions =
         getValue(
@@ -2939,7 +2885,6 @@ function renderAssignedExam(exam){
             ]
         );
 
-
     const roll =
         getValue(
             candidateData,
@@ -2948,7 +2893,6 @@ function renderAssignedExam(exam){
                 "rollNo"
             ]
         );
-
 
     const centre =
         getValue(
@@ -2960,7 +2904,6 @@ function renderAssignedExam(exam){
             ]
         );
 
-
     const room =
         getValue(
             candidateData,
@@ -2970,7 +2913,6 @@ function renderAssignedExam(exam){
                 "room"
             ]
         );
-
 
     const seat =
         getValue(
@@ -2989,6 +2931,10 @@ function renderAssignedExam(exam){
     );
 
 
+    /*
+     * Only actual result detection can make this true.
+     */
+
     if(examSubmitted){
 
         setText(
@@ -2996,15 +2942,17 @@ function renderAssignedExam(exam){
             "Submitted"
         );
 
-
         renderSubmittedExam(
             exam
         );
 
-
         return;
 
     }
+
+
+    examSubmitted =
+        false;
 
 
     setText(
@@ -3013,11 +2961,13 @@ function renderAssignedExam(exam){
     );
 
 
+    showExamAccessOptions();
+
+
     const container =
         document.getElementById(
             "dashboardExam"
         );
-
 
     if(!container){
         return;
@@ -3192,6 +3142,7 @@ function renderAssignedExam(exam){
 
 
             <button
+                type="button"
                 class="btn success"
                 onclick="openExamAccess()"
             >
@@ -3211,6 +3162,122 @@ function renderAssignedExam(exam){
 
 
 /* =====================================================
+   NO EXAM
+===================================================== */
+
+function renderNoExam(){
+
+    assignedExam =
+        null;
+
+    examSubmitted =
+        false;
+
+
+    setText(
+        "examStatus",
+        "Not Assigned"
+    );
+
+
+    const dashboard =
+        document.getElementById(
+            "dashboardExam"
+        );
+
+
+    if(dashboard){
+
+        dashboard.innerHTML = `
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    📝
+                </div>
+
+                <h3>
+                    Examination Not Assigned
+                </h3>
+
+                <p style="margin-top:8px;">
+                    No examination has been assigned
+                    to your account yet.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+
+    const tests =
+        document.getElementById(
+            "testsContainer"
+        );
+
+
+    if(tests){
+
+        tests.innerHTML = `
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    📝
+                </div>
+
+                <h3>
+                    No Tests Assigned
+                </h3>
+
+                <p style="margin-top:8px;">
+                    Wait for the administrator or
+                    invigilator to assign your exam.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+
+    const online =
+        document.getElementById(
+            "onlineExamBox"
+        );
+
+
+    if(online){
+
+        online.innerHTML = `
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    🔒
+                </div>
+
+                <h3>
+                    Examination Not Assigned
+                </h3>
+
+                <p style="margin-top:8px;">
+                    Wait for the examination assignment.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
    TESTS
 ===================================================== */
 
@@ -3220,7 +3287,6 @@ function renderAssignedTests(examName){
         document.getElementById(
             "testsContainer"
         );
-
 
     if(!container){
         return;
@@ -3251,6 +3317,7 @@ function renderAssignedTests(examName){
 
 
             <button
+                type="button"
                 class="btn success"
                 onclick="openExamAccess()"
             >
@@ -3270,7 +3337,6 @@ function renderSubmittedTests(examName){
         document.getElementById(
             "testsContainer"
         );
-
 
     if(!container){
         return;
@@ -3306,7 +3372,7 @@ function renderSubmittedTests(examName){
 
                 <br>
 
-                You have already submitted
+                You have submitted
                 this examination.
 
                 <br>
@@ -3341,7 +3407,6 @@ function renderSubmittedOnlineExam(){
         document.getElementById(
             "onlineExamBox"
         );
-
 
     if(!box){
         return;
@@ -3418,7 +3483,6 @@ function updateOnlineExam(){
             "onlineExamBox"
         );
 
-
     if(!box){
         return;
     }
@@ -3451,8 +3515,7 @@ function updateOnlineExam(){
                 </h3>
 
                 <p style="margin-top:8px;">
-                    Wait for the Invigilator to assign
-                    your examination.
+                    Wait for the examination assignment.
                 </p>
 
             </div>
@@ -3516,6 +3579,7 @@ function updateOnlineExam(){
 
 
                 <button
+                    type="button"
                     class="btn success"
                     onclick="openExamAccess()"
                 >
@@ -3532,13 +3596,18 @@ function updateOnlineExam(){
 
 
 /* =====================================================
-   DETECT SUBMITTED RESULT
+   FIXED SUBMISSION DETECTION
 ===================================================== */
 
-async function detectSubmittedResult(){
+async function detectSubmittedResult(currentExamId){
 
-    if(!currentUser){
-        return;
+    if(
+        !currentUser ||
+        !currentExamId
+    ){
+
+        return false;
+
     }
 
 
@@ -3546,10 +3615,13 @@ async function detectSubmittedResult(){
         false;
 
 
-    try{
+    /*
+     * Candidate document ID query
+     */
 
+    if(candidateDocId){
 
-        if(candidateDocId){
+        try{
 
             const query =
                 await db
@@ -3559,7 +3631,7 @@ async function detectSubmittedResult(){
                     "==",
                     candidateDocId
                 )
-                .limit(20)
+                .limit(50)
                 .get();
 
 
@@ -3570,19 +3642,35 @@ async function detectSubmittedResult(){
                         doc.data() || {};
 
 
+                    /*
+                     * CRITICAL:
+                     * Result must belong to CURRENT exam.
+                     */
+
+                    if(
+                        String(data.examId || "") !==
+                        String(currentExamId)
+                    ){
+
+                        return;
+
+                    }
+
+
                     const status =
                         String(
                             data.resultStatus ||
                             data.status ||
                             ""
                         )
-                        .toLowerCase();
+                        .toLowerCase()
+                        .trim();
 
 
                     if(
-                        status === "submitted" ||
                         status === "pending" ||
-                        status === "declared"
+                        status === "declared" ||
+                        status === "submitted"
                     ){
 
                         submitted =
@@ -3594,12 +3682,28 @@ async function detectSubmittedResult(){
             );
 
         }
+        catch(error){
+
+            console.warn(
+                "Candidate document result lookup failed:",
+                error
+            );
+
+        }
+
+    }
 
 
-        if(
-            !submitted &&
-            currentUser.uid
-        ){
+    /*
+     * Firebase UID query
+     */
+
+    if(
+        !submitted &&
+        currentUser.uid
+    ){
+
+        try{
 
             const query =
                 await db
@@ -3609,7 +3713,7 @@ async function detectSubmittedResult(){
                     "==",
                     currentUser.uid
                 )
-                .limit(20)
+                .limit(50)
                 .get();
 
 
@@ -3620,19 +3724,30 @@ async function detectSubmittedResult(){
                         doc.data() || {};
 
 
+                    if(
+                        String(data.examId || "") !==
+                        String(currentExamId)
+                    ){
+
+                        return;
+
+                    }
+
+
                     const status =
                         String(
                             data.resultStatus ||
                             data.status ||
                             ""
                         )
-                        .toLowerCase();
+                        .toLowerCase()
+                        .trim();
 
 
                     if(
-                        status === "submitted" ||
                         status === "pending" ||
-                        status === "declared"
+                        status === "declared" ||
+                        status === "submitted"
                     ){
 
                         submitted =
@@ -3644,12 +3759,28 @@ async function detectSubmittedResult(){
             );
 
         }
+        catch(error){
+
+            console.warn(
+                "UID result lookup failed:",
+                error
+            );
+
+        }
+
+    }
 
 
-        if(
-            !submitted &&
-            currentCandidateEmail()
-        ){
+    /*
+     * Email query as final fallback.
+     */
+
+    if(
+        !submitted &&
+        currentCandidateEmail()
+    ){
+
+        try{
 
             const query =
                 await db
@@ -3659,7 +3790,7 @@ async function detectSubmittedResult(){
                     "==",
                     currentCandidateEmail()
                 )
-                .limit(20)
+                .limit(50)
                 .get();
 
 
@@ -3670,19 +3801,30 @@ async function detectSubmittedResult(){
                         doc.data() || {};
 
 
+                    if(
+                        String(data.examId || "") !==
+                        String(currentExamId)
+                    ){
+
+                        return;
+
+                    }
+
+
                     const status =
                         String(
                             data.resultStatus ||
                             data.status ||
                             ""
                         )
-                        .toLowerCase();
+                        .toLowerCase()
+                        .trim();
 
 
                     if(
-                        status === "submitted" ||
                         status === "pending" ||
-                        status === "declared"
+                        status === "declared" ||
+                        status === "submitted"
                     ){
 
                         submitted =
@@ -3694,27 +3836,54 @@ async function detectSubmittedResult(){
             );
 
         }
+        catch(error){
 
-
-        if(submitted){
-
-            setExamSubmitted();
+            console.warn(
+                "Email result lookup failed:",
+                error
+            );
 
         }
 
     }
-    catch(error){
 
-        /*
-         * No popup.
-         */
 
-        console.warn(
-            "Result detection skipped:",
-            error
-        );
+    if(submitted){
+
+        setExamSubmitted();
 
     }
+    else{
+
+        /*
+         * Very important:
+         * Keep exam assigned/open.
+         */
+
+        examSubmitted =
+            false;
+
+        setText(
+            "examStatus",
+            "Assigned"
+        );
+
+        showExamAccessOptions();
+
+        if(assignedExam){
+
+            renderAssignedExam(
+                assignedExam
+            );
+
+        }
+
+        updateOnlineExam();
+
+    }
+
+
+    return submitted;
 
 }
 
@@ -3855,12 +4024,10 @@ function updateNotificationCounts(unread){
             "headerNotificationCount"
         );
 
-
     const menu =
         document.getElementById(
             "menuNotificationCount"
         );
-
 
     const page =
         document.getElementById(
@@ -3876,7 +4043,6 @@ function updateNotificationCounts(unread){
             "99+"
             :
             unread;
-
 
         header.style.display =
             unread > 0
@@ -3897,7 +4063,6 @@ function updateNotificationCounts(unread){
             :
             unread;
 
-
         menu.style.display =
             unread > 0
             ?
@@ -3916,7 +4081,6 @@ function updateNotificationCounts(unread){
             "99+"
             :
             unread;
-
 
         page.style.display =
             unread > 0
@@ -3946,7 +4110,6 @@ function loadNotifications(){
         document.getElementById(
             "notificationsContainer"
         );
-
 
     if(!container){
         return;
@@ -4007,7 +4170,6 @@ function loadNotifications(){
                                 :
                                 0;
 
-
                             const bTime =
                                 b.createdAt &&
                                 b.createdAt.toMillis
@@ -4015,7 +4177,6 @@ function loadNotifications(){
                                 b.createdAt.toMillis()
                                 :
                                 0;
-
 
                             return bTime-aTime;
 
@@ -4113,7 +4274,6 @@ function loadNotifications(){
                                         }
                                     ">
 
-
                                         ${
                                             unread
                                             ?
@@ -4127,7 +4287,6 @@ function loadNotifications(){
                                             :
                                             ""
                                         }
-
 
                                         <h4>
 
@@ -4176,6 +4335,7 @@ function loadNotifications(){
                                             ?
                                             `
                                                 <button
+                                                    type="button"
                                                     class="btn success"
                                                     onclick="
                                                         openPublishedResult(
@@ -4198,6 +4358,7 @@ function loadNotifications(){
                                             ?
                                             `
                                                 <button
+                                                    type="button"
                                                     class="btn secondary"
                                                     onclick="
                                                         markNotificationRead(
@@ -4303,7 +4464,6 @@ async function markNotificationRead(
             error
         );
 
-
         showToast(
             "Unable to mark notification as read.",
             true
@@ -4315,7 +4475,7 @@ async function markNotificationRead(
 
 
 /* =====================================================
-   RESULT
+   RESULT MENU
 ===================================================== */
 
 function openResultFromMenu(button){
@@ -4325,11 +4485,14 @@ function openResultFromMenu(button){
         button
     );
 
-
     loadCandidateResultStatus();
 
 }
 
+
+/* =====================================================
+   OPEN PUBLISHED RESULT
+===================================================== */
 
 async function openPublishedResult(
     resultId
@@ -4364,7 +4527,9 @@ async function openPublishedResult(
         const snap =
             await db
             .collection("examResults")
-            .doc(resultId)
+            .doc(
+                resultId
+            )
             .get();
 
 
@@ -4390,7 +4555,8 @@ async function openPublishedResult(
                 ""
             )
             .toLowerCase()
-            !== "declared"
+            !==
+            "declared"
         ){
 
             showToast(
@@ -4501,6 +4667,10 @@ async function openPublishedResult(
 }
 
 
+/* =====================================================
+   RESULT STATUS
+===================================================== */
+
 async function loadCandidateResultStatus(){
 
     if(!currentUser){
@@ -4512,7 +4682,6 @@ async function loadCandidateResultStatus(){
         document.getElementById(
             "resultContainer"
         );
-
 
     if(!container){
         return;
@@ -4590,7 +4759,7 @@ async function loadCandidateResultStatus(){
                         "==",
                         candidateDocId
                     )
-                    .limit(20)
+                    .limit(50)
                     .get();
 
 
@@ -4654,7 +4823,7 @@ async function loadCandidateResultStatus(){
                         "==",
                         currentUser.uid
                     )
-                    .limit(20)
+                    .limit(50)
                     .get();
 
 
@@ -4718,7 +4887,7 @@ async function loadCandidateResultStatus(){
                         "==",
                         currentCandidateEmail()
                     )
-                    .limit(20)
+                    .limit(50)
                     .get();
 
 
@@ -4772,10 +4941,8 @@ async function loadCandidateResultStatus(){
             candidateData.resultStatus =
                 "declared";
 
-
             candidateData.lastResultId =
                 declaredResult.id;
-
 
             renderPublishedResultStatus(
                 declaredResult.id
@@ -4796,7 +4963,6 @@ async function loadCandidateResultStatus(){
             error
         );
 
-
         renderPendingResult();
 
     }
@@ -4810,7 +4976,6 @@ function renderPendingResult(){
         document.getElementById(
             "resultContainer"
         );
-
 
     if(!container){
         return;
@@ -4846,7 +5011,6 @@ function renderPublishedResultStatus(
             "resultContainer"
         );
 
-
     if(!container){
         return;
     }
@@ -4881,6 +5045,7 @@ function renderPublishedResultStatus(
 
 
         <button
+            type="button"
             class="btn success"
             onclick="
                 openPublishedResult(
@@ -4930,10 +5095,6 @@ async function logout(){
     }
 
 
-    /*
-     * Stop Firestore listener.
-     */
-
     if(
         notificationUnsubscribe
     ){
@@ -4949,16 +5110,11 @@ async function logout(){
 
         }
 
-
         notificationUnsubscribe =
             null;
 
     }
 
-
-    /*
-     * Remove candidate session values.
-     */
 
     const keys = [
 
@@ -4976,7 +5132,9 @@ async function logout(){
 
         "candidateEmail",
 
-        "examPin"
+        "examPin",
+
+        "lastResultId"
 
     ];
 
@@ -4991,10 +5149,6 @@ async function logout(){
         }
     );
 
-
-    /*
-     * Firebase logout.
-     */
 
     try{
 
@@ -5011,10 +5165,6 @@ async function logout(){
     }
 
 
-    /*
-     * Final redirect.
-     */
-
     window.location.replace(
         "login.html"
     );
@@ -5029,10 +5179,6 @@ async function logout(){
 auth.onAuthStateChanged(
     async function(user){
 
-        /*
-         * During logout do nothing.
-         */
-
         if(loggingOut){
 
             return;
@@ -5040,16 +5186,7 @@ auth.onAuthStateChanged(
         }
 
 
-        /*
-         * Firebase has no logged-in user.
-         */
-
         if(!user){
-
-            /*
-             * Give Firebase a moment to restore
-             * persistent login.
-             */
 
             setTimeout(
                 function(){
@@ -5124,18 +5261,19 @@ async function startDashboard(user){
         );
 
 
-        /*
-         * Never show Candidate data not found popup.
-         * Never redirect because Firestore lookup failed.
-         */
-
         renderBasicCandidate(
             user
         );
 
 
-        renderNoExam();
+        assignedExam =
+            null;
 
+        examSubmitted =
+            false;
+
+
+        renderNoExam();
 
         renderPendingResult();
 
