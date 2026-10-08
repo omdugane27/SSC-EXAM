@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -11,6 +12,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
 <style>
+
 *{
     box-sizing:border-box;
     margin:0;
@@ -140,6 +142,10 @@ input:focus{
     cursor:pointer;
 }
 
+.login-button:hover{
+    background:#047857;
+}
+
 .login-button:disabled{
     opacity:.6;
     cursor:not-allowed;
@@ -153,6 +159,7 @@ input:focus{
     font-size:13px;
     line-height:1.5;
     text-align:center;
+    word-break:break-word;
 }
 
 .info{
@@ -180,12 +187,29 @@ input:focus{
     font-weight:bold;
 }
 
+.back:hover{
+    text-decoration:underline;
+}
+
 .security{
     text-align:center;
     margin-top:18px;
     color:#94a3b8;
     font-size:11px;
 }
+
+.debug{
+    margin-top:15px;
+    padding:10px;
+    border-radius:8px;
+    background:#f8fafc;
+    color:#64748b;
+    font-size:10px;
+    line-height:1.5;
+    display:none;
+    word-break:break-word;
+}
+
 </style>
 </head>
 
@@ -198,17 +222,28 @@ input:focus{
     </div>
 
     <div class="heading">
-        <h1>SSC Examination System</h1>
-        <p>Secure Invigilator Portal</p>
+
+        <h1>
+            SSC Examination System
+        </h1>
+
+        <p>
+            Secure Invigilator Portal
+        </p>
+
     </div>
+
 
     <div class="card">
 
-        <h2>Invigilator Login</h2>
+        <h2>
+            Invigilator Login
+        </h2>
 
         <p class="subtitle">
             Sign in using credentials provided by the administrator.
         </p>
+
 
         <div class="group">
 
@@ -221,9 +256,12 @@ input:focus{
                 id="email"
                 placeholder="Enter your email"
                 autocomplete="username"
+                autocapitalize="none"
+                spellcheck="false"
             >
 
         </div>
+
 
         <div class="group">
 
@@ -244,6 +282,7 @@ input:focus{
                     type="button"
                     class="eye"
                     id="eyeButton"
+                    aria-label="Show password"
                 >
                     👁️
                 </button>
@@ -251,6 +290,7 @@ input:focus{
             </div>
 
         </div>
+
 
         <button
             type="button"
@@ -260,7 +300,15 @@ input:focus{
             Sign In
         </button>
 
+
         <div id="message"></div>
+
+
+        <div
+            id="debug"
+            class="debug"
+        ></div>
+
 
         <a
             href="index.html"
@@ -268,6 +316,7 @@ input:focus{
         >
             Back to Main Portal
         </a>
+
 
         <div class="security">
             Registration is controlled by the administrator
@@ -277,31 +326,51 @@ input:focus{
 
 </div>
 
+
 <script>
 
 /* =====================================================
-   FIREBASE CONFIGURATION
+   FIREBASE CONFIG
 ===================================================== */
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
-    authDomain: "ssc-exam-project-8af6b.firebaseapp.com",
-    projectId: "ssc-exam-project-8af6b",
-    storageBucket: "ssc-exam-project-8af6b.firebasestorage.app",
-    messagingSenderId: "288245274853",
-    appId: "1:288245274853:web:b4d535a08faf305f5e9c0c",
-    measurementId: "G-4BTLY67VDS"
+
+    apiKey:
+        "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+
+    authDomain:
+        "ssc-exam-project-8af6b.firebaseapp.com",
+
+    projectId:
+        "ssc-exam-project-8af6b",
+
+    storageBucket:
+        "ssc-exam-project-8af6b.firebasestorage.app",
+
+    messagingSenderId:
+        "288245274853",
+
+    appId:
+        "1:288245274853:web:b4d535a08faf305f5e9c0c",
+
+    measurementId:
+        "G-4BTLY67VDS"
+
 };
 
 
 /* =====================================================
-   FIREBASE INITIALIZATION
+   INITIALIZE FIREBASE
 ===================================================== */
 
 try{
 
     if(!firebase.apps.length){
-        firebase.initializeApp(firebaseConfig);
+
+        firebase.initializeApp(
+            firebaseConfig
+        );
+
     }
 
 }
@@ -316,79 +385,169 @@ catch(error){
 
 
 /* =====================================================
-   FIREBASE SERVICES
+   SERVICES
 ===================================================== */
 
-const auth = firebase.auth();
-const db = firebase.firestore();
+const auth =
+    firebase.auth();
+
+const db =
+    firebase.firestore();
 
 
 /* =====================================================
-   HTML ELEMENTS
+   ELEMENTS
 ===================================================== */
 
 const emailInput =
-    document.getElementById("email");
+    document.getElementById(
+        "email"
+    );
 
 const passwordInput =
-    document.getElementById("password");
+    document.getElementById(
+        "password"
+    );
 
 const loginButton =
-    document.getElementById("loginButton");
+    document.getElementById(
+        "loginButton"
+    );
 
 const eyeButton =
-    document.getElementById("eyeButton");
+    document.getElementById(
+        "eyeButton"
+    );
 
 const message =
-    document.getElementById("message");
+    document.getElementById(
+        "message"
+    );
+
+const debugBox =
+    document.getElementById(
+        "debug"
+    );
+
+
+let loginInProgress =
+    false;
+
+
+/* =====================================================
+   FIREBASE PERSISTENCE
+===================================================== */
+
+auth.setPersistence(
+    firebase.auth.Auth.Persistence.LOCAL
+)
+.catch(function(error){
+
+    console.warn(
+        "Persistence warning:",
+        error
+    );
+
+});
 
 
 /* =====================================================
    MESSAGE
 ===================================================== */
 
-function showMessage(text,type){
+function showMessage(
+    text,
+    type
+){
 
-    message.textContent = text;
+    message.textContent =
+        text;
 
-    message.className = type;
+    message.className =
+        type;
 
-    message.style.display = "block";
+    message.style.display =
+        "block";
+
 }
 
 
 /* =====================================================
-   RESET BUTTON
+   DEBUG
+===================================================== */
+
+function showDebug(text){
+
+    if(!debugBox){
+        return;
+    }
+
+    debugBox.textContent =
+        text;
+
+    debugBox.style.display =
+        "block";
+
+}
+
+
+function hideDebug(){
+
+    if(debugBox){
+
+        debugBox.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* =====================================================
+   BUTTON RESET
 ===================================================== */
 
 function resetButton(){
 
-    loginButton.disabled = false;
+    loginInProgress =
+        false;
 
-    loginButton.textContent = "Sign In";
+    loginButton.disabled =
+        false;
+
+    loginButton.textContent =
+        "Sign In";
+
 }
 
 
 /* =====================================================
-   PASSWORD SHOW / HIDE
+   PASSWORD TOGGLE
 ===================================================== */
 
 eyeButton.addEventListener(
     "click",
     function(){
 
-        if(passwordInput.type === "password"){
+        if(
+            passwordInput.type ===
+            "password"
+        ){
 
-            passwordInput.type = "text";
+            passwordInput.type =
+                "text";
 
-            eyeButton.textContent = "🙈";
+            eyeButton.textContent =
+                "🙈";
 
         }
         else{
 
-            passwordInput.type = "password";
+            passwordInput.type =
+                "password";
 
-            eyeButton.textContent = "👁️";
+            eyeButton.textContent =
+                "👁️";
 
         }
 
@@ -397,25 +556,300 @@ eyeButton.addEventListener(
 
 
 /* =====================================================
-   LOGIN BUTTON
+   FIREBASE ERROR MESSAGE
 ===================================================== */
 
-loginButton.addEventListener(
-    "click",
-    invigilatorLogin
-);
+function firebaseErrorMessage(
+    error
+){
+
+    if(!error){
+        return "Login failed.";
+    }
+
+
+    switch(error.code){
+
+        case "auth/invalid-email":
+
+            return "Invalid email address.";
+
+
+        case "auth/user-disabled":
+
+            return "This Firebase account has been disabled.";
+
+
+        case "auth/user-not-found":
+
+            return "No Firebase account exists with this email.";
+
+
+        case "auth/wrong-password":
+
+            return "Incorrect password.";
+
+
+        case "auth/invalid-credential":
+
+            return "Incorrect email or password.";
+
+
+        case "auth/invalid-api-key":
+
+        case "auth/api-key-not-valid":
+
+            return "Firebase API key is invalid.";
+
+
+        case "auth/network-request-failed":
+
+            return "Network error. Check your internet connection.";
+
+
+        case "auth/too-many-requests":
+
+            return "Too many attempts. Please try again later.";
+
+
+        case "auth/operation-not-allowed":
+
+            return "Email/Password authentication is disabled in Firebase.";
+
+
+        default:
+
+            return (
+                error.message ||
+                "Login failed."
+            );
+
+    }
+
+}
 
 
 /* =====================================================
-   LOGIN FUNCTION
+   GET PROFILE BY UID
+===================================================== */
+
+async function getProfileByUID(
+    uid
+){
+
+    try{
+
+        const snap =
+            await db
+            .collection(
+                "invigilators"
+            )
+            .doc(uid)
+            .get();
+
+
+        if(
+            snap.exists
+        ){
+
+            return {
+
+                id:
+                    snap.id,
+
+                data:
+                    snap.data() || {}
+
+            };
+
+        }
+
+    }
+    catch(error){
+
+        console.warn(
+            "UID profile lookup failed:",
+            error
+        );
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =====================================================
+   GET PROFILE BY EMAIL
+===================================================== */
+
+async function getProfileByEmail(
+    email
+){
+
+    try{
+
+        const result =
+            await db
+            .collection(
+                "invigilators"
+            )
+            .where(
+                "email",
+                "==",
+                email
+            )
+            .limit(1)
+            .get();
+
+
+        if(
+            !result.empty
+        ){
+
+            const doc =
+                result.docs[0];
+
+
+            return {
+
+                id:
+                    doc.id,
+
+                data:
+                    doc.data() || {}
+
+            };
+
+        }
+
+    }
+    catch(error){
+
+        console.warn(
+            "Email profile lookup failed:",
+            error
+        );
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =====================================================
+   SAVE INVIGILATOR SESSION
+===================================================== */
+
+function saveSession(
+    user,
+    profile
+){
+
+    const data =
+        profile.data || {};
+
+
+    sessionStorage.setItem(
+        "userRole",
+        "invigilator"
+    );
+
+
+    sessionStorage.setItem(
+        "invigilatorUid",
+        user.uid
+    );
+
+
+    sessionStorage.setItem(
+        "invigilatorEmail",
+        user.email || ""
+    );
+
+
+    sessionStorage.setItem(
+        "invigilatorDocId",
+        profile.id || user.uid
+    );
+
+
+    sessionStorage.setItem(
+        "invigilatorName",
+        data.fullName ||
+        data.name ||
+        "Invigilator"
+    );
+
+
+    sessionStorage.setItem(
+        "invigilatorId",
+        data.employeeId ||
+        data.invigilatorId ||
+        ""
+    );
+
+
+    sessionStorage.setItem(
+        "invigilatorCentre",
+        data.centre ||
+        data.center ||
+        ""
+    );
+
+
+    sessionStorage.setItem(
+        "invigilatorRoom",
+        data.roomNo ||
+        data.room ||
+        data.lab ||
+        ""
+    );
+
+
+    sessionStorage.setItem(
+        "invigilatorLab",
+        data.lab ||
+        data.roomNo ||
+        data.room ||
+        ""
+    );
+
+
+    sessionStorage.setItem(
+        "invigilatorLoginTime",
+        String(
+            Date.now()
+        )
+    );
+
+}
+
+
+/* =====================================================
+   LOGIN
 ===================================================== */
 
 async function invigilatorLogin(){
+
+    if(loginInProgress){
+
+        return;
+
+    }
+
+
+    hideDebug();
+
 
     const email =
         emailInput.value
         .trim()
         .toLowerCase();
+
 
     const password =
         passwordInput.value;
@@ -431,6 +865,7 @@ async function invigilatorLogin(){
         emailInput.focus();
 
         return;
+
     }
 
 
@@ -444,12 +879,20 @@ async function invigilatorLogin(){
         passwordInput.focus();
 
         return;
+
     }
 
 
-    loginButton.disabled = true;
+    loginInProgress =
+        true;
 
-    loginButton.textContent = "Signing In...";
+
+    loginButton.disabled =
+        true;
+
+
+    loginButton.textContent =
+        "Signing In...";
 
 
     try{
@@ -461,7 +904,7 @@ async function invigilatorLogin(){
 
 
         /* =============================================
-           AUTH LOGIN
+           FIREBASE AUTH
         ============================================= */
 
         const result =
@@ -481,41 +924,79 @@ async function invigilatorLogin(){
         );
 
 
-        /* =============================================
-           GET INVIGILATOR PROFILE
-        ============================================= */
-
         showMessage(
-            "Login successful. Checking profile...",
+            "Authentication successful. Checking invigilator profile...",
             "info"
         );
 
 
-        const profile =
-            await db
-            .collection("invigilators")
-            .doc(user.uid)
-            .get();
+        /* =============================================
+           PROFILE BY UID
+        ============================================= */
+
+        let profile =
+            await getProfileByUID(
+                user.uid
+            );
 
 
-        if(!profile.exists){
+        /* =============================================
+           PROFILE FALLBACK BY EMAIL
+        ============================================= */
+
+        if(!profile){
+
+            profile =
+                await getProfileByEmail(
+                    email
+                );
+
+        }
+
+
+        /* =============================================
+           PROFILE NOT FOUND
+        ============================================= */
+
+        if(!profile){
 
             await auth.signOut();
 
+
             showMessage(
-                "Invigilator profile not found for this Firebase UID: " +
-                user.uid,
+                "Firebase login is correct, but no invigilator profile was found in Firestore.",
                 "error"
             );
+
+
+            showDebug(
+                "Auth UID: " +
+                user.uid +
+                "\n\n" +
+                "Expected Firestore collection: invigilators\n\n" +
+                "Expected document ID: " +
+                user.uid +
+                "\n\n" +
+                "Email searched: " +
+                email
+            );
+
 
             resetButton();
 
             return;
+
         }
 
 
         const data =
-            profile.data() || {};
+            profile.data || {};
+
+
+        console.log(
+            "Invigilator profile:",
+            data
+        );
 
 
         /* =============================================
@@ -524,24 +1005,31 @@ async function invigilatorLogin(){
 
         const role =
             String(
-                data.role || "invigilator"
+                data.role ||
+                "invigilator"
             )
             .trim()
             .toLowerCase();
 
 
-        if(role !== "invigilator"){
+        if(
+            role !==
+            "invigilator"
+        ){
 
             await auth.signOut();
+
 
             showMessage(
                 "This account is not registered as an invigilator.",
                 "error"
             );
 
+
             resetButton();
 
             return;
+
         }
 
 
@@ -551,7 +1039,8 @@ async function invigilatorLogin(){
 
         const status =
             String(
-                data.status || "active"
+                data.status ||
+                "active"
             )
             .trim()
             .toLowerCase();
@@ -565,14 +1054,17 @@ async function invigilatorLogin(){
 
             await auth.signOut();
 
+
             showMessage(
-                "Your invigilator account is inactive. Contact administrator.",
+                "Your invigilator account is inactive. Contact the administrator.",
                 "error"
             );
+
 
             resetButton();
 
             return;
+
         }
 
 
@@ -580,48 +1072,9 @@ async function invigilatorLogin(){
            SAVE SESSION
         ============================================= */
 
-        sessionStorage.setItem(
-            "userRole",
-            "invigilator"
-        );
-
-        sessionStorage.setItem(
-            "invigilatorUid",
-            user.uid
-        );
-
-        sessionStorage.setItem(
-            "invigilatorEmail",
-            user.email || email
-        );
-
-        sessionStorage.setItem(
-            "invigilatorName",
-            data.fullName ||
-            data.name ||
-            "Invigilator"
-        );
-
-        sessionStorage.setItem(
-            "invigilatorId",
-            data.employeeId ||
-            data.invigilatorId ||
-            ""
-        );
-
-        sessionStorage.setItem(
-            "invigilatorCentre",
-            data.centre ||
-            data.center ||
-            ""
-        );
-
-        sessionStorage.setItem(
-            "invigilatorLab",
-            data.roomNo ||
-            data.lab ||
-            data.room ||
-            ""
+        saveSession(
+            user,
+            profile
         );
 
 
@@ -639,6 +1092,11 @@ async function invigilatorLogin(){
             "Opening Dashboard...";
 
 
+        /*
+         * Use replace so browser back button
+         * does not return to login unnecessarily.
+         */
+
         setTimeout(
             function(){
 
@@ -647,8 +1105,9 @@ async function invigilatorLogin(){
                 );
 
             },
-            700
+            500
         );
+
 
     }
     catch(error){
@@ -659,83 +1118,48 @@ async function invigilatorLogin(){
         );
 
 
-        let msg =
-            "Login failed.";
-
-
-        switch(error.code){
-
-            case "auth/invalid-api-key":
-
-            case "auth/api-key-not-valid":
-
-                msg =
-                    "Firebase API key is not valid. Please check Firebase Web App configuration.";
-
-                break;
-
-
-            case "auth/invalid-credential":
-
-                msg =
-                    "Incorrect email or password.";
-
-                break;
-
-
-            case "auth/user-not-found":
-
-                msg =
-                    "Invigilator account not found.";
-
-                break;
-
-
-            case "auth/wrong-password":
-
-                msg =
-                    "Incorrect password.";
-
-                break;
-
-
-            case "auth/invalid-email":
-
-                msg =
-                    "Invalid email address.";
-
-                break;
-
-
-            case "auth/network-request-failed":
-
-                msg =
-                    "Network error. Check your internet connection.";
-
-                break;
-
-
-            case "auth/too-many-requests":
-
-                msg =
-                    "Too many login attempts. Try again later.";
-
-                break;
-
-
-            default:
-
-                msg =
-                    error.message ||
-                    msg;
-
-        }
-
-
         showMessage(
-            "❌ " + msg,
+            "❌ " +
+            firebaseErrorMessage(
+                error
+            ),
             "error"
         );
+
+
+        showDebug(
+            "Error Code: " +
+            (error.code || "unknown") +
+            "\n\n" +
+            "Error Message: " +
+            (error.message || "unknown")
+        );
+
+
+        /*
+         * If authentication succeeded but
+         * Firestore caused an error, ensure
+         * no broken session remains.
+         */
+
+        try{
+
+            if(
+                auth.currentUser
+            ){
+
+                await auth.signOut();
+
+            }
+
+        }
+        catch(signOutError){
+
+            console.warn(
+                signOutError
+            );
+
+        }
 
 
         resetButton();
@@ -746,14 +1170,52 @@ async function invigilatorLogin(){
 
 
 /* =====================================================
+   LOGIN BUTTON
+===================================================== */
+
+loginButton.addEventListener(
+    "click",
+    function(){
+
+        invigilatorLogin();
+
+    }
+);
+
+
+/* =====================================================
    ENTER KEY
 ===================================================== */
+
+emailInput.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key ===
+            "Enter"
+        ){
+
+            event.preventDefault();
+
+            passwordInput.focus();
+
+        }
+
+    }
+);
+
 
 passwordInput.addEventListener(
     "keydown",
     function(event){
 
-        if(event.key === "Enter"){
+        if(
+            event.key ===
+            "Enter"
+        ){
+
+            event.preventDefault();
 
             invigilatorLogin();
 
@@ -763,15 +1225,32 @@ passwordInput.addEventListener(
 );
 
 
-emailInput.addEventListener(
-    "keydown",
-    function(event){
+/* =====================================================
+   INITIAL AUTH CHECK
+===================================================== */
 
-        if(event.key === "Enter"){
+auth.onAuthStateChanged(
+    function(user){
 
-            passwordInput.focus();
+        if(!user){
+
+            return;
 
         }
+
+
+        /*
+         * If already logged in and session
+         * belongs to invigilator, don't
+         * automatically redirect immediately.
+         *
+         * User can press Sign In normally.
+         */
+
+        console.log(
+            "Existing Firebase session:",
+            user.uid
+        );
 
     }
 );

@@ -6,632 +6,947 @@
 
 <title>Exam Access | SSC Examination System</title>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
 <style>
 *{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
-    font-family:Arial, sans-serif;
-    min-height:100vh;
-    background:linear-gradient(135deg,#0f172a,#1e3a8a);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top left,#dbeafe,transparent 35%),
+    radial-gradient(circle at bottom right,#e0e7ff,transparent 35%),
+    #f8fafc;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  color:#0f172a;
+}
+
+.container{
+  width:100%;
+  max-width:520px;
 }
 
 .card{
-    width:100%;
-    max-width:500px;
-    background:#ffffff;
-    border-radius:20px;
-    padding:30px;
-    box-shadow:0 20px 50px rgba(0,0,0,.30);
+  background:#fff;
+  border:1px solid #e2e8f0;
+  border-radius:22px;
+  padding:30px;
+  box-shadow:0 20px 60px rgba(15,23,42,.15);
 }
 
-.header{
-    text-align:center;
-    margin-bottom:25px;
+.logo{
+  width:68px;
+  height:68px;
+  margin:0 auto 18px;
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#2563eb,#4f46e5);
+  color:#fff;
+  font-size:30px;
 }
 
-.header h1{
-    color:#1e3a8a;
-    font-size:25px;
-    margin-bottom:8px;
+h1{
+  text-align:center;
+  font-size:25px;
+  margin-bottom:8px;
 }
 
-.header p{
-    color:#64748b;
-    font-size:14px;
-}
-
-.info{
-    background:#f8fafc;
-    border-radius:14px;
-    padding:18px;
-    margin-bottom:20px;
-}
-
-.row{
-    display:flex;
-    justify-content:space-between;
-    gap:15px;
-    padding:9px 0;
-    border-bottom:1px solid #e2e8f0;
-}
-
-.row:last-child{
-    border-bottom:none;
-}
-
-.label{
-    color:#64748b;
-    font-size:14px;
-}
-
-.value{
-    color:#0f172a;
-    font-weight:bold;
-    text-align:right;
-    font-size:14px;
-}
-
-.pin-title{
-    font-weight:bold;
-    color:#0f172a;
-    margin-bottom:8px;
-}
-
-#examPin{
-    width:100%;
-    padding:15px;
-    border:2px solid #cbd5e1;
-    border-radius:12px;
-    font-size:22px;
-    text-align:center;
-    letter-spacing:6px;
-    outline:none;
-}
-
-#examPin:focus{
-    border-color:#2563eb;
-}
-
-button{
-    width:100%;
-    margin-top:15px;
-    padding:15px;
-    border:none;
-    border-radius:12px;
-    background:#2563eb;
-    color:white;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-button:disabled{
-    background:#94a3b8;
-}
-
-.message{
-    margin-top:15px;
-    padding:12px;
-    border-radius:10px;
-    text-align:center;
-    display:none;
-    font-size:14px;
-}
-
-.error{
-    display:block;
-    background:#fee2e2;
-    color:#b91c1c;
-}
-
-.success{
-    display:block;
-    background:#dcfce7;
-    color:#166534;
+.subtitle{
+  text-align:center;
+  color:#64748b;
+  font-size:14px;
+  margin-bottom:25px;
 }
 
 .loading{
-    text-align:center;
-    color:#64748b;
-    margin:15px 0;
+  text-align:center;
+  color:#64748b;
+  padding:20px;
+}
+
+.info-box{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:15px;
+  padding:16px;
+  margin-bottom:22px;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  padding:9px 0;
+  border-bottom:1px solid #e5e7eb;
+  font-size:14px;
+}
+
+.row:last-child{
+  border-bottom:none;
+}
+
+.label{
+  color:#64748b;
+}
+
+.value{
+  font-weight:600;
+  text-align:right;
+  word-break:break-word;
+}
+
+.pin-label{
+  display:block;
+  font-size:14px;
+  font-weight:700;
+  margin-bottom:9px;
+}
+
+.pin-input{
+  width:100%;
+  height:58px;
+  border:2px solid #cbd5e1;
+  border-radius:14px;
+  outline:none;
+  text-align:center;
+  font-size:25px;
+  font-weight:700;
+  letter-spacing:8px;
+}
+
+.pin-input:focus{
+  border-color:#2563eb;
+  box-shadow:0 0 0 4px rgba(37,99,235,.1);
+}
+
+.pin-input::placeholder{
+  letter-spacing:2px;
+  font-size:15px;
+  font-weight:400;
+}
+
+.expiry{
+  text-align:center;
+  color:#64748b;
+  font-size:12px;
+  margin-top:9px;
+}
+
+.btn{
+  width:100%;
+  height:52px;
+  margin-top:20px;
+  border:0;
+  border-radius:13px;
+  background:linear-gradient(135deg,#2563eb,#4f46e5);
+  color:white;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.message{
+  display:none;
+  margin-top:16px;
+  padding:13px;
+  border-radius:12px;
+  text-align:center;
+  font-size:14px;
+  font-weight:600;
+}
+
+.error{
+  color:#b91c1c;
+  background:#fef2f2;
+  border:1px solid #fecaca;
+}
+
+.success{
+  color:#15803d;
+  background:#f0fdf4;
+  border:1px solid #bbf7d0;
+}
+
+.security{
+  margin-top:20px;
+  padding:13px;
+  border-radius:12px;
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  color:#1e40af;
+  font-size:12px;
+  line-height:1.5;
+  text-align:center;
+}
+
+@media(max-width:480px){
+
+  .card{
+    padding:22px;
+  }
+
+  h1{
+    font-size:22px;
+  }
+
+  .row{
+    font-size:13px;
+  }
+
+  .pin-input{
+    height:54px;
+  }
 }
 </style>
 </head>
 
 <body>
 
+<div class="container">
+
 <div class="card">
 
-    <div class="header">
-        <h1>SSC Examination System</h1>
-        <p>Secure Examination Access</p>
-    </div>
+<div class="logo">🔐</div>
 
-    <div id="loading" class="loading">
-        Loading candidate information...
-    </div>
+<h1>Exam Access</h1>
 
-    <div id="candidateInfo" style="display:none;">
+<p class="subtitle">
+Verify your Examination PIN to continue
+</p>
 
-        <div class="info">
+<div id="loadingBox" class="loading">
+Loading examination details...
+</div>
 
-            <div class="row">
-                <span class="label">Candidate</span>
-                <span class="value" id="candidateName">-</span>
-            </div>
+<div id="mainContent" style="display:none;">
 
-            <div class="row">
-                <span class="label">Roll Number</span>
-                <span class="value" id="rollNumber">-</span>
-            </div>
+<div class="info-box">
 
-            <div class="row">
-                <span class="label">Examination</span>
-                <span class="value" id="examName">-</span>
-            </div>
+<div class="row">
+<span class="label">Candidate Name</span>
+<span class="value" id="candidateName">-</span>
+</div>
 
-            <div class="row">
-                <span class="label">Centre</span>
-                <span class="value" id="centre">-</span>
-            </div>
+<div class="row">
+<span class="label">Roll Number</span>
+<span class="value" id="rollNumber">-</span>
+</div>
 
-            <div class="row">
-                <span class="label">Room / Lab</span>
-                <span class="value" id="roomNo">-</span>
-            </div>
+<div class="row">
+<span class="label">Examination</span>
+<span class="value" id="examName">-</span>
+</div>
 
-            <div class="row">
-                <span class="label">Seat Number</span>
-                <span class="value" id="seatNumber">-</span>
-            </div>
+<div class="row">
+<span class="label">Centre</span>
+<span class="value" id="centre">-</span>
+</div>
 
-        </div>
+<div class="row">
+<span class="label">Room / Lab</span>
+<span class="value" id="roomNo">-</span>
+</div>
 
-        <div class="pin-title">
-            Enter Examination PIN
-        </div>
+<div class="row">
+<span class="label">Seat Number</span>
+<span class="value" id="seatNumber">-</span>
+</div>
 
-        <input
-            type="text"
-            id="examPin"
-            maxlength="6"
-            inputmode="numeric"
-            autocomplete="off"
-            placeholder="••••••"
-        >
+</div>
 
-        <button id="verifyButton">
-            Verify PIN & Continue
-        </button>
+<label class="pin-label">
+Examination PIN
+</label>
 
-        <div id="message" class="message"></div>
+<input
+  id="pinInput"
+  class="pin-input"
+  type="password"
+  inputmode="numeric"
+  maxlength="6"
+  autocomplete="off"
+  placeholder="Enter PIN"
+/>
 
-    </div>
+<div id="expiryText" class="expiry">
+Enter the PIN provided by your Invigilator.
+</div>
+
+<button
+  id="verifyBtn"
+  class="btn"
+  onclick="verifyExamPIN()">
+
+🔓 Verify & Continue
+
+</button>
+
+<div id="errorMessage" class="message error"></div>
+
+<div id="successMessage" class="message success"></div>
+
+<div class="security">
+🛡️ Your examination access is protected.<br>
+Do not share your Examination PIN with anyone.
+</div>
+
+</div>
+
+</div>
 
 </div>
 
 
-<!-- Firebase -->
-
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-
-
 <script>
 
+/* =====================================================
+   FIREBASE CONFIG
+===================================================== */
+
 const firebaseConfig = {
-    apiKey: "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
-    authDomain: "ssc-exam-project-8af6b.firebaseapp.com",
-    projectId: "ssc-exam-project-8af6b",
-    storageBucket: "ssc-exam-project-8af6b.firebasestorage.app",
-    messagingSenderId: "288245274853",
-    appId: "1:288245274853:web:b4d535a08faf305f5e9c0c",
-    measurementId: "G-4BTLY67VDS"
+  apiKey: "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+  authDomain: "ssc-exam-project-8af6b.firebaseapp.com",
+  projectId: "ssc-exam-project-8af6b",
+  storageBucket: "ssc-exam-project-8af6b.firebasestorage.app",
+  messagingSenderId: "288245274853",
+  appId: "1:288245274853:web:b4d535a08faf305f5e9c0c",
+  measurementId: "G-4BTLY67VDS"
 };
 
-firebase.initializeApp(firebaseConfig);
+
+/* =====================================================
+   FIREBASE INITIALIZE
+===================================================== */
+
+if(!firebase.apps.length){
+  firebase.initializeApp(firebaseConfig);
+}
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+
 let currentUser = null;
 let candidateData = null;
+let currentExam = null;
+let examId = null;
 
 
-/* =========================
+/* =====================================================
+   GET EXAM ID
+===================================================== */
+
+function getExamId(){
+
+  const params =
+    new URLSearchParams(window.location.search);
+
+  return (
+    params.get("examId") ||
+    sessionStorage.getItem("examId") ||
+    null
+  );
+}
+
+
+/* =====================================================
    MESSAGE
-========================= */
+===================================================== */
 
-function showMessage(text, type){
+function showError(message){
 
-    const message = document.getElementById("message");
+  const box =
+    document.getElementById("errorMessage");
 
-    message.textContent = text;
+  box.textContent = message;
+  box.style.display = "block";
 
-    message.className = "message " + type;
+  document.getElementById("successMessage")
+    .style.display = "none";
+}
+
+
+function showSuccess(message){
+
+  const box =
+    document.getElementById("successMessage");
+
+  box.textContent = message;
+  box.style.display = "block";
+
+  document.getElementById("errorMessage")
+    .style.display = "none";
+}
+
+
+/* =====================================================
+   LOAD EXAM ACCESS
+===================================================== */
+
+async function loadExamAccess(){
+
+  try{
+
+    examId = getExamId();
+
+    if(!examId){
+
+      document.getElementById("loadingBox").innerHTML =
+        "❌ Examination ID is missing.";
+
+      return;
+    }
+
+
+    if(!currentUser){
+
+      document.getElementById("loadingBox").innerHTML =
+        "❌ Candidate login session not found.";
+
+      return;
+    }
+
+
+    /* ================================================
+       LOAD CANDIDATE
+    ================================================ */
+
+    const candidateSnap =
+      await db
+      .collection("candidates")
+      .doc(currentUser.uid)
+      .get();
+
+
+    if(!candidateSnap.exists){
+
+      document.getElementById("loadingBox").innerHTML =
+        "❌ Candidate record not found.";
+
+      return;
+    }
+
+
+    candidateData =
+      candidateSnap.data();
+
+
+    /* ================================================
+       VERIFY ASSIGNED EXAM
+    ================================================ */
+
+    if(
+      candidateData.assignedExamId &&
+      candidateData.assignedExamId !== examId
+    ){
+
+      document.getElementById("loadingBox").innerHTML =
+        "❌ This examination is not assigned to you.";
+
+      return;
+    }
+
+
+    /* ================================================
+       LOAD EXAM
+    ================================================ */
+
+    const examSnap =
+      await db
+      .collection("exams")
+      .doc(examId)
+      .get();
+
+
+    if(!examSnap.exists){
+
+      document.getElementById("loadingBox").innerHTML =
+        "❌ Examination not found.";
+
+      return;
+    }
+
+
+    currentExam =
+      examSnap.data();
+
+
+    /* ================================================
+       EXAM STATUS
+    ================================================ */
+
+    const status =
+      String(currentExam.status || "").toLowerCase();
+
+
+    if(
+      status !== "published" &&
+      status !== "active"
+    ){
+
+      document.getElementById("loadingBox").innerHTML =
+        "❌ This examination is not currently available.";
+
+      return;
+    }
+
+
+    /* ================================================
+       DISPLAY CANDIDATE
+    ================================================ */
+
+    document.getElementById("candidateName").textContent =
+      candidateData.fullName ||
+      candidateData.name ||
+      currentUser.email ||
+      "-";
+
+
+    document.getElementById("rollNumber").textContent =
+      candidateData.rollNumber || "-";
+
+
+    document.getElementById("examName").textContent =
+      candidateData.assignedExamName ||
+      currentExam.examName ||
+      "-";
+
+
+    document.getElementById("centre").textContent =
+      candidateData.centre ||
+      candidateData.center ||
+      "-";
+
+
+    document.getElementById("roomNo").textContent =
+      candidateData.roomNo ||
+      candidateData.lab ||
+      "-";
+
+
+    document.getElementById("seatNumber").textContent =
+      candidateData.seatNumber ||
+      "-";
+
+
+    /* ================================================
+       PIN EXPIRY
+    ================================================ */
+
+    if(candidateData.examPinExpiresAt){
+
+      let expiryTime;
+
+      if(
+        typeof candidateData.examPinExpiresAt.toMillis ===
+        "function"
+      ){
+
+        expiryTime =
+          candidateData.examPinExpiresAt.toMillis();
+
+      }else{
+
+        expiryTime =
+          new Date(
+            candidateData.examPinExpiresAt
+          ).getTime();
+
+      }
+
+
+      if(
+        !isNaN(expiryTime) &&
+        Date.now() > expiryTime
+      ){
+
+        document.getElementById("loadingBox").innerHTML =
+          "❌ Examination PIN has expired.";
+
+        return;
+      }
+
+
+      if(!isNaN(expiryTime)){
+
+        document.getElementById("expiryText")
+          .textContent =
+          "PIN is valid until " +
+          new Date(expiryTime).toLocaleString();
+
+      }
+    }
+
+
+    /* ================================================
+       SHOW PAGE
+    ================================================ */
+
+    document.getElementById("loadingBox")
+      .style.display = "none";
+
+    document.getElementById("mainContent")
+      .style.display = "block";
+
+
+    setTimeout(function(){
+
+      document.getElementById("pinInput").focus();
+
+    },300);
+
+
+  }catch(error){
+
+    console.error(
+      "Exam Access Error:",
+      error
+    );
+
+    document.getElementById("loadingBox").innerHTML =
+      "❌ Unable to load examination access.";
+
+  }
 
 }
 
 
-/* =========================
-   LOAD CANDIDATE
-========================= */
-
-auth.onAuthStateChanged(async function(user){
-
-    if(!user){
-
-        showMessage(
-            "Please login first.",
-            "error"
-        );
-
-        document.getElementById("loading").style.display = "none";
-
-        setTimeout(function(){
-
-            window.location.replace("login.html");
-
-        },1500);
-
-        return;
-    }
-
-    currentUser = user;
-
-    try{
-
-        const doc = await db
-            .collection("candidates")
-            .doc(user.uid)
-            .get();
-
-        if(!doc.exists){
-
-            document.getElementById("loading").style.display = "none";
-
-            showMessage(
-                "Candidate record not found.",
-                "error"
-            );
-
-            return;
-        }
-
-        candidateData = doc.data();
-
-        document.getElementById("loading").style.display = "none";
-
-        document.getElementById("candidateInfo").style.display = "block";
-
-
-        /* Candidate */
-
-        document.getElementById("candidateName").textContent =
-            candidateData.fullName ||
-            candidateData.name ||
-            user.displayName ||
-            "Candidate";
-
-
-        /* Roll */
-
-        document.getElementById("rollNumber").textContent =
-            candidateData.rollNumber ||
-            "-";
-
-
-        /* Exam */
-
-        document.getElementById("examName").textContent =
-            candidateData.assignedExamName ||
-            candidateData.examName ||
-            "Assigned Examination";
-
-
-        /* Centre */
-
-        document.getElementById("centre").textContent =
-            candidateData.centre ||
-            candidateData.center ||
-            candidateData.centreName ||
-            "-";
-
-
-        /* Room */
-
-        document.getElementById("roomNo").textContent =
-            candidateData.roomNo ||
-            candidateData.lab ||
-            candidateData.room ||
-            candidateData.roomName ||
-            "-";
-
-
-        /* Seat */
-
-        document.getElementById("seatNumber").textContent =
-            candidateData.seatNumber ||
-            "-";
-
-
-    }catch(error){
-
-        console.error(error);
-
-        document.getElementById("loading").style.display = "none";
-
-        showMessage(
-            "Error loading candidate information: " +
-            error.message,
-            "error"
-        );
-
-    }
-
-});
-
-
-/* =========================
+/* =====================================================
    VERIFY PIN
-========================= */
+===================================================== */
 
-document
-.getElementById("verifyButton")
-.addEventListener("click", async function(){
+async function verifyExamPIN(){
 
-    const button = document.getElementById("verifyButton");
+  const pinInput =
+    document.getElementById("pinInput");
 
-    const enteredPin =
-        document
-        .getElementById("examPin")
-        .value
-        .trim();
-
-    /* Candidate not loaded */
-
-    if(!currentUser || !candidateData){
-
-        showMessage(
-            "Candidate information is still loading. Please wait.",
-            "error"
-        );
-
-        return;
-    }
+  const verifyBtn =
+    document.getElementById("verifyBtn");
 
 
-    /* Empty PIN */
+  /* ================================================
+     GET ENTERED PIN
+  ================================================ */
 
-    if(!enteredPin){
-
-        showMessage(
-            "Please enter the 6-digit examination PIN.",
-            "error"
-        );
-
-        return;
-    }
+  const enteredPIN =
+    String(pinInput.value || "").trim();
 
 
-    /* PIN length */
+  if(!enteredPIN){
 
-    if(enteredPin.length !== 6){
+    showError(
+      "Please enter the Examination PIN."
+    );
 
-        showMessage(
-            "PIN must contain exactly 6 digits.",
-            "error"
-        );
+    pinInput.focus();
 
-        return;
-    }
-
-
-    /* Firebase generated PIN */
-
-    const correctPin =
-        String(candidateData.examPin || "").trim();
+    return;
+  }
 
 
-    if(!correctPin){
+  if(!candidateData){
 
-        showMessage(
-            "Exam PIN has not been generated by the invigilator yet.",
-            "error"
-        );
+    showError(
+      "Candidate information is not loaded."
+    );
 
-        return;
-    }
-
-
-    /* PIN check */
-
-    if(enteredPin !== correctPin){
-
-        showMessage(
-            "❌ Incorrect PIN. Please enter the PIN generated by the invigilator.",
-            "error"
-        );
-
-        return;
-    }
+    return;
+  }
 
 
-    /* Check expiry */
+  /* ================================================
+     DIRECT FIRESTORE PIN
+  ================================================ */
 
-    if(candidateData.examPinExpiresAt){
-
-        let expiryTime = null;
-
-        try{
-
-            if(
-                candidateData.examPinExpiresAt.toDate
-            ){
-
-                expiryTime =
-                    candidateData.examPinExpiresAt
-                    .toDate()
-                    .getTime();
-
-            }else if(
-                candidateData.examPinExpiresAt.seconds
-            ){
-
-                expiryTime =
-                    candidateData.examPinExpiresAt.seconds * 1000;
-
-            }
-
-        }catch(e){
-
-            console.log("Expiry check skipped",e);
-
-        }
+  const storedPIN =
+    String(
+      candidateData.examPin ?? ""
+    ).trim();
 
 
-        if(
-            expiryTime &&
-            Date.now() > expiryTime
-        ){
+  console.log(
+    "Entered PIN:",
+    enteredPIN
+  );
 
-            showMessage(
-                "❌ This examination PIN has expired. Ask the invigilator to generate a new PIN.",
-                "error"
-            );
+  console.log(
+    "Firestore examPin:",
+    storedPIN
+  );
 
-            return;
-        }
+
+  if(!storedPIN){
+
+    showError(
+      "Examination PIN has not been assigned yet. Please contact your Invigilator."
+    );
+
+    return;
+  }
+
+
+  /* ================================================
+     CHECK EXPIRY
+  ================================================ */
+
+  if(candidateData.examPinExpiresAt){
+
+    let expiryTime;
+
+    if(
+      typeof candidateData.examPinExpiresAt.toMillis ===
+      "function"
+    ){
+
+      expiryTime =
+        candidateData.examPinExpiresAt.toMillis();
+
+    }else{
+
+      expiryTime =
+        new Date(
+          candidateData.examPinExpiresAt
+        ).getTime();
 
     }
 
 
-    /* =========================
-       SUCCESS
-    ========================= */
+    if(
+      !isNaN(expiryTime) &&
+      Date.now() > expiryTime
+    ){
 
-    button.disabled = true;
+      showError(
+        "This Examination PIN has expired. Please contact your Invigilator."
+      );
 
-    button.textContent =
-        "PIN Verified ✓ Opening Instructions...";
-
-
-    showMessage(
-        "✅ PIN verified successfully. Opening instructions...",
-        "success"
-    );
+      return;
+    }
+  }
 
 
-    /* Session */
+  /* ================================================
+     VERIFY
+  ================================================ */
 
-    sessionStorage.setItem(
-        "examAccessGranted",
-        "true"
-    );
+  verifyBtn.disabled = true;
+  verifyBtn.textContent = "Verifying...";
 
-    sessionStorage.setItem(
-        "examAccessTime",
-        Date.now().toString()
-    );
 
-    sessionStorage.setItem(
-        "candidateId",
-        currentUser.uid
-    );
-
-    sessionStorage.setItem(
-        "examId",
-        candidateData.assignedExamId || ""
-    );
-
-    sessionStorage.setItem(
-        "examName",
-        candidateData.assignedExamName || ""
-    );
-
-    sessionStorage.setItem(
-        "rollNumber",
-        candidateData.rollNumber || ""
-    );
-
-    sessionStorage.setItem(
-        "centre",
-        candidateData.centre ||
-        candidateData.center ||
-        ""
-    );
-
-    sessionStorage.setItem(
-        "roomNo",
-        candidateData.roomNo ||
-        candidateData.lab ||
-        ""
-    );
-
-    sessionStorage.setItem(
-        "seatNumber",
-        candidateData.seatNumber || ""
-    );
-
+  try{
 
     /*
-       IMPORTANT:
-       Direct redirect to instructions.html
+      Both values are converted to strings.
+      This handles Firestore string/number differences.
     */
+
+    const enteredNormalized =
+      enteredPIN.replace(/\s/g,"");
+
+    const storedNormalized =
+      storedPIN.replace(/\s/g,"");
+
+
+    if(
+      enteredNormalized !==
+      storedNormalized
+    ){
+
+      showError(
+        "❌ Incorrect Examination PIN. Please try again."
+      );
+
+      pinInput.value = "";
+      pinInput.focus();
+
+      verifyBtn.disabled = false;
+      verifyBtn.textContent =
+        "🔓 Verify & Continue";
+
+      return;
+    }
+
+
+    /* ================================================
+       PIN CORRECT
+    ================================================ */
+
+    sessionStorage.setItem(
+      "examAccessGranted",
+      "true"
+    );
+
+    sessionStorage.setItem(
+      "examAccessTime",
+      String(Date.now())
+    );
+
+    sessionStorage.setItem(
+      "candidateId",
+      currentUser.uid
+    );
+
+    sessionStorage.setItem(
+      "examId",
+      examId
+    );
+
+    sessionStorage.setItem(
+      "examName",
+      candidateData.assignedExamName ||
+      currentExam.examName ||
+      ""
+    );
+
+    sessionStorage.setItem(
+      "rollNumber",
+      candidateData.rollNumber || ""
+    );
+
+    sessionStorage.setItem(
+      "centre",
+      candidateData.centre ||
+      candidateData.center ||
+      ""
+    );
+
+    sessionStorage.setItem(
+      "roomNo",
+      candidateData.roomNo ||
+      candidateData.lab ||
+      ""
+    );
+
+    sessionStorage.setItem(
+      "seatNumber",
+      candidateData.seatNumber || ""
+    );
+
+    sessionStorage.setItem(
+      "instructionsAccepted",
+      "false"
+    );
+
+
+    showSuccess(
+      "✅ PIN verified successfully. Opening instructions..."
+    );
+
+
+    verifyBtn.textContent =
+      "✓ Verified";
+
+
+    /* ================================================
+       GO TO INSTRUCTIONS
+    ================================================ */
 
     setTimeout(function(){
 
-        window.location.replace(
-            "instructions.html"
-        );
+      window.location.replace(
+        "instructions.html?examId=" +
+        encodeURIComponent(examId)
+      );
 
-    },1000);
-
-});
+    },900);
 
 
-/* =========================
-   ENTER KEY SUPPORT
-========================= */
+  }catch(error){
 
-document
-.getElementById("examPin")
-.addEventListener("keydown", function(event){
+    console.error(
+      "PIN Verification Error:",
+      error
+    );
 
-    if(event.key === "Enter"){
+    showError(
+      "Something went wrong while verifying the PIN."
+    );
 
-        document
-        .getElementById("verifyButton")
-        .click();
+    verifyBtn.disabled = false;
+
+    verifyBtn.textContent =
+      "🔓 Verify & Continue";
+
+  }
+
+}
+
+
+/* =====================================================
+   ENTER KEY
+===================================================== */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    document
+      .getElementById("pinInput")
+      .addEventListener(
+        "keydown",
+        function(event){
+
+          if(event.key === "Enter"){
+
+            event.preventDefault();
+
+            verifyExamPIN();
+
+          }
+
+        }
+      );
+
+  }
+);
+
+
+/* =====================================================
+   AUTH STATE
+===================================================== */
+
+auth.onAuthStateChanged(
+  function(user){
+
+    if(user){
+
+      currentUser = user;
+
+      loadExamAccess();
+
+    }else{
+
+      document.getElementById("loadingBox").innerHTML =
+        "❌ Please login as a candidate first.";
+
+      setTimeout(function(){
+
+        window.location.href =
+          "login.html";
+
+      },1500);
 
     }
 
-});
-
-
-/* =========================
-   ONLY NUMBERS
-========================= */
-
-document
-.getElementById("examPin")
-.addEventListener("input", function(){
-
-    this.value =
-        this.value
-        .replace(/[^0-9]/g,"")
-        .slice(0,6);
-
-});
+  }
+);
 
 </script>
 

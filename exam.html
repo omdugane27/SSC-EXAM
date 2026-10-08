@@ -14,227 +14,986 @@
 
 <style>
 
-.exam-page{
-    min-height:100vh;
-    background:linear-gradient(135deg,#0f1f4d,#243f91);
-    color:white;
+/* =====================================================
+   RESET
+===================================================== */
+
+*{
+    box-sizing:border-box;
 }
 
+html,
+body{
+    margin:0;
+    padding:0;
+    width:100%;
+    min-height:100%;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#eef2f7;
+}
+
+
+/* =====================================================
+   MAIN PAGE
+===================================================== */
+
+.exam-page{
+    min-height:100vh;
+    background:#eef2f7;
+    color:#172033;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
 .exam-header{
-    min-height:70px;
-    background:#101b3d;
+    position:sticky;
+    top:0;
+    z-index:1000;
+
+    min-height:68px;
+
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:15px 25px;
-    gap:20px;
+
+    gap:18px;
+
+    padding:12px 22px;
+
+    background:#123b72;
+
+    color:white;
+
+    box-shadow:
+        0 2px 10px rgba(0,0,0,.18);
 }
 
-.exam-header b{
+.header-title{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-width:0;
+}
+
+.header-logo{
+    width:42px;
+    height:42px;
+
+    border-radius:9px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:white;
+    color:#123b72;
+
     font-size:20px;
+    font-weight:800;
+
+    flex-shrink:0;
+}
+
+.header-title-text{
+    min-width:0;
+}
+
+.header-title-text strong{
+    display:block;
+    font-size:17px;
+    white-space:nowrap;
+}
+
+.header-title-text small{
+    display:block;
+    margin-top:3px;
+    opacity:.8;
+    font-size:11px;
+}
+
+.candidate-box{
+    display:flex;
+    align-items:center;
+    gap:9px;
+
+    padding:8px 13px;
+
+    background:rgba(255,255,255,.12);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    border-radius:9px;
+
+    white-space:nowrap;
+}
+
+.candidate-icon{
+    width:30px;
+    height:30px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:white;
+    color:#123b72;
+
+    font-size:14px;
+    font-weight:bold;
 }
 
 #candidateName{
-    font-size:16px;
+    max-width:180px;
+
+    overflow:hidden;
+    text-overflow:ellipsis;
+
+    font-size:14px;
+    font-weight:700;
+}
+
+
+/* =====================================================
+   TIMER
+===================================================== */
+
+.timer-box{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.timer-label{
+    font-size:11px;
+    opacity:.8;
+    text-transform:uppercase;
 }
 
 .timer{
-    background:#dc2626;
-    padding:10px 18px;
-    border-radius:10px;
+    min-width:92px;
+
+    padding:9px 13px;
+
+    border-radius:8px;
+
+    background:#b91c1c;
+
+    color:white;
+
+    text-align:center;
+
     font-size:20px;
-    font-weight:bold;
+    font-weight:800;
+
+    letter-spacing:1px;
 }
+
+
+/* =====================================================
+   EXAM BODY
+===================================================== */
 
 .exam-container{
+
     display:grid;
-    grid-template-columns:1fr 300px;
-    gap:20px;
-    padding:25px;
-    max-width:1400px;
+
+    grid-template-columns:minmax(0,1fr) 320px;
+
+    gap:18px;
+
+    width:100%;
+
+    max-width:1450px;
+
     margin:auto;
+
+    padding:20px;
 }
 
+
+/* =====================================================
+   QUESTION CARD
+===================================================== */
+
 .question-section{
+
     background:white;
-    color:#111827;
-    border-radius:15px;
-    padding:25px;
-    min-height:500px;
+
+    border:1px solid #dce3ec;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+    min-width:0;
+
+    box-shadow:
+        0 2px 7px rgba(15,23,42,.06);
+}
+
+
+/* =====================================================
+   QUESTION TOP BAR
+===================================================== */
+
+.question-topbar{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:15px;
+
+    padding:15px 20px;
+
+    border-bottom:1px solid #e5eaf0;
+
+    background:#f8fafc;
 }
 
 .question-number{
-    font-size:18px;
-    font-weight:bold;
-    color:#1e3a8a;
-    margin-bottom:20px;
+
+    margin:0;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    color:#172033;
+}
+
+.question-number span{
+
+    color:#123b72;
+
+    font-size:17px;
+}
+
+.question-type{
+
+    padding:5px 10px;
+
+    border-radius:5px;
+
+    background:#e8f0fb;
+
+    color:#123b72;
+
+    font-size:11px;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+}
+
+
+/* =====================================================
+   QUESTION CONTENT
+===================================================== */
+
+.question-content{
+
+    padding:25px 24px 10px;
 }
 
 .question-text{
-    font-size:20px;
-    line-height:1.7;
+
+    color:#172033;
+
+    font-size:19px;
+
+    line-height:1.65;
+
     font-weight:600;
-    margin-bottom:25px;
+
+    word-wrap:break-word;
+
+    overflow-wrap:anywhere;
+
 }
 
+
+/* =====================================================
+   OPTIONS
+===================================================== */
+
 .options{
+
     display:flex;
+
     flex-direction:column;
-    gap:15px;
+
+    gap:11px;
+
+    padding:15px 24px 10px;
 }
 
 .exam-option{
+
+    position:relative;
+
     display:flex;
+
     align-items:flex-start;
-    gap:12px;
-    padding:16px;
-    border:2px solid #dbe3ef;
-    border-radius:12px;
+
+    gap:13px;
+
+    width:100%;
+
+    padding:14px 16px;
+
+    border:1px solid #d8e0ea;
+
+    border-radius:8px;
+
+    background:#fff;
+
+    color:#172033;
+
     cursor:pointer;
-    background:#f8fafc;
-    color:#111827;
-    font-size:17px;
-    line-height:1.5;
+
+    transition:
+        border-color .15s ease,
+        background .15s ease,
+        box-shadow .15s ease;
 }
 
 .exam-option:hover{
+
+    border-color:#4478b9;
+
+    background:#f7faff;
+}
+
+.exam-option:has(input:checked){
+
     border-color:#2563eb;
+
     background:#eff6ff;
+
+    box-shadow:
+        0 0 0 2px rgba(37,99,235,.08);
 }
 
 .exam-option input{
-    width:20px;
-    height:20px;
-    margin-top:3px;
+
+    width:18px;
+    height:18px;
+
+    margin:2px 0 0;
+
+    flex-shrink:0;
+
+    accent-color:#2563eb;
 }
 
+.exam-option span{
+
+    flex:1;
+
+    font-size:16px;
+
+    line-height:1.55;
+}
+
+.exam-option strong{
+
+    color:#123b72;
+}
+
+
+/* =====================================================
+   ACTION BUTTONS
+===================================================== */
+
 .exam-buttons{
+
     display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
     flex-wrap:wrap;
-    gap:10px;
-    margin-top:30px;
+
+    padding:20px 24px 24px;
+
+    border-top:1px solid #e5eaf0;
+
+    margin-top:18px;
+
+    background:#fbfcfe;
 }
 
 .exam-buttons button{
-    border:none;
-    padding:13px 18px;
-    border-radius:10px;
+
+    border:1px solid #cbd5e1;
+
+    padding:11px 16px;
+
+    border-radius:7px;
+
     cursor:pointer;
-    font-weight:bold;
-    font-size:14px;
+
+    font-weight:700;
+
+    font-size:13px;
+
+    background:white;
+
+    color:#172033;
+
+    transition:.15s ease;
+}
+
+.exam-buttons button:hover{
+
+    transform:translateY(-1px);
+
+    box-shadow:
+        0 3px 8px rgba(0,0,0,.08);
 }
 
 .exam-buttons button:first-child{
-    background:#38bdf8;
-    color:#082f49;
+
+    border-color:#94a3b8;
+
+    background:#f8fafc;
 }
 
 .exam-buttons button:nth-child(2){
-    background:#e5e7eb;
-    color:#111827;
+
+    color:#475569;
 }
 
 .exam-buttons button:nth-child(3){
-    background:#a855f7;
+
+    border-color:#7c3aed;
+
+    background:#7c3aed;
+
     color:white;
 }
 
 .exam-buttons button:nth-child(4){
-    background:#2563eb;
+
+    border-color:#123b72;
+
+    background:#123b72;
+
     color:white;
 }
 
 .exam-buttons button:disabled{
-    opacity:.5;
+
+    opacity:.45;
+
     cursor:not-allowed;
+
+    transform:none;
 }
+
+
+/* =====================================================
+   PALETTE PANEL
+===================================================== */
 
 .palette{
+
+    position:sticky;
+
+    top:88px;
+
+    align-self:start;
+
     background:white;
-    color:#111827;
-    border-radius:15px;
-    padding:20px;
-    height:max-content;
+
+    border:1px solid #dce3ec;
+
+    border-radius:10px;
+
+    padding:18px;
+
+    box-shadow:
+        0 2px 7px rgba(15,23,42,.06);
 }
 
-.palette h3{
+.palette-header{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
     margin-bottom:15px;
 }
 
-.palette-grid{
+.palette h3{
+
+    margin:0;
+
+    color:#172033;
+
+    font-size:17px;
+}
+
+.palette-count{
+
+    color:#64748b;
+
+    font-size:12px;
+}
+
+
+/* =====================================================
+   LEGEND
+===================================================== */
+
+.palette-legend{
+
     display:grid;
-    grid-template-columns:repeat(5,1fr);
+
+    grid-template-columns:1fr 1fr;
+
     gap:8px;
-    margin-bottom:20px;
+
+    margin-bottom:16px;
+
+    padding-bottom:14px;
+
+    border-bottom:1px solid #e5eaf0;
+}
+
+.legend-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    color:#64748b;
+
+    font-size:11px;
+}
+
+.legend-dot{
+
+    width:11px;
+    height:11px;
+
+    border-radius:3px;
+
+    background:#e5e7eb;
+}
+
+.legend-dot.answered{
+
+    background:#16a34a;
+}
+
+.legend-dot.marked{
+
+    background:#7c3aed;
+}
+
+.legend-dot.current{
+
+    background:#fff;
+
+    border:2px solid #2563eb;
+}
+
+
+/* =====================================================
+   PALETTE GRID
+===================================================== */
+
+.palette-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(5,minmax(0,1fr));
+
+    gap:7px;
+
+    max-height:410px;
+
+    overflow-y:auto;
+
+    padding:2px;
+
+    margin-bottom:18px;
 }
 
 .palette-question{
-    height:42px;
+
+    width:100%;
+
+    height:38px;
+
     border:1px solid #cbd5e1;
-    border-radius:8px;
-    background:#e5e7eb;
+
+    border-radius:6px;
+
+    background:#f1f5f9;
+
+    color:#334155;
+
     cursor:pointer;
-    font-weight:bold;
+
+    font-weight:700;
+
+    font-size:12px;
+}
+
+.palette-question:hover{
+
+    border-color:#2563eb;
 }
 
 .palette-question.answered{
-    background:#84cc16;
+
+    background:#16a34a;
+
+    border-color:#16a34a;
+
     color:white;
 }
 
 .palette-question.marked{
-    background:#a855f7;
+
+    background:#7c3aed;
+
+    border-color:#7c3aed;
+
     color:white;
 }
 
 .palette-question.current{
+
     outline:3px solid #2563eb;
+
+    outline-offset:1px;
 }
 
+
+/* =====================================================
+   SUBMIT
+===================================================== */
+
 .submit-btn{
+
     width:100%;
-    padding:14px;
+
+    padding:13px;
+
     border:none;
-    border-radius:10px;
-    background:#dc2626;
+
+    border-radius:7px;
+
+    background:#b91c1c;
+
     color:white;
-    font-size:16px;
-    font-weight:bold;
+
+    font-size:14px;
+
+    font-weight:800;
+
     cursor:pointer;
 }
 
-.loading{
-    text-align:center;
-    padding:50px;
-    font-size:20px;
+.submit-btn:hover{
+
+    background:#991b1b;
 }
 
-@media(max-width:800px){
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.loading{
+
+    padding:45px 20px;
+
+    text-align:center;
+
+    color:#64748b;
+
+    font-size:16px;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:900px){
 
     .exam-header{
-        flex-direction:column;
-        align-items:flex-start;
+
+        position:relative;
+
+        display:grid;
+
+        grid-template-columns:1fr auto;
+
+        gap:10px;
+
+        padding:10px 12px;
     }
 
-    .exam-container{
-        grid-template-columns:1fr;
-        padding:12px;
+    .header-title{
+
+        grid-column:1 / -1;
     }
 
-    .question-section{
-        padding:18px;
+    .header-title-text strong{
+
+        font-size:14px;
     }
 
-    .question-text{
+    .header-title-text small{
+
+        font-size:10px;
+    }
+
+    .candidate-box{
+
+        justify-self:start;
+
+        max-width:60%;
+    }
+
+    #candidateName{
+
+        max-width:130px;
+    }
+
+    .timer-box{
+
+        justify-self:end;
+    }
+
+    .timer-label{
+
+        display:none;
+    }
+
+    .timer{
+
+        min-width:80px;
+
+        padding:8px 10px;
+
         font-size:18px;
     }
 
-    .exam-buttons{
+    .exam-container{
+
+        display:flex;
+
         flex-direction:column;
+
+        padding:10px;
+
+        gap:12px;
+    }
+
+    .question-section{
+
+        order:1;
+
+        border-radius:8px;
+    }
+
+    .palette{
+
+        position:relative;
+
+        top:auto;
+
+        order:2;
+
+        padding:14px;
+    }
+
+    .question-topbar{
+
+        padding:13px 14px;
+    }
+
+    .question-content{
+
+        padding:20px 15px 5px;
+    }
+
+    .question-text{
+
+        font-size:17px;
+
+        line-height:1.6;
+    }
+
+    .options{
+
+        padding:12px 15px 5px;
+
+        gap:9px;
+    }
+
+    .exam-option{
+
+        padding:13px;
+
+        gap:10px;
+    }
+
+    .exam-option span{
+
+        font-size:15px;
+    }
+
+    .exam-buttons{
+
+        display:grid;
+
+        grid-template-columns:1fr 1fr;
+
+        padding:15px;
+
+        gap:8px;
     }
 
     .exam-buttons button{
+
         width:100%;
+
+        min-height:44px;
+
+        padding:10px 7px;
+
+        font-size:12px;
+    }
+
+    .exam-buttons button:nth-child(4){
+
+        grid-column:1 / -1;
+    }
+
+    .palette-grid{
+
+        max-height:250px;
+
+        grid-template-columns:
+            repeat(8,minmax(0,1fr));
+
+        gap:6px;
+    }
+
+    .palette-question{
+
+        height:34px;
+
+        font-size:11px;
+    }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media(max-width:480px){
+
+    .header-logo{
+
+        width:34px;
+        height:34px;
+
+        font-size:16px;
+    }
+
+    .header-title-text strong{
+
+        font-size:12px;
+    }
+
+    .header-title-text small{
+
+        display:none;
+    }
+
+    .candidate-icon{
+
+        width:26px;
+        height:26px;
+    }
+
+    #candidateName{
+
+        max-width:110px;
+
+        font-size:12px;
+    }
+
+    .timer{
+
+        min-width:72px;
+
+        font-size:16px;
+    }
+
+    .question-text{
+
+        font-size:16px;
+    }
+
+    .exam-option span{
+
+        font-size:14px;
+    }
+
+    .palette-grid{
+
+        grid-template-columns:
+            repeat(6,minmax(0,1fr));
+    }
+
+}
+
+
+/* =====================================================
+   VERY SMALL MOBILE
+===================================================== */
+
+@media(max-width:360px){
+
+    .exam-buttons{
+
+        grid-template-columns:1fr;
+    }
+
+    .exam-buttons button:nth-child(4){
+
+        grid-column:auto;
+    }
+
+    .palette-grid{
+
+        grid-template-columns:
+            repeat(5,minmax(0,1fr));
     }
 
 }
@@ -249,45 +1008,115 @@
 <div class="exam-page">
 
 
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
 <header class="exam-header">
 
-    <b>
-        SSC COMPUTER BASED EXAMINATION
-    </b>
 
-    <span id="candidateName">
-        Candidate
-    </span>
+    <div class="header-title">
 
-    <div class="timer">
-        <span id="timer">
-            60:00
-        </span>
+        <div class="header-logo">
+            SSC
+        </div>
+
+        <div class="header-title-text">
+
+            <strong>
+                SSC COMPUTER BASED EXAMINATION
+            </strong>
+
+            <small>
+                Computer Based Test
+            </small>
+
+        </div>
+
     </div>
+
+
+    <div class="candidate-box">
+
+        <div class="candidate-icon">
+            👤
+        </div>
+
+        <span id="candidateName">
+            Candidate
+        </span>
+
+    </div>
+
+
+    <div class="timer-box">
+
+        <span class="timer-label">
+            Time Left
+        </span>
+
+        <div class="timer">
+
+            <span id="timer">
+                60:00
+            </span>
+
+        </div>
+
+    </div>
+
 
 </header>
 
 
+
+<!-- =====================================================
+     MAIN EXAM
+===================================================== -->
+
 <main class="exam-container">
 
 
+<!-- =====================================================
+     QUESTION
+===================================================== -->
+
 <section class="question-section">
 
-    <div class="question-number">
 
-        Question
-        <span id="questionNumber">1</span>
+    <div class="question-topbar">
 
-        of
-        <span id="totalQuestions">0</span>
+        <div class="question-number">
+
+            Question
+            <span id="questionNumber">
+                1
+            </span>
+
+            of
+
+            <span id="totalQuestions">
+                0
+            </span>
+
+        </div>
+
+
+        <div class="question-type">
+            MCQ
+        </div>
 
     </div>
 
 
-    <div id="questionText"
-         class="question-text">
+    <div class="question-content">
 
-        Loading question...
+        <div id="questionText"
+             class="question-text">
+
+            Loading question...
+
+        </div>
 
     </div>
 
@@ -296,52 +1125,126 @@
          class="options">
 
         <div class="loading">
+
             Loading options...
+
         </div>
 
     </div>
 
 
+    <!-- ACTIONS -->
+
     <div class="exam-buttons">
+
 
         <button
             onclick="previousQuestion()">
-            Previous
+
+            ← Previous
+
         </button>
 
 
         <button
             onclick="clearAnswer()">
+
             Clear Response
+
         </button>
 
 
         <button
             onclick="markReview()">
-            Mark for Review
+
+            ⚑ Mark for Review
+
         </button>
 
 
         <button
             onclick="nextQuestion()">
-            Save & Next
+
+            Save & Next →
+
         </button>
 
+
     </div>
+
 
 </section>
 
 
 
+<!-- =====================================================
+     QUESTION PALETTE
+===================================================== -->
+
 <aside class="palette">
 
-    <h3>
-        Question Palette
-    </h3>
+
+    <div class="palette-header">
+
+        <h3>
+            Question Palette
+        </h3>
+
+        <span
+            class="palette-count">
+
+            Questions
+
+        </span>
+
+    </div>
+
+
+    <div class="palette-legend">
+
+
+        <div class="legend-item">
+
+            <span class="legend-dot answered"></span>
+
+            Answered
+
+        </div>
+
+
+        <div class="legend-item">
+
+            <span class="legend-dot marked"></span>
+
+            Review
+
+        </div>
+
+
+        <div class="legend-item">
+
+            <span class="legend-dot"></span>
+
+            Not Answered
+
+        </div>
+
+
+        <div class="legend-item">
+
+            <span class="legend-dot current"></span>
+
+            Current
+
+        </div>
+
+
+    </div>
 
 
     <div id="questionPalette"
          class="palette-grid">
+
     </div>
 
 
@@ -353,6 +1256,7 @@
 
     </button>
 
+
 </aside>
 
 
@@ -361,8 +1265,9 @@
 </div>
 
 
+
 <!-- =====================================================
-     FIREBASE SDK
+     FIREBASE
 ===================================================== -->
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -372,46 +1277,12 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
 
+
 <!-- =====================================================
-     EXAM SCRIPT
+     EXAM ENGINE
 ===================================================== -->
 
 <script src="script.js"></script>
-
-
-<script>
-
-/*
-   Update total question count
-   after script loads questions.
-*/
-
-const originalDisplayQuestion =
-    window.displayQuestion;
-
-if(typeof originalDisplayQuestion === "function"){
-
-    window.displayQuestion = function(){
-
-        originalDisplayQuestion();
-
-        const total =
-            document.getElementById(
-                "totalQuestions"
-            );
-
-        if(total && window.questions){
-
-            total.textContent =
-                window.questions.length;
-
-        }
-
-    };
-
-}
-
-</script>
 
 
 </body>

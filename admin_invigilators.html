@@ -1,988 +1,1210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Manage Invigilators - SSC Examination System</title>
+  <title>Invigilator Management | SSC Examination System</title>
 
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-<style>
-*{
-  box-sizing:border-box;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
 
-body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:#f1f5f9;
-  color:#172033;
-}
+    body {
+      background: #f4f7fb;
+      color: #1f2937;
+    }
 
-.header{
-  background:linear-gradient(135deg,#172554,#2563eb);
-  color:white;
-  padding:25px 20px;
-}
+    header {
+      background: #111827;
+      color: white;
+      padding: 18px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
 
-.header h1{
-  margin:0;
-  font-size:30px;
-}
+    header h1 {
+      font-size: 22px;
+    }
 
-.header p{
-  margin:8px 0 0;
-  font-size:16px;
-}
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-.top-buttons{
-  display:flex;
-  gap:12px;
-  margin-top:25px;
-}
+    .admin-email {
+      font-size: 13px;
+      opacity: .85;
+    }
 
-.top-buttons a,
-.top-buttons button{
-  flex:1;
-  border:0;
-  border-radius:12px;
-  padding:16px;
-  font-size:17px;
-  font-weight:bold;
-  text-align:center;
-  text-decoration:none;
-  cursor:pointer;
-}
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-weight: 600;
+    }
 
-.dashboard-btn{
-  background:#475569;
-  color:white;
-}
+    .logout {
+      background: #ef4444;
+      color: white;
+    }
 
-.logout-btn{
-  background:#dc2626;
-  color:white;
-}
+    .container {
+      max-width: 1250px;
+      margin: 25px auto;
+      padding: 0 18px;
+    }
 
-.container{
-  max-width:1100px;
-  margin:30px auto;
-  padding:0 18px;
-}
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
 
-.card{
-  background:white;
-  border-radius:22px;
-  padding:25px;
-  margin-bottom:25px;
-  box-shadow:0 8px 30px rgba(15,23,42,.08);
-}
+    .topbar h2 {
+      font-size: 24px;
+    }
 
-.card h2{
-  color:#1e3a8a;
-  margin-top:0;
-}
+    .back-btn {
+      background: #374151;
+      color: white;
+    }
 
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-}
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
 
-.field{
-  display:flex;
-  flex-direction:column;
-}
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 3px 15px rgba(0,0,0,.06);
+    }
 
-.field label{
-  font-weight:bold;
-  margin-bottom:8px;
-  color:#374151;
-}
+    .stat-card span {
+      display: block;
+      color: #6b7280;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
 
-.field input,
-.field select{
-  width:100%;
-  padding:15px;
-  border:1px solid #cbd5e1;
-  border-radius:12px;
-  font-size:16px;
-  outline:none;
-}
+    .stat-card strong {
+      font-size: 28px;
+    }
 
-.field input:focus,
-.field select:focus{
-  border-color:#2563eb;
-  box-shadow:0 0 0 3px rgba(37,99,235,.12);
-}
+    .panel {
+      background: white;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 3px 15px rgba(0,0,0,.06);
+    }
 
-.full{
-  grid-column:1 / -1;
-}
+    .panel h3 {
+      margin-bottom: 18px;
+    }
 
-.create-btn{
-  width:100%;
-  margin-top:22px;
-  border:0;
-  background:#2563eb;
-  color:white;
-  padding:16px;
-  border-radius:12px;
-  font-size:17px;
-  font-weight:bold;
-  cursor:pointer;
-}
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
 
-.create-btn:disabled{
-  opacity:.6;
-  cursor:not-allowed;
-}
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
 
-.message{
-  display:none;
-  padding:15px;
-  margin-top:18px;
-  border-radius:12px;
-  font-weight:bold;
-}
+    input,
+    select {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      outline: none;
+      background: white;
+    }
 
-.success{
-  display:block;
-  background:#dcfce7;
-  color:#166534;
-}
+    input:focus,
+    select:focus {
+      border-color: #2563eb;
+    }
 
-.error{
-  display:block;
-  background:#fee2e2;
-  color:#991b1b;
-}
+    .full {
+      grid-column: 1 / -1;
+    }
 
-.loading{
-  display:block;
-  background:#dbeafe;
-  color:#1e40af;
-}
+    .primary {
+      background: #2563eb;
+      color: white;
+    }
 
-.table-wrap{
-  overflow-x:auto;
-}
+    .primary:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:850px;
-}
+    .message {
+      margin-top: 14px;
+      padding: 11px 13px;
+      border-radius: 8px;
+      display: none;
+      font-size: 14px;
+    }
 
-th,
-td{
-  padding:14px;
-  border-bottom:1px solid #e5e7eb;
-  text-align:left;
-}
+    .success {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+    }
 
-th{
-  background:#eff6ff;
-  color:#1e3a8a;
-}
+    .error {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+    }
 
-.badge{
-  display:inline-block;
-  padding:6px 10px;
-  border-radius:20px;
-  font-size:13px;
-  font-weight:bold;
-}
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
 
-.active{
-  background:#dcfce7;
-  color:#166534;
-}
+    .table-wrapper {
+      overflow-x: auto;
+    }
 
-.empty{
-  text-align:center;
-  padding:30px;
-  color:#64748b;
-}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 950px;
+    }
 
-.refresh-btn{
-  background:#0f766e;
-  color:white;
-  border:0;
-  padding:10px 15px;
-  border-radius:9px;
-  cursor:pointer;
-  font-weight:bold;
-}
+    th,
+    td {
+      padding: 13px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      font-size: 13px;
+    }
 
-@media(max-width:700px){
-  .form-grid{
-    grid-template-columns:1fr;
-  }
+    th {
+      background: #f9fafb;
+      font-weight: 700;
+    }
 
-  .full{
-    grid-column:auto;
-  }
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
 
-  .header h1{
-    font-size:25px;
-  }
+    .active {
+      background: #dcfce7;
+      color: #166534;
+    }
 
-  .top-buttons{
-    flex-direction:column;
-  }
+    .inactive {
+      background: #fee2e2;
+      color: #991b1b;
+    }
 
-  .card{
-    padding:20px;
-  }
-}
-</style>
+    .actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .activate {
+      background: #16a34a;
+      color: white;
+    }
+
+    .deactivate {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .delete {
+      background: #dc2626;
+      color: white;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px;
+      color: #6b7280;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 25px;
+      color: #6b7280;
+    }
+
+    @media (max-width: 750px) {
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      .filters {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        align-items: flex-start;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<header class="header">
+<header>
+  <h1>SSC Examination System</h1>
 
-  <h1>👨‍🏫 Manage Invigilators</h1>
+  <div class="header-right">
+    <span class="admin-email" id="adminEmail">Admin</span>
+    <button class="logout" onclick="logout()">Logout</button>
+  </div>
+</header>
 
-  <p>
-    SSC Examination System - Admin Panel
-  </p>
+<div class="container">
 
-  <div class="top-buttons">
-
-    <a
-      href="admin_dashboard.html"
-      class="dashboard-btn"
-    >
+  <div class="topbar">
+    <h2>Invigilator Management</h2>
+    <button class="back-btn" onclick="location.href='admin_dashboard.html'">
       ← Dashboard
-    </a>
-
-    <button
-      class="logout-btn"
-      onclick="logoutAdmin()"
-    >
-      Logout
     </button>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+
+    <div class="stat-card">
+      <span>Total Invigilators</span>
+      <strong id="totalCount">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Active</span>
+      <strong id="activeCount">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Inactive</span>
+      <strong id="inactiveCount">0</strong>
+    </div>
 
   </div>
 
-</header>
-
-<main class="container">
-
   <!-- CREATE -->
-  <section class="card">
+  <div class="panel">
 
-    <h2>
-      ➕ Create Invigilator Account
-    </h2>
+    <h3>Create Invigilator</h3>
 
     <form id="invigilatorForm">
 
       <div class="form-grid">
 
-        <div class="field">
-
-          <label>
-            Full Name
-          </label>
-
+        <div>
+          <label>Full Name</label>
           <input
-            id="fullName"
             type="text"
+            id="name"
             placeholder="Enter full name"
             required
           >
-
         </div>
 
-        <div class="field">
-
-          <label>
-            Email
-          </label>
-
+        <div>
+          <label>Email</label>
           <input
-            id="email"
             type="email"
-            placeholder="invigilator@example.com"
+            id="email"
+            placeholder="Enter email address"
             required
           >
-
         </div>
 
-        <div class="field">
-
-          <label>
-            Login Password
-          </label>
-
+        <div>
+          <label>Employee ID</label>
           <input
-            id="password"
-            type="password"
-            placeholder="Minimum 6 characters"
-            minlength="6"
-            required
-          >
-
-        </div>
-
-        <div class="field">
-
-          <label>
-            Employee ID
-          </label>
-
-          <input
-            id="employeeId"
             type="text"
-            placeholder="INV-001"
+            id="employeeId"
+            placeholder="Example: INV-101"
             required
           >
-
         </div>
 
-        <div class="field">
-
-          <label>
-            Centre
-          </label>
-
-          <select id="centre">
+        <div>
+          <label>Centre</label>
+          <select id="centre" required>
+            <option value="">Select Centre</option>
             <option value="Centre-01">Centre-01</option>
             <option value="Centre-02">Centre-02</option>
             <option value="Centre-03">Centre-03</option>
           </select>
-
         </div>
 
-        <div class="field">
-
-          <label>
-            Lab / Room
-          </label>
-
-          <select id="lab">
-
+        <div>
+          <label>Lab / Room</label>
+          <select id="lab" required>
+            <option value="">Select Lab</option>
             <option value="Lab-01">Lab-01</option>
             <option value="Lab-02">Lab-02</option>
             <option value="Lab-03">Lab-03</option>
             <option value="Lab-04">Lab-04</option>
             <option value="Lab-05">Lab-05</option>
-
           </select>
+        </div>
 
+        <div>
+          <label>Password</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="Minimum 6 characters"
+            minlength="6"
+            required
+          >
+        </div>
+
+        <div class="full">
+          <button
+            type="submit"
+            class="primary"
+            id="createBtn"
+          >
+            Create Invigilator
+          </button>
         </div>
 
       </div>
 
-      <button
-        id="createBtn"
-        type="submit"
-        class="create-btn"
-      >
-        👨‍🏫 Create Invigilator
-      </button>
+      <div id="formMessage" class="message"></div>
 
     </form>
 
-    <div
-      id="message"
-      class="message"
-    ></div>
-
-  </section>
-
+  </div>
 
   <!-- LIST -->
-  <section class="card">
+  <div class="panel">
 
-    <h2>
-      📋 Invigilator List
-    </h2>
+    <h3>Invigilators</h3>
 
-    <button
-      class="refresh-btn"
-      onclick="loadInvigilators()"
-    >
-      🔄 Refresh
-    </button>
+    <div class="filters">
 
-    <br><br>
+      <input
+        type="search"
+        id="searchInput"
+        placeholder="Search name, email, employee ID, centre, lab or UID..."
+      >
 
-    <div class="table-wrap">
+      <select id="statusFilter">
+        <option value="all">All Status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
 
-      <table>
+    </div>
+
+    <div id="loading" class="loading">
+      Loading invigilators...
+    </div>
+
+    <div class="table-wrapper">
+
+      <table id="invigilatorTable" style="display:none;">
 
         <thead>
-
           <tr>
-
             <th>Name</th>
-
             <th>Email</th>
-
             <th>Employee ID</th>
-
             <th>Centre</th>
-
             <th>Lab / Room</th>
-
             <th>Status</th>
-
+            <th>Actions</th>
           </tr>
-
         </thead>
 
-        <tbody id="invigilatorTable">
-
-          <tr>
-
-            <td
-              colspan="6"
-              class="empty"
-            >
-              Loading invigilators...
-            </td>
-
-          </tr>
-
-        </tbody>
+        <tbody id="invigilatorBody"></tbody>
 
       </table>
 
     </div>
 
-  </section>
+    <div id="emptyState" class="empty" style="display:none;">
+      No invigilators found.
+    </div>
 
-</main>
+  </div>
 
+</div>
 
 <script>
 
-/* =========================================================
-   FIREBASE CONFIG
-========================================================= */
+  // ==============================
+  // FIREBASE CONFIG
+  // ==============================
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
-  authDomain: "ssc-exam-project-8af6b.firebaseapp.com",
-  projectId: "ssc-exam-project-8af6b",
-  storageBucket: "ssc-exam-project-8af6b.firebasestorage.app",
-  messagingSenderId: "288245274853",
-  appId: "1:288245274853:web:b4d535a08faf305f5e9c0c",
-  measurementId: "G-4BTLY67VDS"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+    authDomain: "ssc-exam-project-8af6b.firebaseapp.com",
+    projectId: "ssc-exam-project-8af6b",
+    storageBucket: "ssc-exam-project-8af6b.firebasestorage.app",
+    messagingSenderId: "288245274853",
+    appId: "1:288245274853:web:b4d535a08faf305f5e9c0c",
+    measurementId: "G-4BTLY67VDS"
+  };
 
-firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
 
-const auth =
-  firebase.auth();
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-const db =
-  firebase.firestore();
+  // ==============================
+  // SUPABASE EDGE FUNCTION
+  // ==============================
 
+  const FUNCTION_URL =
+    "https://sjvdfvibbdxjtmfmuyci.supabase.co/functions/v1/hyper-function";
 
-/* =========================================================
-   SUPABASE EDGE FUNCTION
-========================================================= */
+  // ==============================
+  // GLOBAL DATA
+  // ==============================
 
-const FUNCTION_URL =
-  "https://sjvdfvibbdxjtmfmuyci.supabase.co/functions/v1/hyper-function";
+  let currentAdmin = null;
+  let allInvigilators = [];
 
+  // ==============================
+  // AUTH GUARD
+  // ==============================
 
-/* =========================================================
-   ELEMENTS
-========================================================= */
-
-const form =
-  document.getElementById(
-    "invigilatorForm"
-  );
-
-const message =
-  document.getElementById(
-    "message"
-  );
-
-const createBtn =
-  document.getElementById(
-    "createBtn"
-  );
-
-const table =
-  document.getElementById(
-    "invigilatorTable"
-  );
-
-
-/* =========================================================
-   MESSAGE
-========================================================= */
-
-function showMessage(
-  text,
-  type
-) {
-  message.textContent =
-    text;
-
-  message.className =
-    "message " + type;
-}
-
-
-/* =========================================================
-   ADMIN AUTH
-========================================================= */
-
-auth.onAuthStateChanged(
-  async (user) => {
+  auth.onAuthStateChanged(async (user) => {
 
     if (!user) {
-
-      window.location.replace(
-        "admin_login.html"
-      );
-
+      location.href = "admin_login.html";
       return;
     }
 
-    const isAdmin =
-      sessionStorage.getItem(
-        "adminLoggedIn"
-      );
+    const sessionUID = sessionStorage.getItem("adminUID");
 
-    if (isAdmin !== "true") {
-
-      window.location.replace(
-        "admin_login.html"
-      );
-
+    if (
+      sessionStorage.getItem("adminLoggedIn") !== "true" ||
+      !sessionUID ||
+      sessionUID !== user.uid
+    ) {
+      await auth.signOut();
+      location.href = "admin_login.html";
       return;
     }
 
-    await loadInvigilators();
+    currentAdmin = user;
 
-  }
-);
+    document.getElementById("adminEmail").textContent =
+      user.email || "Admin";
 
+    loadInvigilators();
 
-/* =========================================================
-   CREATE INVIGILATOR
-========================================================= */
+  });
 
-form.addEventListener(
-  "submit",
-  async (event) => {
+  // ==============================
+  // LOAD INVIGILATORS
+  // ==============================
 
-    event.preventDefault();
+  async function loadInvigilators() {
+
+    const loading = document.getElementById("loading");
+
+    loading.style.display = "block";
 
     try {
 
-      createBtn.disabled = true;
+      const snapshot =
+        await db.collection("invigilators").get();
 
-      showMessage(
-        "Creating invigilator account...",
-        "loading"
-      );
+      allInvigilators = [];
 
-      const user =
-        auth.currentUser;
+      snapshot.forEach(doc => {
 
-      if (!user) {
-        throw new Error(
-          "Admin is not logged in."
-        );
-      }
+        const data = doc.data();
 
-      /* Get fresh Firebase ID token */
+        allInvigilators.push({
+          id: doc.id,
+          ...data
+        });
 
-      const idToken =
-        await user.getIdToken(
-          true
-        );
+      });
+
+      updateStats();
+      renderInvigilators();
+
+    } catch (error) {
+
+      console.error(error);
+
+      loading.textContent =
+        "Failed to load invigilators: " + error.message;
+
+    }
+
+  }
+
+  // ==============================
+  // STATS
+  // ==============================
+
+  function updateStats() {
+
+    const total = allInvigilators.length;
+
+    const active =
+      allInvigilators.filter(
+        x => String(x.status || "").toLowerCase() === "active"
+      ).length;
+
+    const inactive = total - active;
+
+    document.getElementById("totalCount").textContent = total;
+    document.getElementById("activeCount").textContent = active;
+    document.getElementById("inactiveCount").textContent = inactive;
+
+  }
+
+  // ==============================
+  // SEARCH + STATUS FILTER
+  // ==============================
+
+  document
+    .getElementById("searchInput")
+    .addEventListener("input", renderInvigilators);
+
+  document
+    .getElementById("statusFilter")
+    .addEventListener("change", renderInvigilators);
+
+  function renderInvigilators() {
+
+    const search =
+      document
+        .getElementById("searchInput")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const status =
+      document.getElementById("statusFilter").value;
+
+    const filtered = allInvigilators.filter(item => {
+
+      const searchable = [
+        item.name,
+        item.fullName,
+        item.email,
+        item.employeeId,
+        item.centre,
+        item.lab,
+        item.roomNo,
+        item.uid,
+        item.id
+      ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+      const matchesSearch =
+        !search || searchable.includes(search);
+
+      const itemStatus =
+        String(item.status || "active").toLowerCase();
+
+      const matchesStatus =
+        status === "all" ||
+        itemStatus === status;
+
+      return matchesSearch && matchesStatus;
+
+    });
+
+    const body =
+      document.getElementById("invigilatorBody");
+
+    const table =
+      document.getElementById("invigilatorTable");
+
+    const empty =
+      document.getElementById("emptyState");
+
+    const loading =
+      document.getElementById("loading");
+
+    loading.style.display = "none";
+
+    body.innerHTML = "";
+
+    if (filtered.length === 0) {
+
+      table.style.display = "none";
+      empty.style.display = "block";
+
+      return;
+    }
+
+    table.style.display = "table";
+    empty.style.display = "none";
+
+    filtered.forEach(item => {
+
+      const status =
+        String(item.status || "active").toLowerCase();
+
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+
+        <td>
+          <strong>
+            ${escapeHTML(item.name || item.fullName || "-")}
+          </strong>
+        </td>
+
+        <td>
+          ${escapeHTML(item.email || "-")}
+        </td>
+
+        <td>
+          ${escapeHTML(item.employeeId || "-")}
+        </td>
+
+        <td>
+          ${escapeHTML(item.centre || "-")}
+        </td>
+
+        <td>
+          ${escapeHTML(item.lab || item.roomNo || "-")}
+        </td>
+
+        <td>
+          <span class="badge ${status === "active" ? "active" : "inactive"}">
+            ${status === "active" ? "ACTIVE" : "INACTIVE"}
+          </span>
+        </td>
+
+        <td>
+
+          <div class="actions">
+
+            ${
+              status === "active"
+
+              ? `
+                <button
+                  class="deactivate"
+                  onclick="changeStatus(
+                    '${escapeJS(item.uid || item.id)}',
+                    'deactivate'
+                  )"
+                >
+                  Deactivate
+                </button>
+              `
+
+              : `
+                <button
+                  class="activate"
+                  onclick="changeStatus(
+                    '${escapeJS(item.uid || item.id)}',
+                    'activate'
+                  )"
+                >
+                  Activate
+                </button>
+              `
+            }
+
+            <button
+              class="delete"
+              onclick="deleteInvigilator(
+                '${escapeJS(item.uid || item.id)}',
+                '${escapeJS(item.name || item.fullName || item.email || "this invigilator")}'
+              )"
+            >
+              Delete
+            </button>
+
+          </div>
+
+        </td>
+
+      `;
+
+      body.appendChild(tr);
+
+    });
+
+  }
+
+  // ==============================
+  // CREATE INVIGILATOR
+  // ==============================
+
+  document
+    .getElementById("invigilatorForm")
+    .addEventListener("submit", async (e) => {
+
+      e.preventDefault();
 
       const name =
-        document
-          .getElementById("fullName")
-          .value
-          .trim();
+        document.getElementById("name").value.trim();
 
       const email =
-        document
-          .getElementById("email")
-          .value
-          .trim()
-          .toLowerCase();
-
-      const password =
-        document
-          .getElementById("password")
-          .value;
+        document.getElementById("email").value.trim().toLowerCase();
 
       const employeeId =
         document
           .getElementById("employeeId")
           .value
-          .trim();
+          .trim()
+          .toUpperCase();
 
       const centre =
-        document
-          .getElementById("centre")
-          .value;
+        document.getElementById("centre").value;
 
       const lab =
-        document
-          .getElementById("lab")
-          .value;
+        document.getElementById("lab").value;
 
+      const password =
+        document.getElementById("password").value;
 
-      /* ---------------------------------------------------
-         IMPORTANT:
-         Exact backend action
-      --------------------------------------------------- */
+      const message =
+        document.getElementById("formMessage");
 
-      const response =
-        await fetch(
-          FUNCTION_URL,
-          {
+      const createBtn =
+        document.getElementById("createBtn");
+
+      message.className = "message";
+      message.textContent = "";
+
+      // ------------------------------
+      // CLIENT-SIDE DUPLICATE CHECK
+      // ------------------------------
+
+      const emailExists =
+        allInvigilators.some(
+          x =>
+            String(x.email || "")
+              .toLowerCase()
+              === email
+        );
+
+      if (emailExists) {
+
+        showMessage(
+          "This email is already registered as an invigilator.",
+          "error"
+        );
+
+        return;
+      }
+
+      const employeeExists =
+        allInvigilators.some(
+          x =>
+            String(x.employeeId || "")
+              .toUpperCase()
+              === employeeId
+        );
+
+      if (employeeExists) {
+
+        showMessage(
+          "This Employee ID is already registered.",
+          "error"
+        );
+
+        return;
+      }
+
+      if (password.length < 6) {
+
+        showMessage(
+          "Password must contain at least 6 characters.",
+          "error"
+        );
+
+        return;
+      }
+
+      createBtn.disabled = true;
+      createBtn.textContent = "Creating...";
+
+      try {
+
+        const idToken =
+          await currentAdmin.getIdToken(true);
+
+        const response =
+          await fetch(FUNCTION_URL, {
+
             method: "POST",
 
             headers: {
-              "Content-Type":
-                "application/json",
-
-              "Authorization":
-                `Bearer ${idToken}`
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + idToken
             },
 
             body: JSON.stringify({
 
-              action:
-                "create_invigilator",
+              action: "create_invigilator",
 
-              name:
-                name,
-
-              email:
-                email,
-
-              password:
-                password,
-
-              employeeId:
-                employeeId,
-
-              centre:
-                centre,
-
-              lab:
-                lab,
-
-              roomNo:
-                lab
+              name,
+              email,
+              employeeId,
+              password,
+              centre,
+              lab,
+              roomNo: lab
 
             })
+
+          });
+
+        const result =
+          await response.json();
+
+        if (!response.ok) {
+
+          if (
+            result.code === "EMAIL_ALREADY_EXISTS"
+          ) {
+
+            throw new Error(
+              "This email is already registered."
+            );
+
           }
+
+          if (
+            result.code === "EMPLOYEE_ID_ALREADY_EXISTS"
+          ) {
+
+            throw new Error(
+              "This Employee ID is already registered."
+            );
+
+          }
+
+          throw new Error(
+            result.error ||
+            result.message ||
+            "Failed to create invigilator."
+          );
+
+        }
+
+        showMessage(
+          "Invigilator created successfully.",
+          "success"
         );
 
+        document
+          .getElementById("invigilatorForm")
+          .reset();
+
+        await loadInvigilators();
+
+      } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+          error.message ||
+          "Something went wrong.",
+          "error"
+        );
+
+      } finally {
+
+        createBtn.disabled = false;
+        createBtn.textContent = "Create Invigilator";
+
+      }
+
+    });
+
+  // ==============================
+  // ACTIVATE / DEACTIVATE
+  // ==============================
+
+  async function changeStatus(uid, action) {
+
+    if (!uid) {
+
+      alert("Invigilator UID not found.");
+      return;
+
+    }
+
+    const confirmText =
+      action === "activate"
+        ? "Activate this invigilator?"
+        : "Deactivate this invigilator?";
+
+    if (!confirm(confirmText)) return;
+
+    try {
+
+      const idToken =
+        await currentAdmin.getIdToken(true);
+
+      const response =
+        await fetch(FUNCTION_URL, {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + idToken
+          },
+
+          body: JSON.stringify({
+
+            action:
+              action === "activate"
+                ? "activate_invigilator"
+                : "deactivate_invigilator",
+
+            uid
+
+          })
+
+        });
 
       const result =
         await response.json();
-
 
       if (!response.ok) {
 
         throw new Error(
           result.error ||
-          `HTTP ${response.status}`
-        );
-
-      }
-
-
-      if (
-        result.success !== true
-      ) {
-
-        throw new Error(
           result.message ||
-          result.error ||
-          "Invigilator creation failed."
+          "Status update failed."
         );
 
       }
 
-
-      showMessage(
-        "✅ Invigilator created successfully.",
-        "success"
+      alert(
+        action === "activate"
+          ? "Invigilator activated successfully."
+          : "Invigilator deactivated successfully."
       );
-
-
-      form.reset();
-
 
       await loadInvigilators();
 
-    }
+    } catch (error) {
 
-    catch (error) {
+      console.error(error);
 
-      console.error(
-        "Create invigilator error:",
-        error
+      alert(
+        "Error: " +
+        (error.message || "Status update failed.")
       );
-
-      showMessage(
-        "❌ " +
-        (
-          error.message ||
-          "Failed to create invigilator."
-        ),
-        "error"
-      );
-
-    }
-
-    finally {
-
-      createBtn.disabled =
-        false;
 
     }
 
   }
-);
 
+  // ==============================
+  // SECURE DELETE
+  // ==============================
 
-/* =========================================================
-   LOAD INVIGILATORS
-========================================================= */
+  async function deleteInvigilator(uid, displayName) {
 
-async function loadInvigilators() {
+    if (!uid) {
 
-  table.innerHTML = `
-    <tr>
-      <td colspan="6" class="empty">
-        Loading...
-      </td>
-    </tr>
-  `;
-
-  try {
-
-    const snapshot =
-      await db
-        .collection(
-          "invigilators"
-        )
-        .orderBy(
-          "createdAt",
-          "desc"
-        )
-        .get();
-
-
-    if (
-      snapshot.empty
-    ) {
-
-      table.innerHTML = `
-        <tr>
-          <td colspan="6" class="empty">
-            No invigilators found.
-          </td>
-        </tr>
-      `;
-
+      alert("Invigilator UID not found.");
       return;
+
     }
 
+    const confirmed =
+      confirm(
+        "Delete invigilator:\n\n" +
+        displayName +
+        "\n\nThis will permanently delete the Firebase Auth account and Firestore record.\n\nContinue?"
+      );
 
-    let html = "";
+    if (!confirmed) return;
 
+    const secondConfirm =
+      confirm(
+        "FINAL CONFIRMATION\n\n" +
+        "Are you sure you want to permanently delete this invigilator?"
+      );
 
-    snapshot.forEach(
-      (doc) => {
+    if (!secondConfirm) return;
 
-        const data =
-          doc.data();
+    try {
 
+      const idToken =
+        await currentAdmin.getIdToken(true);
 
-        html += `
-          <tr>
+      const response =
+        await fetch(FUNCTION_URL, {
 
-            <td>
-              <strong>
-                ${
-                  escapeHtml(
-                    data.name ||
-                    data.fullName ||
-                    "-"
-                  )
-                }
-              </strong>
-            </td>
+          method: "POST",
 
-            <td>
-              ${
-                escapeHtml(
-                  data.email ||
-                  "-"
-                )
-              }
-            </td>
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + idToken
+          },
 
-            <td>
-              ${
-                escapeHtml(
-                  data.employeeId ||
-                  "-"
-                )
-              }
-            </td>
+          body: JSON.stringify({
 
-            <td>
-              ${
-                escapeHtml(
-                  data.centre ||
-                  "-"
-                )
-              }
-            </td>
+            action: "delete_invigilator",
 
-            <td>
-              ${
-                escapeHtml(
-                  data.lab ||
-                  data.roomNo ||
-                  "-"
-                )
-              }
-            </td>
+            uid
 
-            <td>
-              <span class="badge active">
-                ${
-                  escapeHtml(
-                    data.status ||
-                    "active"
-                  )
-                }
-              </span>
-            </td>
+          })
 
-          </tr>
-        `;
+        });
+
+      const result =
+        await response.json();
+
+      if (!response.ok) {
+
+        throw new Error(
+          result.error ||
+          result.message ||
+          "Delete failed."
+        );
 
       }
-    );
 
+      alert(
+        "Invigilator deleted successfully."
+      );
 
-    table.innerHTML =
-      html;
+      await loadInvigilators();
 
-  }
+    } catch (error) {
 
-  catch (error) {
+      console.error(error);
 
-    console.error(
-      "Load invigilators error:",
-      error
-    );
+      alert(
+        "Delete failed:\n" +
+        (error.message || "Unknown error")
+      );
 
-    table.innerHTML = `
-      <tr>
-        <td colspan="6" class="empty">
-          ❌ Unable to load invigilators.
-          <br><br>
-          ${
-            escapeHtml(
-              error.message ||
-              "Unknown error"
-            )
-          }
-        </td>
-      </tr>
-    `;
+    }
 
   }
 
-}
+  // ==============================
+  // MESSAGE
+  // ==============================
 
+  function showMessage(text, type) {
 
-/* =========================================================
-   HTML ESCAPE
-========================================================= */
+    const message =
+      document.getElementById("formMessage");
 
-function escapeHtml(value) {
+    message.textContent = text;
 
-  return String(value)
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-
-}
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-async function logoutAdmin() {
-
-  try {
-
-    await auth.signOut();
-
-  } catch (error) {
-
-    console.error(
-      error
-    );
+    message.className =
+      "message " + type;
 
   }
 
-  sessionStorage.removeItem(
-    "adminLoggedIn"
-  );
+  // ==============================
+  // HTML ESCAPE
+  // ==============================
 
-  sessionStorage.removeItem(
-    "adminUID"
-  );
+  function escapeHTML(value) {
 
-  sessionStorage.removeItem(
-    "adminEmail"
-  );
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
 
-  window.location.replace(
-    "admin_login.html"
-  );
+  }
 
-}
+  // ==============================
+  // JS ESCAPE
+  // ==============================
+
+  function escapeJS(value) {
+
+    return String(value)
+      .replace(/\\/g, "\\\\")
+      .replace(/'/g, "\\'")
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, "\\n")
+      .replace(/\r/g, "\\r");
+
+  }
+
+  // ==============================
+  // LOGOUT
+  // ==============================
+
+  async function logout() {
+
+    try {
+
+      sessionStorage.removeItem("adminLoggedIn");
+      sessionStorage.removeItem("adminUID");
+      sessionStorage.removeItem("adminEmail");
+      sessionStorage.removeItem("adminLoginTime");
+
+      await auth.signOut();
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+    location.href = "admin_login.html";
+
+  }
 
 </script>
 

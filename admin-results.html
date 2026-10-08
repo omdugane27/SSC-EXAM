@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Results | SSC Examination System</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  background:#f1f5f9;
+  color:#0f172a;
+}
+
+.header{
+  background:linear-gradient(135deg,#0f172a,#1e3a8a);
+  color:white;
+  padding:20px;
+}
+
+.header-inner{
+  max-width:1250px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+
+.header h1{
+  font-size:24px;
+}
+
+.header p{
+  margin-top:5px;
+  color:#cbd5e1;
+  font-size:13px;
+}
+
+.header-actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.logout-btn,
+.back-btn{
+  border:1px solid rgba(255,255,255,.3);
+  background:rgba(255,255,255,.1);
+  color:white;
+  padding:10px 16px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.logout-btn{
+  background:#dc2626;
+  border:0;
+}
+
+.container{
+  max-width:1250px;
+  margin:25px auto;
+  padding:0 16px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:20px;
+}
+
+.stat{
+  background:white;
+  border:1px solid #e2e8f0;
+  border-radius:15px;
+  padding:20px;
+  box-shadow:0 5px 20px rgba(15,23,42,.05);
+}
+
+.stat-title{
+  color:#64748b;
+  font-size:13px;
+}
+
+.stat-value{
+  font-size:28px;
+  font-weight:700;
+  margin-top:7px;
+}
+
+.toolbar{
+  background:white;
+  border:1px solid #e2e8f0;
+  border-radius:15px;
+  padding:16px;
+  margin-bottom:18px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.search{
+  flex:1;
+  min-width:220px;
+  height:44px;
+  border:1px solid #cbd5e1;
+  border-radius:10px;
+  padding:0 14px;
+  outline:none;
+}
+
+.search:focus{
+  border-color:#2563eb;
+}
+
+.filter{
+  height:44px;
+  border:1px solid #cbd5e1;
+  border-radius:10px;
+  padding:0 12px;
+  background:white;
+}
+
+.refresh{
+  height:44px;
+  padding:0 18px;
+  border:0;
+  border-radius:10px;
+  background:#2563eb;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.table-card{
+  background:white;
+  border:1px solid #e2e8f0;
+  border-radius:15px;
+  overflow:hidden;
+  box-shadow:0 5px 20px rgba(15,23,42,.05);
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:1150px;
+}
+
+th{
+  background:#f8fafc;
+  color:#475569;
+  font-size:12px;
+  text-transform:uppercase;
+  padding:14px;
+  text-align:left;
+  border-bottom:1px solid #e2e8f0;
+}
+
+td{
+  padding:14px;
+  border-bottom:1px solid #eef2f7;
+  font-size:13px;
+}
+
+tr:hover{
+  background:#f8fafc;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:700;
+}
+
+.pending{
+  background:#fff7ed;
+  color:#c2410c;
+}
+
+.declared{
+  background:#dcfce7;
+  color:#15803d;
+}
+
+.pass{
+  color:#15803d;
+  font-weight:700;
+}
+
+.fail{
+  color:#dc2626;
+  font-weight:700;
+}
+
+.actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+}
+
+.action-btn{
+  border:0;
+  border-radius:8px;
+  padding:8px 10px;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:600;
+}
+
+.view{
+  background:#e0f2fe;
+  color:#0369a1;
+}
+
+.publish{
+  background:#16a34a;
+  color:white;
+}
+
+.delete{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+
+.published-btn{
+  background:#e2e8f0;
+  color:#64748b;
+  cursor:not-allowed;
+}
+
+.loading{
+  padding:35px;
+  text-align:center;
+  color:#64748b;
+}
+
+.empty{
+  padding:40px;
+  text-align:center;
+  color:#64748b;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.65);
+  z-index:1000;
+  padding:20px;
+  overflow:auto;
+}
+
+.modal-box{
+  width:100%;
+  max-width:700px;
+  margin:40px auto;
+  background:white;
+  border-radius:18px;
+  padding:25px;
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.close{
+  border:0;
+  background:#f1f5f9;
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:18px;
+}
+
+.result-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.result-item{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:10px;
+  padding:13px;
+}
+
+.result-item span{
+  display:block;
+  color:#64748b;
+  font-size:11px;
+  margin-bottom:5px;
+}
+
+.result-item strong{
+  font-size:15px;
+}
+
+.modal-actions{
+  margin-top:20px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.modal-btn{
+  flex:1;
+  min-width:130px;
+  height:45px;
+  border:0;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.modal-publish{
+  background:#16a34a;
+  color:white;
+}
+
+.modal-delete{
+  background:#dc2626;
+  color:white;
+}
+
+.modal-close{
+  background:#e2e8f0;
+  color:#334155;
+}
+
+.message{
+  display:none;
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:2000;
+  padding:14px 18px;
+  border-radius:12px;
+  color:white;
+  font-size:13px;
+  font-weight:600;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+  max-width:350px;
+}
+
+.success-message{
+  background:#16a34a;
+}
+
+.error-message{
+  background:#dc2626;
+}
+
+@media(max-width:800px){
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .result-grid{
+    grid-template-columns:1fr;
+  }
+
+  .header-inner{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+}
+
+@media(max-width:500px){
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .header h1{
+    font-size:20px;
+  }
+
+  .header-actions{
+    width:100%;
+  }
+
+  .header-actions button{
+    flex:1;
+  }
+
+  .modal-actions{
+    flex-direction:column;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+<div class="header-inner">
+
+<div>
+<h1>📊 Examination Results</h1>
+<p>Review, publish and manage candidate results</p>
+</div>
+
+<div class="header-actions">
+
+<button class="back-btn" onclick="goDashboard()">
+← Dashboard
+</button>
+
+<button class="logout-btn" onclick="logout()">
+Logout
+</button>
+
+</div>
+
+</div>
+
+</header>
+
+
+<div class="container">
+
+<div class="stats">
+
+<div class="stat">
+<div class="stat-title">Total Results</div>
+<div class="stat-value" id="totalResults">0</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">Pending Review</div>
+<div class="stat-value" id="pendingResults">0</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">Published</div>
+<div class="stat-value" id="publishedResults">0</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">Pass</div>
+<div class="stat-value" id="passResults">0</div>
+</div>
+
+</div>
+
+
+<div class="toolbar">
+
+<input
+id="searchInput"
+class="search"
+type="text"
+placeholder="Search candidate, roll number or exam..."
+oninput="renderResults()"
+>
+
+<select
+id="statusFilter"
+class="filter"
+onchange="renderResults()"
+>
+
+<option value="all">All Status</option>
+<option value="pending">Pending</option>
+<option value="declared">Published</option>
+
+</select>
+
+<button
+class="refresh"
+onclick="loadResults()"
+>
+🔄 Refresh
+</button>
+
+</div>
+
+
+<div class="table-card">
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Candidate</th>
+<th>Roll Number</th>
+<th>Exam</th>
+<th>Attempted</th>
+<th>Marks</th>
+<th>Percentage</th>
+<th>Result</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody id="resultsTable">
+
+<tr>
+<td colspan="9">
+<div class="loading">
+Loading results...
+</div>
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- RESULT MODAL -->
+
+<div id="resultModal" class="modal">
+
+<div class="modal-box">
+
+<div class="modal-header">
+
+<h2>Result Review</h2>
+
+<button
+class="close"
+onclick="closeModal()"
+>
+×
+</button>
+
+</div>
+
+<div id="resultDetails" class="result-grid"></div>
+
+<div class="modal-actions">
+
+<button
+class="modal-btn modal-close"
+onclick="closeModal()"
+>
+Close
+</button>
+
+<button
+id="modalPublishBtn"
+class="modal-btn modal-publish"
+onclick="publishSelectedResult()"
+>
+📢 Publish Result
+</button>
+
+<button
+id="modalDeleteBtn"
+class="modal-btn modal-delete"
+onclick="deleteSelectedResult()"
+>
+🗑️ Delete Result
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div id="toast" class="message"></div>
+
+
+<script>
+
+/* =====================================================
+FIREBASE CONFIG
+===================================================== */
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+
+  authDomain:
+    "ssc-exam-project-8af6b.firebaseapp.com",
+
+  projectId:
+    "ssc-exam-project-8af6b",
+
+  storageBucket:
+    "ssc-exam-project-8af6b.firebasestorage.app",
+
+  messagingSenderId:
+    "288245274853",
+
+  appId:
+    "1:288245274853:web:b4d535a08faf305f5e9c0c",
+
+  measurementId:
+    "G-4BTLY67VDS"
+};
+
+
+/* =====================================================
+INITIALIZE
+===================================================== */
+
+if(!firebase.apps.length){
+
+  firebase.initializeApp(
+    firebaseConfig
+  );
+
+}
+
+const auth =
+  firebase.auth();
+
+const db =
+  firebase.firestore();
+
+
+let adminUser = null;
+let results = [];
+let selectedResult = null;
+
+
+/* =====================================================
+AUTH GUARD
+===================================================== */
+
+auth.onAuthStateChanged(
+  async function(user){
+
+    if(!user){
+
+      window.location.replace(
+        "admin_login.html"
+      );
+
+      return;
+
+    }
+
+
+    const sessionUID =
+      sessionStorage.getItem(
+        "adminUID"
+      );
+
+
+    const sessionLoggedIn =
+      sessionStorage.getItem(
+        "adminLoggedIn"
+      );
+
+
+    if(
+      sessionLoggedIn !== "true" ||
+      !sessionUID ||
+      sessionUID !== user.uid
+    ){
+
+      await auth.signOut();
+
+      window.location.replace(
+        "admin_login.html"
+      );
+
+      return;
+
+    }
+
+
+    adminUser = user;
+
+    await loadResults();
+
+  }
+);
+
+
+/* =====================================================
+LOAD RESULTS
+===================================================== */
+
+async function loadResults(){
+
+  const table =
+    document.getElementById(
+      "resultsTable"
+    );
+
+
+  table.innerHTML = `
+    <tr>
+      <td colspan="9">
+        <div class="loading">
+          Loading results...
+        </div>
+      </td>
+    </tr>
+  `;
+
+
+  try{
+
+    let snapshot;
+
+
+    try{
+
+      snapshot =
+        await db
+          .collection("examResults")
+          .orderBy(
+            "submittedAt",
+            "desc"
+          )
+          .get();
+
+    }catch(orderError){
+
+      console.warn(
+        "OrderBy unavailable:",
+        orderError
+      );
+
+      snapshot =
+        await db
+          .collection("examResults")
+          .get();
+
+    }
+
+
+    results = [];
+
+
+    snapshot.forEach(
+      function(doc){
+
+        results.push({
+
+          id:doc.id,
+
+          ...doc.data()
+
+        });
+
+      }
+    );
+
+
+    /* Newest first if submittedAt exists */
+
+    results.sort(
+      function(a,b){
+
+        const aTime =
+          getTimeValue(
+            a.submittedAt
+          );
+
+        const bTime =
+          getTimeValue(
+            b.submittedAt
+          );
+
+        return bTime - aTime;
+
+      }
+    );
+
+
+    updateStats();
+
+    renderResults();
+
+
+  }catch(error){
+
+    console.error(
+      "Load Results Error:",
+      error
+    );
+
+
+    table.innerHTML = `
+      <tr>
+        <td colspan="9">
+          <div class="empty">
+            ❌ Unable to load examination results.
+            <br><br>
+            ${escapeHTML(
+              error.message || ""
+            )}
+          </div>
+        </td>
+      </tr>
+    `;
+
+  }
+
+}
+
+
+/* =====================================================
+TIME HELPER
+===================================================== */
+
+function getTimeValue(value){
+
+  if(!value){
+    return 0;
+  }
+
+
+  if(
+    value.seconds !== undefined
+  ){
+
+    return (
+      Number(value.seconds) * 1000
+    );
+
+  }
+
+
+  if(
+    value.toMillis &&
+    typeof value.toMillis === "function"
+  ){
+
+    return value.toMillis();
+
+  }
+
+
+  const parsed =
+    new Date(value).getTime();
+
+
+  return isNaN(parsed)
+    ? 0
+    : parsed;
+
+}
+
+
+/* =====================================================
+STATS
+===================================================== */
+
+function updateStats(){
+
+  const total =
+    results.length;
+
+
+  const pending =
+    results.filter(
+      function(r){
+
+        return String(
+          r.resultStatus ||
+          "pending"
+        ).toLowerCase()
+        !== "declared";
+
+      }
+    ).length;
+
+
+  const published =
+    results.filter(
+      function(r){
+
+        return String(
+          r.resultStatus ||
+          ""
+        ).toLowerCase()
+        === "declared";
+
+      }
+    ).length;
+
+
+  const pass =
+    results.filter(
+      function(r){
+
+        return String(
+          r.result ||
+          ""
+        ).toUpperCase()
+        === "PASS";
+
+      }
+    ).length;
+
+
+  document.getElementById(
+    "totalResults"
+  ).textContent = total;
+
+
+  document.getElementById(
+    "pendingResults"
+  ).textContent = pending;
+
+
+  document.getElementById(
+    "publishedResults"
+  ).textContent = published;
+
+
+  document.getElementById(
+    "passResults"
+  ).textContent = pass;
+
+}
+
+
+/* =====================================================
+RENDER
+===================================================== */
+
+function renderResults(){
+
+  const table =
+    document.getElementById(
+      "resultsTable"
+    );
+
+
+  const search =
+    document.getElementById(
+      "searchInput"
+    )
+    .value
+    .trim()
+    .toLowerCase();
+
+
+  const filter =
+    document.getElementById(
+      "statusFilter"
+    ).value;
+
+
+  const filtered =
+    results.filter(
+      function(r){
+
+        const candidate =
+          String(
+            r.candidateName ||
+            r.fullName ||
+            ""
+          ).toLowerCase();
+
+
+        const roll =
+          String(
+            r.rollNumber ||
+            ""
+          ).toLowerCase();
+
+
+        const exam =
+          String(
+            r.examName ||
+            ""
+          ).toLowerCase();
+
+
+        const email =
+          String(
+            r.candidateEmail ||
+            r.email ||
+            ""
+          ).toLowerCase();
+
+
+        const status =
+          String(
+            r.resultStatus ||
+            "pending"
+          ).toLowerCase();
+
+
+        const searchMatch =
+          !search ||
+          candidate.includes(search) ||
+          roll.includes(search) ||
+          exam.includes(search) ||
+          email.includes(search);
+
+
+        const filterMatch =
+          filter === "all" ||
+
+          (
+            filter === "pending" &&
+            status !== "declared"
+          ) ||
+
+          (
+            filter === "declared" &&
+            status === "declared"
+          );
+
+
+        return (
+          searchMatch &&
+          filterMatch
+        );
+
+      }
+    );
+
+
+  if(!filtered.length){
+
+    table.innerHTML = `
+      <tr>
+        <td colspan="9">
+          <div class="empty">
+            No examination results found.
+          </div>
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  table.innerHTML =
+    filtered.map(
+      function(r){
+
+        const status =
+          String(
+            r.resultStatus ||
+            "pending"
+          ).toLowerCase();
+
+
+        const result =
+          String(
+            r.result ||
+            "-"
+          ).toUpperCase();
+
+
+        const statusHTML =
+          status === "declared"
+
+          ? `
+            <span class="badge declared">
+              PUBLISHED
+            </span>
+          `
+
+          : `
+            <span class="badge pending">
+              PENDING
+            </span>
+          `;
+
+
+        let resultHTML = "-";
+
+
+        if(result === "PASS"){
+
+          resultHTML =
+            `<span class="pass">PASS</span>`;
+
+        }else if(result === "FAIL"){
+
+          resultHTML =
+            `<span class="fail">FAIL</span>`;
+
+        }
+
+
+        const publishHTML =
+          status === "declared"
+
+          ? `
+            <button
+              class="action-btn published-btn"
+              disabled
+            >
+              ✓ Published
+            </button>
+          `
+
+          : `
+            <button
+              class="action-btn publish"
+              onclick="publishResult('${escapeJS(r.id)}')"
+            >
+              📢 Publish
+            </button>
+          `;
+
+
+        return `
+
+          <tr>
+
+            <td>
+              <strong>
+                ${escapeHTML(
+                  r.candidateName ||
+                  r.fullName ||
+                  "-"
+                )}
+              </strong>
+            </td>
+
+            <td>
+              ${escapeHTML(
+                r.rollNumber ||
+                "-"
+              )}
+            </td>
+
+            <td>
+              ${escapeHTML(
+                r.examName ||
+                "-"
+              )}
+            </td>
+
+            <td>
+              ${r.attempted ?? 0}/
+              ${r.totalQuestions ?? 0}
+            </td>
+
+            <td>
+              ${r.obtainedMarks ?? 0}/
+              ${r.totalMarks ?? 0}
+            </td>
+
+            <td>
+              ${r.percentage ?? 0}%
+            </td>
+
+            <td>
+              ${resultHTML}
+            </td>
+
+            <td>
+              ${statusHTML}
+            </td>
+
+            <td>
+
+              <div class="actions">
+
+                <button
+                  class="action-btn view"
+                  onclick="viewResult('${escapeJS(r.id)}')"
+                >
+                  👁️
+                  ${
+                    status === "declared"
+                    ? "View"
+                    : "Check"
+                  }
+                </button>
+
+                ${publishHTML}
+
+                <button
+                  class="action-btn delete"
+                  onclick="deleteResult('${escapeJS(r.id)}')"
+                >
+                  🗑️ Delete
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+    ).join("");
+
+}
+
+
+/* =====================================================
+VIEW
+===================================================== */
+
+function viewResult(id){
+
+  const result =
+    results.find(
+      function(r){
+
+        return r.id === id;
+
+      }
+    );
+
+
+  if(!result){
+
+    showToast(
+      "Result not found.",
+      true
+    );
+
+    return;
+
+  }
+
+
+  selectedResult =
+    result;
+
+
+  const status =
+    String(
+      result.resultStatus ||
+      "pending"
+    ).toLowerCase();
+
+
+  document.getElementById(
+    "resultDetails"
+  ).innerHTML = `
+
+    <div class="result-item">
+      <span>Candidate Name</span>
+      <strong>
+        ${escapeHTML(
+          result.candidateName ||
+          result.fullName ||
+          "-"
+        )}
+      </strong>
+    </div>
+
+    <div class="result-item">
+      <span>Email</span>
+      <strong>
+        ${escapeHTML(
+          result.candidateEmail ||
+          result.email ||
+          "-"
+        )}
+      </strong>
+    </div>
+
+    <div class="result-item">
+      <span>Roll Number</span>
+      <strong>
+        ${escapeHTML(
+          result.rollNumber ||
+          "-"
+        )}
+      </strong>
+    </div>
+
+    <div class="result-item">
+      <span>Examination</span>
+      <strong>
+        ${escapeHTML(
+          result.examName ||
+          "-"
+        )}
+      </strong>
+    </div>
+
+    <div class="result-item">
+      <span>Subject</span>
+      <strong>
+        ${escapeHTML(
+          result.subject ||
+          "-"
+        )}
+      </strong>
+    </div>
+
+    <div class="result-item">
+      <span>Total Questions</span>
+      <strong>
+        ${result.totalQuestions ?? 0}
+      </strong>
+    </div>
+
+    <div class="result-item">
+      <span>Attempted</span>
+      <strong>
+        ${result.attempted ?? 0}
+      </strong>
+    </div>
+
+    <div class="result-item">
+      <span>Unanswered</span>
+      <strong>
+        ${result.unanswered ?? 0}
+      </strong>
+    </div>
+
+    <div class="result-item">
+      <span>Correct</span>
+      <strong>
+        ${result.correct ?? 0}
+      </strong>
+    </div>
+
+    <div class="result-item">
+      <span>Wrong</span>
+      <strong>
+        ${result.wrong ?? 0}
+      </strong>
+    </div>
+
+    <div class="result-item">
+      <span>Obtained Marks</span>
+      <strong>
+        ${result.obtainedMarks ?? 0}
+        /
+        ${result.totalMarks ?? 0}
+      </strong>
+    </div>
+
+    <div class="result-item">
+      <span>Percentage</span>
+      <strong>
+        ${result.percentage ?? 0}%
+      </strong>
+    </div>
+
+    <div class="result-item">
+      <span>Pass Marks</span>
+      <strong>
+        ${result.passMarks ?? "-"}
+      </strong>
+    </div>
+
+    <div class="result-item">
+      <span>Result</span>
+      <strong>
+        ${escapeHTML(
+          result.result ||
+          "-"
+        )}
+      </strong>
+    </div>
+
+    <div class="result-item">
+      <span>Status</span>
+      <strong>
+        ${
+          status === "declared"
+          ? "PUBLISHED"
+          : "PENDING REVIEW"
+        }
+      </strong>
+    </div>
+
+  `;
+
+
+  const publishBtn =
+    document.getElementById(
+      "modalPublishBtn"
+    );
+
+
+  if(status === "declared"){
+
+    publishBtn.disabled =
+      true;
+
+    publishBtn.textContent =
+      "✓ Already Published";
+
+    publishBtn.style.opacity =
+      ".6";
+
+  }else{
+
+    publishBtn.disabled =
+      false;
+
+    publishBtn.textContent =
+      "📢 Publish Result";
+
+    publishBtn.style.opacity =
+      "1";
+
+  }
+
+
+  document.getElementById(
+    "resultModal"
+  ).style.display =
+    "block";
+
+}
+
+
+/* =====================================================
+PUBLISH RESULT
+===================================================== */
+
+async function publishResult(id){
+
+  const result =
+    results.find(
+      function(r){
+
+        return r.id === id;
+
+      }
+    );
+
+
+  if(!result){
+
+    showToast(
+      "Result not found.",
+      true
+    );
+
+    return;
+
+  }
+
+
+  const currentStatus =
+    String(
+      result.resultStatus ||
+      "pending"
+    ).toLowerCase();
+
+
+  if(currentStatus === "declared"){
+
+    showToast(
+      "Result is already published.",
+      true
+    );
+
+    return;
+
+  }
+
+
+  if(!result.candidateId){
+
+    showToast(
+      "❌ Candidate ID is missing. Result cannot be published safely.",
+      true
+    );
+
+    return;
+
+  }
+
+
+  const confirmed =
+    confirm(
+
+      "Publish this result?\n\n" +
+
+      "Candidate: " +
+      (result.candidateName || "-") +
+
+      "\nRoll Number: " +
+      (result.rollNumber || "-") +
+
+      "\nExam: " +
+      (result.examName || "-") +
+
+      "\n\nThe candidate will receive a notification."
+
+    );
+
+
+  if(!confirmed){
+    return;
+  }
+
+
+  try{
+
+    const batch =
+      db.batch();
+
+
+    /* ==========================================
+       1. RESULT UPDATE
+    ========================================== */
+
+    const resultRef =
+      db
+        .collection("examResults")
+        .doc(id);
+
+
+    batch.update(
+      resultRef,
+      {
+
+        resultStatus:
+          "declared",
+
+        declaredBy:
+          adminUser
+          ? adminUser.uid
+          : "",
+
+        declaredAt:
+          firebase.firestore
+            .FieldValue
+            .serverTimestamp()
+
+      }
+    );
+
+
+    /* ==========================================
+       2. CANDIDATE UPDATE
+    ========================================== */
+
+    const candidateRef =
+      db
+        .collection("candidates")
+        .doc(result.candidateId);
+
+
+    batch.set(
+      candidateRef,
+      {
+
+        resultStatus:
+          "declared",
+
+        lastResultId:
+          id,
+
+        resultPublishedAt:
+          firebase.firestore
+            .FieldValue
+            .serverTimestamp(),
+
+        lastExamId:
+          result.examId ||
+          null
+
+      },
+      {
+        merge:true
+      }
+    );
+
+
+    /* ==========================================
+       3. NOTIFICATION
+    ========================================== */
+
+    const notificationRef =
+      db
+        .collection("notifications")
+        .doc();
+
+
+    batch.set(
+      notificationRef,
+      {
+
+        candidateId:
+          result.candidateId,
+
+        type:
+          "result_published",
+
+        title:
+          "🎉 Result Published",
+
+        message:
+          "Your " +
+          (
+            result.examName ||
+            "examination"
+          ) +
+          " result has been published.",
+
+        examId:
+          result.examId ||
+          null,
+
+        examName:
+          result.examName ||
+          "",
+
+        resultId:
+          id,
+
+        read:
+          false,
+
+        createdAt:
+          firebase.firestore
+            .FieldValue
+            .serverTimestamp()
+
+      }
+    );
+
+
+    /* ==========================================
+       COMMIT ALL TOGETHER
+    ========================================== */
+
+    await batch.commit();
+
+
+    showToast(
+      "✅ Result published successfully.",
+      false
+    );
+
+
+    closeModal();
+
+    await loadResults();
+
+
+  }catch(error){
+
+    console.error(
+      "Publish Error:",
+      error
+    );
+
+
+    showToast(
+      "❌ Unable to publish result: " +
+      (
+        error.message ||
+        "Unknown error"
+      ),
+      true
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+MODAL PUBLISH
+===================================================== */
+
+function publishSelectedResult(){
+
+  if(!selectedResult){
+    return;
+  }
+
+
+  publishResult(
+    selectedResult.id
+  );
+
+}
+
+
+/* =====================================================
+DELETE RESULT
+===================================================== */
+
+async function deleteResult(id){
+
+  const result =
+    results.find(
+      function(r){
+
+        return r.id === id;
+
+      }
+    );
+
+
+  if(!result){
+    return;
+  }
+
+
+  const firstConfirm =
+    confirm(
+
+      "⚠️ DELETE RESULT?\n\n" +
+
+      "Candidate: " +
+      (result.candidateName || "-") +
+
+      "\nRoll Number: " +
+      (result.rollNumber || "-") +
+
+      "\nExam: " +
+      (result.examName || "-") +
+
+      "\nResult: " +
+      (result.result || "-") +
+
+      "\n\nThis will permanently delete the result."
+
+    );
+
+
+  if(!firstConfirm){
+    return;
+  }
+
+
+  const secondConfirm =
+    confirm(
+      "FINAL CONFIRMATION\n\n" +
+      "Are you absolutely sure?"
+    );
+
+
+  if(!secondConfirm){
+    return;
+  }
+
+
+  try{
+
+    /* ==========================================
+       DELETE RESULT
+    ========================================== */
+
+    await db
+      .collection("examResults")
+      .doc(id)
+      .delete();
+
+
+    /* ==========================================
+       RESET CANDIDATE
+    ========================================== */
+
+    if(result.candidateId){
+
+      await db
+        .collection("candidates")
+        .doc(result.candidateId)
+        .set({
+
+          resultStatus:
+            "pending",
+
+          lastResultId:
+            firebase.firestore
+              .FieldValue
+              .delete(),
+
+          resultPublishedAt:
+            firebase.firestore
+              .FieldValue
+              .delete(),
+
+          lastExamId:
+            firebase.firestore
+              .FieldValue
+              .delete()
+
+        },{
+          merge:true
+        });
+
+
+      /* ========================================
+         REMOVE RELATED NOTIFICATIONS
+         WITHOUT COMPOSITE INDEX
+      ======================================== */
+
+      const notificationSnapshot =
+        await db
+          .collection("notifications")
+          .where(
+            "candidateId",
+            "==",
+            result.candidateId
+          )
+          .get();
+
+
+      const batch =
+        db.batch();
+
+
+      let deleteCount = 0;
+
+
+      notificationSnapshot.forEach(
+        function(doc){
+
+          const data =
+            doc.data();
+
+
+          if(
+            data.resultId === id
+          ){
+
+            batch.delete(
+              doc.ref
+            );
+
+            deleteCount++;
+
+          }
+
+        }
+      );
+
+
+      if(deleteCount > 0){
+
+        await batch.commit();
+
+      }
+
+    }
+
+
+    showToast(
+      "🗑️ Result deleted successfully.",
+      false
+    );
+
+
+    closeModal();
+
+    await loadResults();
+
+
+  }catch(error){
+
+    console.error(
+      "Delete Result Error:",
+      error
+    );
+
+
+    showToast(
+      "❌ Unable to delete result: " +
+      (
+        error.message ||
+        "Unknown error"
+      ),
+      true
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+MODAL DELETE
+===================================================== */
+
+function deleteSelectedResult(){
+
+  if(!selectedResult){
+    return;
+  }
+
+
+  deleteResult(
+    selectedResult.id
+  );
+
+}
+
+
+/* =====================================================
+CLOSE MODAL
+===================================================== */
+
+function closeModal(){
+
+  document.getElementById(
+    "resultModal"
+  ).style.display =
+    "none";
+
+
+  selectedResult =
+    null;
+
+}
+
+
+/* =====================================================
+TOAST
+===================================================== */
+
+function showToast(
+  message,
+  error
+){
+
+  const toast =
+    document.getElementById(
+      "toast"
+    );
+
+
+  toast.textContent =
+    message;
+
+
+  toast.className =
+    "message " +
+    (
+      error
+      ? "error-message"
+      : "success-message"
+    );
+
+
+  toast.style.display =
+    "block";
+
+
+  setTimeout(
+    function(){
+
+      toast.style.display =
+        "none";
+
+    },
+    4000
+  );
+
+}
+
+
+/* =====================================================
+DASHBOARD
+===================================================== */
+
+function goDashboard(){
+
+  window.location.href =
+    "admin_dashboard.html";
+
+}
+
+
+/* =====================================================
+LOGOUT
+===================================================== */
+
+async function logout(){
+
+  try{
+
+    sessionStorage.removeItem(
+      "adminLoggedIn"
+    );
+
+    sessionStorage.removeItem(
+      "adminUID"
+    );
+
+    sessionStorage.removeItem(
+      "adminEmail"
+    );
+
+    sessionStorage.removeItem(
+      "adminLoginTime"
+    );
+
+
+    await auth.signOut();
+
+
+  }catch(error){
+
+    console.error(
+      error
+    );
+
+  }
+
+
+  window.location.replace(
+    "admin_login.html"
+  );
+
+}
+
+
+/* =====================================================
+ESCAPE HTML
+===================================================== */
+
+function escapeHTML(value){
+
+  return String(value)
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* =====================================================
+ESCAPE JAVASCRIPT
+===================================================== */
+
+function escapeJS(value){
+
+  return String(value)
+
+    .replace(
+      /\\/g,
+      "\\\\"
+    )
+
+    .replace(
+      /'/g,
+      "\\'"
+    )
+
+    .replace(
+      /"/g,
+      '\\"'
+    )
+
+    .replace(
+      /\n/g,
+      "\\n"
+    )
+
+    .replace(
+      /\r/g,
+      "\\r"
+    );
+
+}
+
+
+/* =====================================================
+CLOSE MODAL WHEN CLICK OUTSIDE
+===================================================== */
+
+window.addEventListener(
+  "click",
+  function(event){
+
+    const modal =
+      document.getElementById(
+        "resultModal"
+      );
+
+
+    if(event.target === modal){
+
+      closeModal();
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>

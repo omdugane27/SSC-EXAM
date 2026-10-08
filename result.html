@@ -1,101 +1,2373 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta charset="UTF-8">
+<title>Examination Result | SSC Examination System</title>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
-    <title>Admin Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <link rel="stylesheet" href="style.css">
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f3f6fb;
+    color:#1f2937;
+}
+
+header{
+    background:linear-gradient(135deg,#1557c0,#2563eb);
+    color:white;
+    padding:16px 22px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 3px 12px rgba(0,0,0,.15);
+}
+
+header h1{
+    font-size:20px;
+}
+
+header p{
+    font-size:11px;
+    margin-top:4px;
+    opacity:.9;
+}
+
+.header-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.header-actions button{
+    border:0;
+    padding:9px 13px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.dashboard-btn{
+    background:white;
+    color:#1557c0;
+}
+
+.logout-btn{
+    background:#dc2626;
+    color:white;
+}
+
+.container{
+    max-width:950px;
+    margin:30px auto;
+    padding:0 15px;
+}
+
+.result-card{
+    background:white;
+    border-radius:16px;
+    box-shadow:0 5px 25px rgba(0,0,0,.08);
+    overflow:hidden;
+}
+
+.result-header{
+    background:linear-gradient(135deg,#1557c0,#2563eb);
+    color:white;
+    text-align:center;
+    padding:28px 20px;
+}
+
+.result-header h2{
+    font-size:25px;
+}
+
+.result-header p{
+    margin-top:6px;
+    font-size:13px;
+    opacity:.9;
+}
+
+.result-content{
+    padding:25px;
+}
+
+.section-title{
+    color:#1d4ed8;
+    font-size:17px;
+    font-weight:bold;
+    margin-bottom:15px;
+    border-bottom:1px solid #e5e7eb;
+    padding-bottom:10px;
+}
+
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    margin-bottom:25px;
+}
+
+.info-box{
+    background:#f8fafc;
+    border:1px solid #e5e7eb;
+    border-radius:9px;
+    padding:13px;
+}
+
+.info-box small{
+    display:block;
+    color:#64748b;
+    font-size:10px;
+    margin-bottom:5px;
+}
+
+.info-box strong{
+    font-size:14px;
+    word-break:break-word;
+}
+
+.marks-box{
+    text-align:center;
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    border-radius:12px;
+    padding:25px;
+    margin-bottom:20px;
+}
+
+.marks-box .percentage{
+    font-size:42px;
+    font-weight:bold;
+    color:#1d4ed8;
+}
+
+.marks-box .label{
+    color:#64748b;
+    font-size:12px;
+    margin-top:5px;
+}
+
+.status-pass{
+    display:inline-block;
+    margin-top:12px;
+    padding:8px 18px;
+    border-radius:20px;
+    background:#dcfce7;
+    color:#166534;
+    font-weight:bold;
+}
+
+.status-fail{
+    display:inline-block;
+    margin-top:12px;
+    padding:8px 18px;
+    border-radius:20px;
+    background:#fee2e2;
+    color:#991b1b;
+    font-weight:bold;
+}
+
+.payment-box{
+    display:none;
+    margin:20px 0;
+    padding:22px;
+    border-radius:14px;
+    background:#f0fdf4;
+    border:1px solid #bbf7d0;
+    text-align:center;
+}
+
+.payment-box h3{
+    color:#166534;
+    margin-bottom:8px;
+    font-size:19px;
+}
+
+.payment-box p{
+    font-size:12px;
+    color:#64748b;
+    margin-bottom:12px;
+    line-height:1.6;
+}
+
+.upi-id{
+    display:inline-block;
+    padding:10px 16px;
+    background:white;
+    border:1px solid #bbf7d0;
+    border-radius:8px;
+    font-weight:bold;
+    color:#166534;
+    margin-bottom:15px;
+}
+
+.payment-amount{
+    font-size:28px;
+    font-weight:bold;
+    color:#15803d;
+    margin-bottom:14px;
+}
+
+.payment-note{
+    font-size:11px;
+    color:#64748b;
+    margin-top:12px;
+    line-height:1.5;
+}
+
+.payment-warning{
+    font-size:11px;
+    color:#92400e;
+    background:#fffbeb;
+    border:1px solid #fde68a;
+    padding:11px;
+    border-radius:8px;
+    margin-top:12px;
+    line-height:1.5;
+}
+
+.payment-success{
+    display:none;
+    margin:20px 0;
+    padding:17px;
+    border-radius:12px;
+    background:#dcfce7;
+    border:1px solid #86efac;
+    color:#166534;
+    text-align:center;
+    font-weight:bold;
+}
+
+.transaction-box{
+    display:none;
+    margin-top:12px;
+    padding:10px;
+    background:#fff;
+    border:1px dashed #86efac;
+    border-radius:8px;
+    font-size:11px;
+    color:#475569;
+    word-break:break-all;
+}
+
+.result-actions{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin:25px 0;
+}
+
+.btn{
+    border:0;
+    padding:12px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:13px;
+    transition:.2s;
+}
+
+.btn:hover{
+    opacity:.9;
+    transform:translateY(-1px);
+}
+
+.btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+    transform:none;
+}
+
+.btn-pdf{
+    background:#dc2626;
+    color:white;
+}
+
+.btn-print{
+    background:#2563eb;
+    color:white;
+}
+
+.btn-dashboard{
+    background:#64748b;
+    color:white;
+}
+
+.btn-upi{
+    background:#16a34a;
+    color:white;
+}
+
+.btn-confirm{
+    background:#2563eb;
+    color:white;
+    margin-top:8px;
+}
+
+#loading{
+    position:fixed;
+    inset:0;
+    background:white;
+    z-index:9999;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+.loader{
+    width:45px;
+    height:45px;
+    border:5px solid #e5e7eb;
+    border-top-color:#2563eb;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin-bottom:15px;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+#loadingMessage{
+    margin-top:8px;
+    font-size:12px;
+    color:#64748b;
+}
+
+#errorBox{
+    display:none;
+    max-width:500px;
+    margin:100px auto;
+    padding:25px;
+    background:#fee2e2;
+    border:1px solid #fecaca;
+    color:#991b1b;
+    border-radius:12px;
+    text-align:center;
+}
+
+#errorBox h2{
+    margin-bottom:10px;
+}
+
+.footer{
+    text-align:center;
+    padding:18px;
+    color:#94a3b8;
+    font-size:11px;
+    border-top:1px solid #e5e7eb;
+}
+
+@media(max-width:600px){
+
+    header{
+        padding:12px 15px;
+        align-items:flex-start;
+        gap:10px;
+    }
+
+    header h1{
+        font-size:16px;
+    }
+
+    .header-actions{
+        justify-content:flex-end;
+    }
+
+    .header-actions button{
+        padding:7px 9px;
+        font-size:10px;
+    }
+
+    .container{
+        margin:15px auto;
+    }
+
+    .result-content{
+        padding:17px;
+    }
+
+    .info-grid{
+        grid-template-columns:1fr;
+    }
+
+    .marks-box .percentage{
+        font-size:35px;
+    }
+
+    .payment-box{
+        padding:16px;
+    }
+
+    .result-actions{
+        flex-direction:column;
+    }
+
+    .result-actions .btn{
+        width:100%;
+    }
+}
+
+@media print{
+
+    header,
+    .result-actions,
+    .payment-box,
+    .payment-success,
+    .footer{
+        display:none !important;
+    }
+
+    body{
+        background:white;
+    }
+
+    .container{
+        margin:0;
+        max-width:none;
+        padding:0;
+    }
+
+    .result-card{
+        box-shadow:none;
+        border-radius:0;
+    }
+
+    .result-header{
+        print-color-adjust:exact;
+        -webkit-print-color-adjust:exact;
+    }
+}
+</style>
 </head>
 
 <body>
 
-<div class="admin-page">
+<div id="loading">
+    <div class="loader"></div>
 
-    <header class="admin-header">
+    <strong id="loadingTitle">
+        Loading Result...
+    </strong>
 
-        <div>
-            <div class="logo small">SSC</div>
-            <h2>Admin Dashboard</h2>
-        </div>
-
-        <button onclick="clearAllData()"
-                class="btn danger">
-            Reset Demo Data
-        </button>
-
-    </header>
-
-
-    <div class="stats">
-
-        <div class="stat-card">
-            <h3 id="totalCandidates">0</h3>
-            <p>Registered</p>
-        </div>
-
-        <div class="stat-card">
-            <h3 id="verifiedCandidates">0</h3>
-            <p>Entry Verified</p>
-        </div>
-
-        <div class="stat-card">
-            <h3 id="completedCandidates">0</h3>
-            <p>Completed</p>
-        </div>
-
-        <div class="stat-card">
-            <h3 id="exitVerified">0</h3>
-            <p>Exit Verified</p>
-        </div>
-
+    <div id="loadingMessage">
+        Verifying candidate session...
     </div>
+</div>
 
+<div id="errorBox">
 
-    <div class="admin-card">
+    <h2>Unable to Load Result</h2>
 
-        <h3>Candidate Records</h3>
+    <p id="errorMessage">
+        Please try again.
+    </p>
 
-        <div class="table-wrapper">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-                        <th>Roll No</th>
-                        <th>Name</th>
-                        <th>Centre</th>
-                        <th>Seat</th>
-                        <th>Entry</th>
-                        <th>Exam</th>
-                        <th>Exit</th>
-                        <th>Score</th>
-                    </tr>
-
-                </thead>
-
-                <tbody id="candidateTable"></tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-    <br>
-
-    <a href="index.html">← Back to Home</a>
+    <button
+        class="btn btn-dashboard"
+        style="margin-top:15px;"
+        onclick="goDashboard()"
+    >
+        ← Back to Dashboard
+    </button>
 
 </div>
 
-<script src="script.js"></script>
+<header>
+
+    <div>
+        <h1>SSC Examination System</h1>
+
+        <p>
+            Candidate Result
+        </p>
+    </div>
+
+    <div class="header-actions">
+
+        <button
+            class="dashboard-btn"
+            onclick="goDashboard()"
+        >
+            Dashboard
+        </button>
+
+        <button
+            class="logout-btn"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+<div
+    class="container"
+    id="mainContainer"
+    style="display:none;"
+>
+
+    <div class="result-card">
+
+        <div class="result-header">
+
+            <h2>
+                Examination Result
+            </h2>
+
+            <p>
+                SSC Examination System
+            </p>
+
+        </div>
+
+        <div class="result-content">
+
+            <div class="section-title">
+                Candidate Information
+            </div>
+
+            <div class="info-grid">
+
+                <div class="info-box">
+                    <small>Candidate Name</small>
+                    <strong id="candidateName">-</strong>
+                </div>
+
+                <div class="info-box">
+                    <small>Roll Number</small>
+                    <strong id="rollNumber">-</strong>
+                </div>
+
+                <div class="info-box">
+                    <small>Email</small>
+                    <strong id="candidateEmail">-</strong>
+                </div>
+
+                <div class="info-box">
+                    <small>Candidate ID</small>
+                    <strong id="candidateIdDisplay">-</strong>
+                </div>
+
+            </div>
+
+            <div class="section-title">
+                Examination Information
+            </div>
+
+            <div class="info-grid">
+
+                <div class="info-box">
+                    <small>Examination</small>
+                    <strong id="examName">-</strong>
+                </div>
+
+                <div class="info-box">
+                    <small>Exam Code</small>
+                    <strong id="examCode">-</strong>
+                </div>
+
+                <div class="info-box">
+                    <small>Exam Date</small>
+                    <strong id="examDate">-</strong>
+                </div>
+
+                <div class="info-box">
+                    <small>Result Status</small>
+                    <strong id="resultStatus">DECLARED</strong>
+                </div>
+
+            </div>
+
+            <div class="section-title">
+                Result Summary
+            </div>
+
+            <div class="marks-box">
+
+                <div
+                    class="percentage"
+                    id="percentage"
+                >
+                    0%
+                </div>
+
+                <div class="label">
+                    Percentage
+                </div>
+
+                <div style="margin-top:15px;">
+
+                    <strong>Marks:</strong>
+
+                    <span id="marks">0</span>
+
+                    /
+
+                    <span id="totalMarks">0</span>
+
+                </div>
+
+                <div id="passStatus">
+                    -
+                </div>
+
+            </div>
+
+            <div
+                class="payment-box"
+                id="paymentBox"
+            >
+
+                <h3>
+                    💳 Marksheet Download
+                </h3>
+
+                <p>
+                    Professional marksheet PDF
+                    download करण्यासाठी ₹1 UPI payment करा.
+                </p>
+
+                <div class="payment-amount">
+                    ₹1.00
+                </div>
+
+                <div class="upi-id">
+                    UPI: 9021447671@ybl
+                </div>
+
+                <br>
+
+                <button
+                    class="btn btn-upi"
+                    onclick="openUPI()"
+                >
+                    📱 Open UPI App
+                </button>
+
+                <br>
+
+                <button
+                    class="btn btn-confirm"
+                    onclick="confirmUPIPayment()"
+                >
+                    ✅ I Have Completed Payment
+                </button>
+
+                <div
+                    class="transaction-box"
+                    id="transactionBox"
+                >
+                    Transaction Reference:
+                    <br>
+
+                    <strong id="transactionReference">
+                        -
+                    </strong>
+                </div>
+
+                <div class="payment-warning">
+                    ⚠️ Payment पूर्ण केल्यानंतरच
+                    "I Have Completed Payment" दाबा.
+                </div>
+
+                <div class="payment-note">
+                    Google Pay / PhonePe / Paytm /
+                    BHIM / इतर UPI apps.
+                </div>
+
+            </div>
+
+            <div
+                class="payment-success"
+                id="paymentSuccess"
+            >
+                ✅ Payment completed.
+                <br>
+                Marksheet download unlocked.
+            </div>
+
+            <div class="result-actions">
+
+                <button
+                    class="btn btn-upi"
+                    id="payButton"
+                    onclick="payViaUPI()"
+                >
+                    ₹1 Pay via UPI
+                </button>
+
+                <button
+                    class="btn btn-pdf"
+                    id="pdfButton"
+                    onclick="downloadPDF()"
+                    style="display:none;"
+                >
+                    📄 Download Marksheet PDF
+                </button>
+
+                <button
+                    class="btn btn-print"
+                    onclick="printResult()"
+                >
+                    🖨️ Print
+                </button>
+
+                <button
+                    class="btn btn-dashboard"
+                    onclick="goDashboard()"
+                >
+                    ← Dashboard
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="footer">
+            This is an electronically generated
+            examination result.
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* =====================================================
+   FIREBASE
+===================================================== */
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+    authDomain: "ssc-exam-project-8af6b.firebaseapp.com",
+    projectId: "ssc-exam-project-8af6b",
+    storageBucket: "ssc-exam-project-8af6b.firebasestorage.app",
+    messagingSenderId: "288245274853",
+    appId: "1:288245274853:web:b4d535a08faf305f5e9c0c",
+    measurementId: "G-4BTLY67VDS"
+};
+
+if(!firebase.apps.length){
+    firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+let currentUser = null;
+let currentResult = null;
+let currentCandidate = null;
+let candidateDocId = null;
+
+let upiPaymentStarted = false;
+let paymentUnlocked = false;
+
+
+/* =====================================================
+   UPI
+===================================================== */
+
+const UPI_ID = "9021447671@ybl";
+const PAYMENT_AMOUNT = "1.00";
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function value(data, keys){
+
+    if(!data){
+        return "-";
+    }
+
+    for(const key of keys){
+
+        if(
+            data[key] !== undefined &&
+            data[key] !== null &&
+            String(data[key]).trim() !== ""
+        ){
+            return data[key];
+        }
+
+    }
+
+    return "-";
+}
+
+
+/* =====================================================
+   RESULT ID
+===================================================== */
+
+function getResultId(){
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const urlResultId =
+        params.get("resultId");
+
+    if(urlResultId){
+        return urlResultId;
+    }
+
+    const stored =
+        sessionStorage.getItem(
+            "publishedResultId"
+        );
+
+    return stored || null;
+}
+
+
+/* =====================================================
+   FIND CANDIDATE
+===================================================== */
+
+async function findCandidate(user){
+
+    let snap =
+        await db
+        .collection("candidates")
+        .doc(user.uid)
+        .get();
+
+
+    if(!snap.exists){
+
+        const storedDocId =
+            sessionStorage.getItem(
+                "candidateDocId"
+            );
+
+        if(storedDocId){
+
+            const storedSnap =
+                await db
+                .collection("candidates")
+                .doc(storedDocId)
+                .get();
+
+            if(storedSnap.exists){
+                snap = storedSnap;
+            }
+
+        }
+
+    }
+
+
+    if(!snap.exists && user.email){
+
+        const query =
+            await db
+            .collection("candidates")
+            .where(
+                "email",
+                "==",
+                user.email
+            )
+            .limit(1)
+            .get();
+
+        if(!query.empty){
+            snap = query.docs[0];
+        }
+
+    }
+
+
+    if(!snap.exists){
+
+        throw new Error(
+            "Candidate record not found."
+        );
+
+    }
+
+
+    candidateDocId = snap.id;
+    currentCandidate = snap.data() || {};
+
+    sessionStorage.setItem(
+        "candidateDocId",
+        candidateDocId
+    );
+
+    sessionStorage.setItem(
+        "candidateUID",
+        user.uid
+    );
+
+    return currentCandidate;
+}
+
+
+/* =====================================================
+   LOAD RESULT
+===================================================== */
+
+async function loadResult(user){
+
+    currentUser = user;
+
+    const resultId = getResultId();
+
+    if(!resultId){
+        throw new Error(
+            "Result ID not found."
+        );
+    }
+
+    await findCandidate(user);
+
+    const resultSnap =
+        await db
+        .collection("examResults")
+        .doc(resultId)
+        .get();
+
+    if(!resultSnap.exists){
+
+        throw new Error(
+            "Result record not found."
+        );
+
+    }
+
+    const result =
+        resultSnap.data() || {};
+
+    if(
+        String(
+            result.resultStatus || ""
+        ).toLowerCase() !== "declared"
+    ){
+
+        throw new Error(
+            "This result has not been published yet."
+        );
+
+    }
+
+    const resultCandidateId =
+        String(
+            result.candidateId || ""
+        );
+
+    const candidateEmail =
+        String(
+            currentCandidate.email || ""
+        ).toLowerCase();
+
+    const resultEmail =
+        String(
+            result.candidateEmail || ""
+        ).toLowerCase();
+
+
+    const allowed =
+        resultCandidateId ===
+            String(candidateDocId)
+        ||
+        resultCandidateId ===
+            String(user.uid)
+        ||
+        (
+            candidateEmail &&
+            resultEmail &&
+            candidateEmail === resultEmail
+        );
+
+
+    if(
+        resultCandidateId &&
+        !allowed
+    ){
+
+        throw new Error(
+            "You are not authorized to view this result."
+        );
+
+    }
+
+
+    currentResult = {
+        id: resultSnap.id,
+        ...result
+    };
+
+    sessionStorage.setItem(
+        "publishedResultId",
+        resultSnap.id
+    );
+
+    renderResult();
+}
+
+
+/* =====================================================
+   RENDER
+===================================================== */
+
+function renderResult(){
+
+    const result = currentResult;
+    const candidate = currentCandidate;
+
+
+    const nameResult =
+        value(
+            result,
+            [
+                "candidateName",
+                "fullName",
+                "name"
+            ]
+        );
+
+    const name =
+        nameResult !== "-"
+        ?
+        nameResult
+        :
+        value(
+            candidate,
+            [
+                "fullName",
+                "name"
+            ]
+        );
+
+
+    const emailResult =
+        value(
+            result,
+            [
+                "candidateEmail",
+                "email"
+            ]
+        );
+
+    const email =
+        emailResult !== "-"
+        ?
+        emailResult
+        :
+        value(
+            candidate,
+            ["email"]
+        );
+
+
+    const rollResult =
+        value(
+            result,
+            [
+                "rollNumber",
+                "rollNo"
+            ]
+        );
+
+    const roll =
+        rollResult !== "-"
+        ?
+        rollResult
+        :
+        value(
+            candidate,
+            [
+                "rollNumber",
+                "rollNo"
+            ]
+        );
+
+
+    const examName =
+        value(
+            result,
+            [
+                "examName",
+                "name"
+            ]
+        );
+
+
+    const examCode =
+        value(
+            result,
+            [
+                "examCode",
+                "code"
+            ]
+        );
+
+
+    const examDate =
+        value(
+            result,
+            [
+                "examDate",
+                "date"
+            ]
+        );
+
+
+    const marks =
+        Number(
+            value(
+                result,
+                [
+                    "marks",
+                    "obtainedMarks",
+                    "score",
+                    "totalObtained"
+                ]
+            )
+        ) || 0;
+
+
+    const total =
+        Number(
+            value(
+                result,
+                [
+                    "totalMarks",
+                    "maxMarks",
+                    "maximumMarks"
+                ]
+            )
+        ) || 0;
+
+
+    let percentage =
+        Number(
+            value(
+                result,
+                ["percentage"]
+            )
+        );
+
+
+    if(
+        !Number.isFinite(percentage) &&
+        total > 0
+    ){
+        percentage =
+            (marks / total) * 100;
+    }
+
+
+    if(!Number.isFinite(percentage)){
+        percentage = 0;
+    }
+
+
+    const status =
+        String(
+            value(
+                result,
+                [
+                    "status",
+                    "result",
+                    "passStatus"
+                ]
+            )
+        ).toLowerCase();
+
+
+    const passed =
+        status.includes("pass")
+        ||
+        (
+            !status.includes("fail") &&
+            percentage >= 35
+        );
+
+
+    document.getElementById(
+        "candidateName"
+    ).textContent = name;
+
+    document.getElementById(
+        "candidateEmail"
+    ).textContent = email;
+
+    document.getElementById(
+        "rollNumber"
+    ).textContent = roll;
+
+    document.getElementById(
+        "candidateIdDisplay"
+    ).textContent = candidateDocId;
+
+    document.getElementById(
+        "examName"
+    ).textContent = examName;
+
+    document.getElementById(
+        "examCode"
+    ).textContent = examCode;
+
+    document.getElementById(
+        "examDate"
+    ).textContent = examDate;
+
+    document.getElementById(
+        "percentage"
+    ).textContent =
+        percentage.toFixed(2) + "%";
+
+    document.getElementById(
+        "marks"
+    ).textContent = marks;
+
+    document.getElementById(
+        "totalMarks"
+    ).textContent = total;
+
+
+    const passStatus =
+        document.getElementById(
+            "passStatus"
+        );
+
+
+    if(passed){
+
+        passStatus.className =
+            "status-pass";
+
+        passStatus.textContent =
+            "PASS";
+
+    }else{
+
+        passStatus.className =
+            "status-fail";
+
+        passStatus.textContent =
+            "FAIL";
+
+    }
+
+
+    document.getElementById(
+        "resultStatus"
+    ).textContent =
+        "DECLARED";
+
+
+    document.getElementById(
+        "loading"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "mainContainer"
+    ).style.display =
+        "block";
+
+
+    restorePaymentState();
+}
+
+
+/* =====================================================
+   PAYMENT
+===================================================== */
+
+function paymentStorageKey(){
+
+    const resultId = getResultId();
+
+    return (
+        "marksheetPayment_" +
+        String(
+            resultId || "unknown"
+        )
+    );
+}
+
+
+function restorePaymentState(){
+
+    const saved =
+        sessionStorage.getItem(
+            paymentStorageKey()
+        );
+
+
+    if(saved === "confirmed"){
+
+        paymentUnlocked = true;
+
+        document.getElementById(
+            "payButton"
+        ).style.display = "none";
+
+        document.getElementById(
+            "pdfButton"
+        ).style.display = "inline-block";
+
+        document.getElementById(
+            "paymentSuccess"
+        ).style.display = "block";
+
+        return;
+    }
+
+
+    const started =
+        sessionStorage.getItem(
+            paymentStorageKey() +
+            "_started"
+        );
+
+
+    if(started === "true"){
+
+        upiPaymentStarted = true;
+
+    }
+}
+
+
+function payViaUPI(){
+
+    document.getElementById(
+        "paymentBox"
+    ).style.display = "block";
+
+    document.getElementById(
+        "paymentBox"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+    });
+
+    setTimeout(
+        function(){
+            openUPI();
+        },
+        250
+    );
+}
+
+
+function generateTransactionReference(){
+
+    return (
+        "SSC" +
+        Date.now() +
+        Math.floor(
+            Math.random() * 1000
+        )
+    );
+}
+
+
+function openUPI(){
+
+    const transactionRef =
+        generateTransactionReference();
+
+    const upiUrl =
+        "upi://pay" +
+        "?pa=" +
+        encodeURIComponent(UPI_ID) +
+        "&pn=" +
+        encodeURIComponent(
+            "SSC Examination System"
+        ) +
+        "&am=" +
+        encodeURIComponent(
+            PAYMENT_AMOUNT
+        ) +
+        "&cu=INR" +
+        "&tn=" +
+        encodeURIComponent(
+            "SSC Marksheet Download"
+        ) +
+        "&tr=" +
+        encodeURIComponent(
+            transactionRef
+        );
+
+
+    upiPaymentStarted = true;
+
+
+    sessionStorage.setItem(
+        paymentStorageKey() +
+        "_started",
+        "true"
+    );
+
+
+    sessionStorage.setItem(
+        "upiTransactionRef",
+        transactionRef
+    );
+
+
+    document.getElementById(
+        "transactionBox"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "transactionReference"
+    ).textContent =
+        transactionRef;
+
+
+    window.location.href = upiUrl;
+}
+
+
+function confirmUPIPayment(){
+
+    if(!upiPaymentStarted){
+
+        alert(
+            "पहिले 'Open UPI App' दाबा आणि ₹1 payment करा."
+        );
+
+        return;
+    }
+
+
+    const confirmed =
+        confirm(
+            "तुम्ही ₹1 UPI payment पूर्ण केले आहे का?\n\nOK = Payment completed\nCancel = Go back"
+        );
+
+
+    if(!confirmed){
+        return;
+    }
+
+
+    paymentUnlocked = true;
+
+
+    sessionStorage.setItem(
+        paymentStorageKey(),
+        "confirmed"
+    );
+
+
+    document.getElementById(
+        "paymentBox"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "paymentSuccess"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "payButton"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "pdfButton"
+    ).style.display = "inline-block";
+
+
+    document.getElementById(
+        "pdfButton"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+    });
+}
+
+
+/* =====================================================
+   PDF
+===================================================== */
+
+async function downloadPDF(){
+
+    if(!currentResult){
+
+        alert(
+            "Result is not loaded yet."
+        );
+
+        return;
+    }
+
+
+    if(!paymentUnlocked){
+
+        document.getElementById(
+            "paymentBox"
+        ).style.display = "block";
+
+        alert(
+            "पहिले ₹1 UPI payment complete करा."
+        );
+
+        return;
+    }
+
+
+    const button =
+        document.getElementById(
+            "pdfButton"
+        );
+
+    const oldText =
+        button.textContent;
+
+
+    try{
+
+        button.disabled = true;
+
+        button.textContent =
+            "⏳ Creating PDF...";
+
+
+        if(
+            !window.jspdf ||
+            !window.jspdf.jsPDF
+        ){
+
+            throw new Error(
+                "PDF library could not be loaded. Check internet connection."
+            );
+
+        }
+
+
+        const { jsPDF } =
+            window.jspdf;
+
+
+        const pdf =
+            new jsPDF({
+                orientation:"portrait",
+                unit:"mm",
+                format:"a4"
+            });
+
+
+        const pageWidth =
+            pdf.internal.pageSize.getWidth();
+
+        const pageHeight =
+            pdf.internal.pageSize.getHeight();
+
+        const margin = 18;
+
+        let y = 18;
+
+
+        pdf.setFillColor(
+            37,
+            99,
+            235
+        );
+
+        pdf.rect(
+            0,
+            0,
+            pageWidth,
+            38,
+            "F"
+        );
+
+
+        pdf.setTextColor(
+            255,
+            255,
+            255
+        );
+
+        pdf.setFontSize(18);
+
+        pdf.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        pdf.text(
+            "SSC Examination System",
+            pageWidth / 2,
+            15,
+            {align:"center"}
+        );
+
+
+        pdf.setFontSize(13);
+
+        pdf.setFont(
+            "helvetica",
+            "normal"
+        );
+
+        pdf.text(
+            "Examination Result",
+            pageWidth / 2,
+            24,
+            {align:"center"}
+        );
+
+
+        pdf.setFontSize(9);
+
+        pdf.text(
+            "Official Electronic Result",
+            pageWidth / 2,
+            31,
+            {align:"center"}
+        );
+
+
+        y = 50;
+
+
+        pdf.setTextColor(
+            29,
+            78,
+            216
+        );
+
+        pdf.setFontSize(13);
+
+        pdf.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        pdf.text(
+            "Candidate Information",
+            margin,
+            y
+        );
+
+        y += 8;
+
+
+        pdf.setTextColor(
+            31,
+            41,
+            55
+        );
+
+        pdf.setFontSize(10);
+
+
+        const candidateRows = [
+
+            [
+                "Candidate Name",
+                document.getElementById(
+                    "candidateName"
+                ).textContent
+            ],
+
+            [
+                "Roll Number",
+                document.getElementById(
+                    "rollNumber"
+                ).textContent
+            ],
+
+            [
+                "Email",
+                document.getElementById(
+                    "candidateEmail"
+                ).textContent
+            ],
+
+            [
+                "Candidate ID",
+                document.getElementById(
+                    "candidateIdDisplay"
+                ).textContent
+            ]
+
+        ];
+
+
+        candidateRows.forEach(
+            function(row){
+
+                pdf.setFont(
+                    "helvetica",
+                    "bold"
+                );
+
+                pdf.text(
+                    row[0] + ":",
+                    margin,
+                    y
+                );
+
+                pdf.setFont(
+                    "helvetica",
+                    "normal"
+                );
+
+                const wrapped =
+                    pdf.splitTextToSize(
+                        String(row[1]),
+                        pageWidth -
+                        margin -
+                        60
+                    );
+
+                pdf.text(
+                    wrapped,
+                    margin + 42,
+                    y
+                );
+
+                y +=
+                    7 *
+                    wrapped.length;
+
+            }
+        );
+
+
+        y += 7;
+
+
+        pdf.setTextColor(
+            29,
+            78,
+            216
+        );
+
+        pdf.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        pdf.setFontSize(13);
+
+        pdf.text(
+            "Examination Information",
+            margin,
+            y
+        );
+
+        y += 8;
+
+
+        pdf.setTextColor(
+            31,
+            41,
+            55
+        );
+
+        pdf.setFontSize(10);
+
+
+        const examRows = [
+
+            [
+                "Examination",
+                document.getElementById(
+                    "examName"
+                ).textContent
+            ],
+
+            [
+                "Exam Code",
+                document.getElementById(
+                    "examCode"
+                ).textContent
+            ],
+
+            [
+                "Exam Date",
+                document.getElementById(
+                    "examDate"
+                ).textContent
+            ],
+
+            [
+                "Result Status",
+                "DECLARED"
+            ]
+
+        ];
+
+
+        examRows.forEach(
+            function(row){
+
+                pdf.setFont(
+                    "helvetica",
+                    "bold"
+                );
+
+                pdf.text(
+                    row[0] + ":",
+                    margin,
+                    y
+                );
+
+                pdf.setFont(
+                    "helvetica",
+                    "normal"
+                );
+
+                const wrapped =
+                    pdf.splitTextToSize(
+                        String(row[1]),
+                        pageWidth -
+                        margin -
+                        60
+                    );
+
+                pdf.text(
+                    wrapped,
+                    margin + 42,
+                    y
+                );
+
+                y +=
+                    7 *
+                    wrapped.length;
+
+            }
+        );
+
+
+        y += 10;
+
+
+        pdf.setFillColor(
+            239,
+            246,
+            255
+        );
+
+        pdf.setDrawColor(
+            191,
+            219,
+            254
+        );
+
+        pdf.roundedRect(
+            margin,
+            y,
+            pageWidth -
+            margin * 2,
+            48,
+            4,
+            4,
+            "FD"
+        );
+
+
+        y += 12;
+
+
+        pdf.setTextColor(
+            29,
+            78,
+            216
+        );
+
+        pdf.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        pdf.setFontSize(24);
+
+        pdf.text(
+            document.getElementById(
+                "percentage"
+            ).textContent,
+            pageWidth / 2,
+            y,
+            {align:"center"}
+        );
+
+
+        y += 9;
+
+
+        pdf.setFontSize(10);
+
+        pdf.setTextColor(
+            100,
+            116,
+            139
+        );
+
+        pdf.setFont(
+            "helvetica",
+            "normal"
+        );
+
+        pdf.text(
+            "Percentage",
+            pageWidth / 2,
+            y,
+            {align:"center"}
+        );
+
+
+        y += 10;
+
+
+        pdf.setTextColor(
+            31,
+            41,
+            55
+        );
+
+        pdf.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        pdf.text(
+            "Marks: " +
+            document.getElementById(
+                "marks"
+            ).textContent +
+            " / " +
+            document.getElementById(
+                "totalMarks"
+            ).textContent,
+            pageWidth / 2,
+            y,
+            {align:"center"}
+        );
+
+
+        y += 8;
+
+
+        const passText =
+            document.getElementById(
+                "passStatus"
+            ).textContent;
+
+
+        pdf.setFontSize(12);
+
+        pdf.text(
+            passText,
+            pageWidth / 2,
+            y,
+            {align:"center"}
+        );
+
+
+        y += 25;
+
+
+        const transactionRef =
+            sessionStorage.getItem(
+                "upiTransactionRef"
+            ) || "-";
+
+
+        pdf.setFontSize(8);
+
+        pdf.setFont(
+            "helvetica",
+            "normal"
+        );
+
+        pdf.setTextColor(
+            100,
+            116,
+            139
+        );
+
+        pdf.text(
+            "UPI Transaction Reference: " +
+            transactionRef,
+            pageWidth / 2,
+            y,
+            {align:"center"}
+        );
+
+
+        y += 7;
+
+
+        pdf.text(
+            "Marksheet access fee: ₹1.00",
+            pageWidth / 2,
+            y,
+            {align:"center"}
+        );
+
+
+        pdf.setDrawColor(
+            226,
+            232,
+            240
+        );
+
+        pdf.line(
+            margin,
+            pageHeight - 20,
+            pageWidth - margin,
+            pageHeight - 20
+        );
+
+
+        pdf.setTextColor(
+            100,
+            116,
+            139
+        );
+
+        pdf.setFontSize(8);
+
+        pdf.text(
+            "This is an electronically generated examination result.",
+            pageWidth / 2,
+            pageHeight - 13,
+            {align:"center"}
+        );
+
+        pdf.text(
+            "SSC Examination System",
+            pageWidth / 2,
+            pageHeight - 8,
+            {align:"center"}
+        );
+
+
+        const roll =
+            document.getElementById(
+                "rollNumber"
+            ).textContent
+            .replace(
+                /[^a-zA-Z0-9_-]/g,
+                "_"
+            );
+
+
+        pdf.save(
+            "SSC_Marksheet_" +
+            roll +
+            ".pdf"
+        );
+
+
+        button.textContent =
+            "✅ Marksheet Downloaded";
+
+
+        setTimeout(
+            function(){
+                button.textContent =
+                    oldText;
+            },
+            2500
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "PDF error:",
+            error
+        );
+
+        alert(
+            "PDF तयार करताना error आला:\n" +
+            error.message
+        );
+
+        button.textContent =
+            oldText;
+
+    }
+    finally{
+
+        button.disabled = false;
+
+    }
+}
+
+
+/* =====================================================
+   PRINT
+===================================================== */
+
+function printResult(){
+
+    try{
+        window.print();
+    }
+    catch(error){
+
+        alert(
+            "Mobile browser print unavailable. Please use Download PDF."
+        );
+
+    }
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function goDashboard(){
+
+    window.location.replace(
+        "candidate_dashboard.html"
+    );
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logout(){
+
+    try{
+
+        await auth.signOut();
+
+        sessionStorage.removeItem(
+            "publishedResultId"
+        );
+
+        sessionStorage.removeItem(
+            "candidateDocId"
+        );
+
+        sessionStorage.removeItem(
+            "candidateUID"
+        );
+
+        sessionStorage.removeItem(
+            "examId"
+        );
+
+        sessionStorage.removeItem(
+            "upiTransactionRef"
+        );
+
+        window.location.replace(
+            "login.html"
+        );
+
+    }
+    catch(error){
+
+        alert(
+            "Logout failed: " +
+            error.message
+        );
+
+    }
+}
+
+
+/* =====================================================
+   AUTH — IMPORTANT FIX
+===================================================== */
+
+let authStateResolved = false;
+
+
+/*
+   Firebase ला session restore करण्यासाठी
+   थोडा वेळ देतो.
+*/
+
+auth.onAuthStateChanged(
+    async function(user){
+
+        authStateResolved = true;
+
+        try{
+
+            if(user){
+
+                /*
+                   User मिळाला म्हणजे login valid.
+                   आता result load करू.
+                */
+
+                currentUser = user;
+
+                document.getElementById(
+                    "loadingMessage"
+                ).textContent =
+                    "Loading your published result...";
+
+
+                await loadResult(user);
+
+                return;
+            }
+
+
+            /*
+               IMPORTANT:
+               Firebase session restore होण्याआधी
+               null मिळाल्यास लगेच login वर redirect
+               करू नये.
+            */
+
+            await new Promise(
+                function(resolve){
+                    setTimeout(
+                        resolve,
+                        1200
+                    );
+                }
+            );
+
+
+            const retryUser =
+                auth.currentUser;
+
+
+            if(retryUser){
+
+                currentUser =
+                    retryUser;
+
+                await loadResult(
+                    retryUser
+                );
+
+                return;
+            }
+
+
+            /*
+               आता खरोखर login नाही.
+            */
+
+            window.location.replace(
+                "login.html"
+            );
+
+        }
+        catch(error){
+
+            console.error(
+                "Result loading error:",
+                error
+            );
+
+
+            document.getElementById(
+                "loading"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "errorBox"
+            ).style.display =
+                "block";
+
+
+            document.getElementById(
+                "errorMessage"
+            ).textContent =
+                error.message ||
+                "Unable to load result.";
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   SAFETY TIMEOUT
+===================================================== */
+
+setTimeout(
+    function(){
+
+        const loading =
+            document.getElementById(
+                "loading"
+            );
+
+        if(
+            loading.style.display !==
+            "none" &&
+            !auth.currentUser
+        ){
+
+            /*
+               Login redirect करण्याऐवजी
+               error दाखवतो.
+            */
+
+            loading.style.display =
+                "none";
+
+            document.getElementById(
+                "errorBox"
+            ).style.display =
+                "block";
+
+            document.getElementById(
+                "errorMessage"
+            ).textContent =
+                "Firebase session could not be restored. Please return to Dashboard and try View Result again.";
+
+        }
+
+    },
+    10000
+);
+
+</script>
 
 </body>
 </html>

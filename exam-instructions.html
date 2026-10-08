@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 <meta charset="UTF-8">
@@ -10,7 +9,7 @@
     content="width=device-width, initial-scale=1.0"
 >
 
-<title>Examination Instructions</title>
+<title>SSC Examination Instructions</title>
 
 <style>
 
@@ -26,14 +25,13 @@ body {
 }
 
 .container {
-    width: 100%;
     max-width: 900px;
     margin: 20px auto;
     padding: 15px;
 }
 
 .card {
-    background: #ffffff;
+    background: #fff;
     border-radius: 20px;
     padding: 28px;
     box-shadow: 0 15px 40px rgba(0,0,0,.10);
@@ -59,7 +57,7 @@ body {
 
 h1 {
     margin: 0 0 8px;
-    font-size: 28px;
+    font-size: 27px;
 }
 
 .subtitle {
@@ -82,7 +80,7 @@ h1 {
 }
 
 .row:last-child {
-    border-bottom: none;
+    border-bottom: 0;
 }
 
 .label {
@@ -129,7 +127,7 @@ h1 {
     line-height: 1.6;
 }
 
-.agreement {
+.agree {
     display: flex;
     gap: 10px;
     margin-top: 22px;
@@ -138,17 +136,16 @@ h1 {
     border-radius: 12px;
 }
 
-.agreement input {
+.agree input {
     width: 20px;
     height: 20px;
-    flex-shrink: 0;
 }
 
-.start-btn {
+.start {
     width: 100%;
     margin-top: 18px;
     padding: 16px;
-    border: none;
+    border: 0;
     border-radius: 12px;
     background: #123b72;
     color: white;
@@ -156,13 +153,13 @@ h1 {
     font-weight: bold;
 }
 
-.start-btn:disabled {
+.start:disabled {
     opacity: .5;
 }
 
 #loading {
     text-align: center;
-    padding: 35px;
+    padding: 40px;
     color: #64748b;
 }
 
@@ -172,10 +169,6 @@ h1 {
     color: #991b1b;
     padding: 16px;
     border-radius: 12px;
-}
-
-#main {
-    display: none;
 }
 
 @media(max-width:650px) {
@@ -196,13 +189,11 @@ h1 {
     .value {
         text-align: left;
     }
-
 }
 
 </style>
 
 </head>
-
 
 <body>
 
@@ -210,126 +201,64 @@ h1 {
 
 <div class="card">
 
-
 <div id="loading">
-    Loading examination instructions...
+    Loading examination...
 </div>
-
 
 <div id="error"></div>
 
-
-<div id="main">
-
+<div id="main" style="display:none;">
 
 <div class="header">
 
-    <div class="icon">
-        📝
-    </div>
+    <div class="icon">📝</div>
 
     <h1>
         Examination Instructions
     </h1>
 
     <div class="subtitle">
-        Please read all instructions carefully
-        before starting the examination.
+        SSC Computer Based Examination
     </div>
 
 </div>
 
-
-<!-- Candidate -->
 
 <div class="info">
 
     <div class="row">
-
-        <span class="label">
-            Candidate
-        </span>
-
-        <span
-            class="value"
-            id="candidateName">
-            -
-        </span>
-
+        <span class="label">Candidate</span>
+        <span class="value" id="candidateName">-</span>
     </div>
 
-
     <div class="row">
-
-        <span class="label">
-            Roll Number
-        </span>
-
-        <span
-            class="value"
-            id="rollNumber">
-            -
-        </span>
-
+        <span class="label">Roll Number</span>
+        <span class="value" id="rollNumber">-</span>
     </div>
 
-
     <div class="row">
-
-        <span class="label">
-            Centre
-        </span>
-
-        <span
-            class="value"
-            id="centre">
-            -
-        </span>
-
+        <span class="label">Centre</span>
+        <span class="value" id="centre">-</span>
     </div>
 
-
     <div class="row">
-
-        <span class="label">
-            Room / Lab
-        </span>
-
-        <span
-            class="value"
-            id="roomNo">
-            -
-        </span>
-
+        <span class="label">Room / Lab</span>
+        <span class="value" id="roomNo">-</span>
     </div>
 
-
     <div class="row">
-
-        <span class="label">
-            Seat Number
-        </span>
-
-        <span
-            class="value"
-            id="seatNumber">
-            -
-        </span>
-
+        <span class="label">Seat Number</span>
+        <span class="value" id="seatNumber">-</span>
     </div>
 
 </div>
 
-
-<!-- Exam -->
 
 <div class="exam-info">
 
     <div class="box">
 
-        <small>
-            Examination
-        </small>
+        <small>Exam</small>
 
         <strong id="examName">
             -
@@ -337,12 +266,9 @@ h1 {
 
     </div>
 
-
     <div class="box">
 
-        <small>
-            Subject
-        </small>
+        <small>Subject</small>
 
         <strong id="subject">
             -
@@ -350,12 +276,9 @@ h1 {
 
     </div>
 
-
     <div class="box">
 
-        <small>
-            Duration
-        </small>
+        <small>Duration</small>
 
         <strong id="duration">
             -
@@ -366,8 +289,6 @@ h1 {
 </div>
 
 
-<!-- Instructions -->
-
 <div class="instructions">
 
 <h2>
@@ -377,51 +298,43 @@ h1 {
 <ol>
 
 <li>
-    Read all instructions carefully before
-    starting the examination.
+    Read all instructions carefully before starting.
 </li>
 
 <li>
-    The examination timer starts when you
-    start the examination.
+    The examination timer starts when you start the exam.
 </li>
 
 <li>
-    Do not refresh or close the examination
-    page while the examination is running.
+    Do not refresh or close the examination page.
 </li>
 
 <li>
-    Do not use the browser Back button during
-    the examination.
+    Do not use the browser Back button during the examination.
 </li>
 
 <li>
-    Select the correct answer for every question.
+    Select the correct answer for each question.
 </li>
 
 <li>
-    You can move between questions using
-    the question palette.
+    You can move between questions using the question palette.
 </li>
 
 <li>
-    You can mark questions for review.
+    Questions can be marked for review.
 </li>
 
 <li>
-    Once the examination is submitted,
-    it cannot be attempted again.
+    Once the examination is submitted, it cannot be attempted again.
 </li>
 
 <li>
-    Your result will remain pending after
-    examination submission.
+    Your result will remain pending after submission.
 </li>
 
 <li>
-    The result will be visible only after
-    the administrator declares it.
+    The result will be visible only after Admin declares it.
 </li>
 
 </ol>
@@ -429,29 +342,24 @@ h1 {
 </div>
 
 
-<!-- Agreement -->
-
-<div class="agreement">
+<div class="agree">
 
 <input
     type="checkbox"
-    id="agreeCheck"
+    id="agree"
 >
 
-<label for="agreeCheck">
-
-    I have read and understood all the
-    examination instructions and agree to
-    follow the examination rules.
-
+<label for="agree">
+    I have read and understood all examination
+    instructions and agree to follow the examination rules.
 </label>
 
 </div>
 
 
 <button
-    class="start-btn"
-    id="startExamButton"
+    class="start"
+    id="start"
     disabled
 >
     Start Examination
@@ -464,8 +372,6 @@ h1 {
 
 </div>
 
-
-<!-- Firebase -->
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 
@@ -498,93 +404,48 @@ const firebaseConfig = {
 
     measurementId:
         "G-4BTLY67VDS"
-
 };
 
 
 if (!firebase.apps.length) {
-
-    firebase.initializeApp(
-        firebaseConfig
-    );
-
+    firebase.initializeApp(firebaseConfig);
 }
 
-
 const auth = firebase.auth();
-
 const db = firebase.firestore();
 
-
-/* =====================================================
-   GET EXAM ID
-===================================================== */
 
 const params =
     new URLSearchParams(
         window.location.search
     );
 
-
 let examId =
     params.get("examId") ||
     sessionStorage.getItem("examId");
 
 
-/* =====================================================
-   ELEMENTS
-===================================================== */
-
 const loading =
-    document.getElementById(
-        "loading"
-    );
+    document.getElementById("loading");
 
 const errorBox =
-    document.getElementById(
-        "error"
-    );
+    document.getElementById("error");
 
 const main =
-    document.getElementById(
-        "main"
-    );
-
-const agreeCheck =
-    document.getElementById(
-        "agreeCheck"
-    );
-
-const startButton =
-    document.getElementById(
-        "startExamButton"
-    );
+    document.getElementById("main");
 
 
-/* =====================================================
-   ERROR
-===================================================== */
+function error(message) {
 
-function showError(text) {
+    loading.style.display = "none";
 
-    loading.style.display =
-        "none";
+    main.style.display = "none";
 
-    main.style.display =
-        "none";
+    errorBox.textContent = message;
 
-    errorBox.textContent =
-        text;
-
-    errorBox.style.display =
-        "block";
-
+    errorBox.style.display = "block";
 }
 
-
-/* =====================================================
-   LOAD PAGE
-===================================================== */
 
 auth.onAuthStateChanged(
 async function(user) {
@@ -593,18 +454,29 @@ async function(user) {
 
         if (!user) {
 
-            showError(
-                "Candidate is not logged in. Please login first."
+            error(
+                "Candidate login session not found."
             );
 
             return;
-
         }
 
 
-        /* =============================================
-           GET CANDIDATE
-        ============================================= */
+        if (!examId) {
+
+            error(
+                "Exam ID not found."
+            );
+
+            return;
+        }
+
+
+        sessionStorage.setItem(
+            "examId",
+            examId
+        );
+
 
         const candidateSnap =
             await db
@@ -615,12 +487,11 @@ async function(user) {
 
         if (!candidateSnap.exists) {
 
-            showError(
+            error(
                 "Candidate record not found."
             );
 
             return;
-
         }
 
 
@@ -628,56 +499,18 @@ async function(user) {
             candidateSnap.data();
 
 
-        /* =============================================
-           GET EXAM ID
-        ============================================= */
-
-        if (!examId) {
-
-            examId =
-                candidate.assignedExamId;
-
-        }
-
-
-        if (!examId) {
-
-            showError(
-                "Exam ID not found."
-            );
-
-            return;
-
-        }
-
-
-        sessionStorage.setItem(
-            "examId",
-            examId
-        );
-
-
-        /* =============================================
-           CHECK ASSIGNMENT
-        ============================================= */
-
         if (
             candidate.assignedExamId &&
             candidate.assignedExamId !== examId
         ) {
 
-            showError(
-                "This examination is not assigned to you."
+            error(
+                "This examination is not assigned to this candidate."
             );
 
             return;
-
         }
 
-
-        /* =============================================
-           LOAD EXAM
-        ============================================= */
 
         const examSnap =
             await db
@@ -688,22 +521,17 @@ async function(user) {
 
         if (!examSnap.exists) {
 
-            showError(
+            error(
                 "Examination not found."
             );
 
             return;
-
         }
 
 
         const exam =
             examSnap.data();
 
-
-        /* =============================================
-           STATUS
-        ============================================= */
 
         const status =
             String(
@@ -716,18 +544,13 @@ async function(user) {
             status !== "active"
         ) {
 
-            showError(
+            error(
                 "This examination is not currently published."
             );
 
             return;
-
         }
 
-
-        /* =============================================
-           DISPLAY CANDIDATE
-        ============================================= */
 
         document.getElementById(
             "candidateName"
@@ -741,8 +564,7 @@ async function(user) {
         document.getElementById(
             "rollNumber"
         ).textContent =
-            candidate.rollNumber ||
-            "-";
+            candidate.rollNumber || "-";
 
 
         document.getElementById(
@@ -768,10 +590,6 @@ async function(user) {
             "-";
 
 
-        /* =============================================
-           DISPLAY EXAM
-        ============================================= */
-
         document.getElementById(
             "examName"
         ).textContent =
@@ -783,8 +601,7 @@ async function(user) {
         document.getElementById(
             "subject"
         ).textContent =
-            exam.subject ||
-            "-";
+            exam.subject || "-";
 
 
         document.getElementById(
@@ -794,27 +611,18 @@ async function(user) {
             " Minutes";
 
 
-        /* =============================================
-           SHOW
-        ============================================= */
+        loading.style.display = "none";
 
-        loading.style.display =
-            "none";
-
-        errorBox.style.display =
-            "none";
-
-        main.style.display =
-            "block";
+        main.style.display = "block";
 
 
-    } catch (error) {
+    } catch (e) {
 
-        console.error(error);
+        console.error(e);
 
-        showError(
-            "Unable to load instructions: " +
-            error.message
+        error(
+            "Unable to load examination: " +
+            e.message
         );
 
     }
@@ -822,50 +630,26 @@ async function(user) {
 });
 
 
-/* =====================================================
-   AGREEMENT
-===================================================== */
-
-agreeCheck.addEventListener(
+document
+.getElementById("agree")
+.addEventListener(
     "change",
     function() {
 
-        startButton.disabled =
+        document.getElementById(
+            "start"
+        ).disabled =
             !this.checked;
 
     }
 );
 
 
-/* =====================================================
-   START EXAM
-===================================================== */
-
-startButton.addEventListener(
+document
+.getElementById("start")
+.addEventListener(
     "click",
     function() {
-
-        if (!agreeCheck.checked) {
-
-            return;
-
-        }
-
-
-        if (!examId) {
-
-            showError(
-                "Exam ID is missing."
-            );
-
-            return;
-
-        }
-
-
-        /* =============================================
-           SAVE
-        ============================================= */
 
         sessionStorage.setItem(
             "examId",
@@ -883,15 +667,9 @@ startButton.addEventListener(
         );
 
 
-        /* =============================================
-           EXAM PAGE
-        ============================================= */
-
         window.location.replace(
             "exam.html?examId=" +
-            encodeURIComponent(
-                examId
-            )
+            encodeURIComponent(examId)
         );
 
     }
@@ -900,5 +678,4 @@ startButton.addEventListener(
 </script>
 
 </body>
-
 </html>

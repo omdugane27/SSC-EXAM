@@ -5,79 +5,133 @@
 
 <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>Admin Login | SSC Examination System</title>
 
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 
 <style>
 
 *{
-    box-sizing:border-box;
     margin:0;
     padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
     min-height:100vh;
-    font-family:Arial,sans-serif;
-    background:linear-gradient(135deg,#123b72,#2453d4);
+
+    background:
+        linear-gradient(
+            135deg,
+            #0f3b82,
+            #2563eb,
+            #1d4ed8
+        );
+
     display:flex;
-    justify-content:center;
     align-items:center;
+    justify-content:center;
+
     padding:20px;
+
+    color:#172033;
 }
 
-.login-container{
+
+/* ================= CARD ================= */
+
+.login-card{
     width:100%;
-    max-width:440px;
+    max-width:500px;
+
     background:white;
-    padding:35px;
-    border-radius:20px;
-    box-shadow:0 20px 50px rgba(0,0,0,.25);
+
+    border-radius:24px;
+
+    padding:42px 40px;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.22);
 }
+
+
+/* ================= LOGO ================= */
 
 .logo{
-    width:80px;
-    height:80px;
-    margin:0 auto 20px;
-    background:#123b72;
-    color:white;
+    width:115px;
+    height:115px;
+
     border-radius:50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #173f7a,
+            #2563eb
+        );
+
+    color:white;
+
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:24px;
+
+    margin:0 auto 24px;
+
+    font-size:32px;
     font-weight:bold;
+
+    box-shadow:
+        0 8px 25px rgba(37,99,235,.25);
 }
+
+
+/* ================= TITLE ================= */
 
 h1{
     text-align:center;
-    color:#172033;
-    font-size:27px;
-    margin-bottom:8px;
+
+    font-size:31px;
+
+    margin-bottom:7px;
 }
 
 .subtitle{
     text-align:center;
-    color:#6b7280;
+
+    color:#64748b;
+
+    font-size:17px;
+
     margin-bottom:25px;
 }
 
-.admin-badge{
+
+/* ================= SECURITY ================= */
+
+.security{
     background:#eff6ff;
-    color:#123b72;
-    padding:12px;
-    border-radius:9px;
+
+    color:#1e467e;
+
+    border-radius:12px;
+
+    padding:14px;
+
     text-align:center;
-    margin-bottom:22px;
+
+    font-size:15px;
+
     font-weight:bold;
+
+    margin-bottom:27px;
 }
+
+
+/* ================= FORM ================= */
 
 .form-group{
     margin-bottom:20px;
@@ -85,27 +139,47 @@ h1{
 
 label{
     display:block;
+
+    font-size:16px;
+
+    font-weight:bold;
+
     margin-bottom:8px;
-    color:#374151;
-    font-weight:600;
+
+    color:#334155;
 }
 
 input{
     width:100%;
-    height:52px;
-    border:1px solid #cbd5e1;
-    border-radius:9px;
+
+    height:56px;
+
+    border:2px solid #d7dce5;
+
+    border-radius:11px;
+
     padding:0 15px;
+
     font-size:16px;
+
     outline:none;
+
     background:#f8fafc;
+
+    transition:.2s;
 }
 
 input:focus{
-    border-color:#2453d4;
-    box-shadow:0 0 0 3px rgba(36,83,212,.12);
+    border-color:#2563eb;
+
     background:white;
+
+    box-shadow:
+        0 0 0 3px rgba(37,99,235,.10);
 }
+
+
+/* ================= PASSWORD ================= */
 
 .password-box{
     position:relative;
@@ -115,97 +189,237 @@ input:focus{
     padding-right:70px;
 }
 
-.show-btn{
+.show-password{
     position:absolute;
-    right:10px;
+
+    right:12px;
     top:50%;
+
     transform:translateY(-50%);
-    border:none;
-    background:none;
-    color:#2453d4;
+
+    border:0;
+
+    background:transparent;
+
+    color:#2563eb;
+
+    font-size:14px;
+
     font-weight:bold;
+
     cursor:pointer;
 }
 
+
+/* ================= BUTTON ================= */
+
 .login-btn{
     width:100%;
-    height:52px;
-    border:none;
-    border-radius:9px;
-    background:#123b72;
+
+    height:57px;
+
+    border:0;
+
+    border-radius:11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1d4ed8,
+            #2563eb
+        );
+
     color:white;
+
     font-size:17px;
+
     font-weight:bold;
+
     cursor:pointer;
+
+    margin-top:5px;
+
+    transition:.2s;
+}
+
+.login-btn:hover{
+    box-shadow:
+        0 8px 20px rgba(37,99,235,.25);
 }
 
 .login-btn:disabled{
     background:#9ca3af;
+
     cursor:not-allowed;
+
+    box-shadow:none;
 }
+
+
+/* ================= MESSAGE ================= */
 
 .message{
     display:none;
+
     margin-top:18px;
-    padding:13px;
-    border-radius:9px;
+
+    padding:15px;
+
+    border-radius:11px;
+
     text-align:center;
+
+    font-size:14px;
+
     line-height:1.5;
-    white-space:pre-wrap;
+
+    white-space:pre-line;
 }
 
-.message.error{
+.message.show{
     display:block;
-    background:#fee2e2;
-    color:#991b1b;
 }
 
 .message.success{
-    display:block;
     background:#dcfce7;
+
     color:#166534;
 }
 
+.message.error{
+    background:#fee2e2;
+
+    color:#991b1b;
+}
+
 .message.info{
-    display:block;
     background:#dbeafe;
+
     color:#1e40af;
 }
 
-.back{
+
+/* ================= BACK ================= */
+
+.back-link{
     display:block;
+
     text-align:center;
-    margin-top:22px;
-    color:#2453d4;
+
+    margin-top:24px;
+
+    color:#2563eb;
+
     text-decoration:none;
+
+    font-size:15px;
+
     font-weight:bold;
+}
+
+.back-link:hover{
+    text-decoration:underline;
+}
+
+
+/* ================= FOOTER ================= */
+
+.footer{
+    text-align:center;
+
+    color:#94a3b8;
+
+    font-size:11px;
+
+    margin-top:23px;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media(max-width:600px){
+
+    body{
+        padding:14px;
+    }
+
+    .login-card{
+        padding:32px 22px;
+
+        border-radius:20px;
+    }
+
+    .logo{
+        width:100px;
+        height:100px;
+
+        font-size:28px;
+    }
+
+    h1{
+        font-size:28px;
+    }
+
+    .subtitle{
+        font-size:16px;
+    }
+
+    .security{
+        font-size:13px;
+    }
+
+    input{
+        height:54px;
+    }
+
+    .login-btn{
+        height:54px;
+
+        font-size:16px;
+    }
 }
 
 </style>
 
 </head>
 
+
 <body>
 
-<div class="login-container">
+
+<div class="login-card">
+
+
+    <!-- LOGO -->
 
     <div class="logo">
         ADM
     </div>
 
+
+    <!-- TITLE -->
+
     <h1>
         Admin Login
     </h1>
 
-    <p class="subtitle">
-        SSC Examination System
-    </p>
 
-    <div class="admin-badge">
+    <div class="subtitle">
+        SSC Examination System
+    </div>
+
+
+    <!-- SECURITY -->
+
+    <div class="security">
         🔐 Authorized Administrator Access
     </div>
 
-    <form id="adminLoginForm">
+
+    <!-- FORM -->
+
+    <form id="loginForm">
+
 
         <div class="form-group">
 
@@ -217,17 +431,19 @@ input:focus{
                 type="email"
                 id="email"
                 placeholder="Enter admin email"
-                autocomplete="email"
+                autocomplete="username"
                 required
             >
 
         </div>
+
 
         <div class="form-group">
 
             <label for="password">
                 Password
             </label>
+
 
             <div class="password-box">
 
@@ -239,9 +455,11 @@ input:focus{
                     required
                 >
 
+
                 <button
                     type="button"
-                    class="show-btn"
+                    class="show-password"
+                    onclick="togglePassword()"
                     id="showPassword"
                 >
                     Show
@@ -251,36 +469,62 @@ input:focus{
 
         </div>
 
+
         <button
             type="submit"
             class="login-btn"
             id="loginBtn"
         >
-            Admin Login
+            Login to Admin Dashboard
         </button>
 
+
     </form>
+
+
+    <!-- MESSAGE -->
 
     <div
         id="message"
         class="message"
     ></div>
 
+
+    <!-- CANDIDATE -->
+
     <a
         href="login.html"
-        class="back"
+        class="back-link"
     >
         ← Candidate Login
     </a>
 
+
+    <div class="footer">
+        SSC Examination System • Administrator Panel
+    </div>
+
+
 </div>
+
+
+
+<!-- =====================================================
+FIREBASE
+===================================================== -->
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
 
 <script>
 
+
 /* =====================================================
-   FIREBASE CONFIG
-   EXACT CONFIG FROM FIREBASE CONSOLE
+FIREBASE CONFIG
 ===================================================== */
 
 const firebaseConfig = {
@@ -305,82 +549,65 @@ const firebaseConfig = {
 
     measurementId:
         "G-4BTLY67VDS"
+
 };
 
 
 /* =====================================================
-   INITIALIZE FIREBASE
+INITIALIZE FIREBASE
 ===================================================== */
 
-try{
+if(
+    !firebase.apps.length
+){
 
-    if(!firebase.apps.length){
-
-        firebase.initializeApp(
-            firebaseConfig
-        );
-
-    }
-
-    console.log(
-        "Firebase initialized successfully."
-    );
-
-}catch(error){
-
-    console.error(
-        "Firebase initialization error:",
-        error
+    firebase.initializeApp(
+        firebaseConfig
     );
 
 }
 
-
-/* =====================================================
-   FIREBASE AUTH
-===================================================== */
 
 const auth =
     firebase.auth();
 
 
 /* =====================================================
-   ELEMENTS
+DOM
 ===================================================== */
 
 const form =
     document.getElementById(
-        "adminLoginForm"
+        "loginForm"
     );
+
 
 const emailInput =
     document.getElementById(
         "email"
     );
 
+
 const passwordInput =
     document.getElementById(
         "password"
     );
+
 
 const loginBtn =
     document.getElementById(
         "loginBtn"
     );
 
+
 const message =
     document.getElementById(
         "message"
     );
 
-const showPassword =
-    document.getElementById(
-        "showPassword"
-    );
-
 
 /* =====================================================
-   MESSAGE
+MESSAGE
 ===================================================== */
 
 function showMessage(
@@ -392,46 +619,62 @@ function showMessage(
         text;
 
     message.className =
-        "message " + type;
+        "message show " +
+        type;
+
+}
+
+
+function hideMessage(){
+
+    message.textContent =
+        "";
+
+    message.className =
+        "message";
 
 }
 
 
 /* =====================================================
-   PASSWORD SHOW / HIDE
+SHOW / HIDE PASSWORD
 ===================================================== */
 
-showPassword.addEventListener(
-    "click",
-    function(){
+function togglePassword(){
 
-        if(
-            passwordInput.type ===
-            "password"
-        ){
+    const button =
+        document.getElementById(
+            "showPassword"
+        );
 
-            passwordInput.type =
-                "text";
 
-            showPassword.textContent =
-                "Hide";
+    if(
+        passwordInput.type ===
+        "password"
+    ){
 
-        }else{
+        passwordInput.type =
+            "text";
 
-            passwordInput.type =
-                "password";
-
-            showPassword.textContent =
-                "Show";
-
-        }
+        button.textContent =
+            "Hide";
 
     }
-);
+    else{
+
+        passwordInput.type =
+            "password";
+
+        button.textContent =
+            "Show";
+
+    }
+
+}
 
 
 /* =====================================================
-   LOGIN
+LOGIN
 ===================================================== */
 
 form.addEventListener(
@@ -440,19 +683,22 @@ form.addEventListener(
 
         event.preventDefault();
 
+
+        hideMessage();
+
+
         const email =
             emailInput.value.trim();
+
 
         const password =
             passwordInput.value;
 
-        if(
-            !email ||
-            !password
-        ){
+
+        if(!email){
 
             showMessage(
-                "Please enter email and password.",
+                "Please enter admin email.",
                 "error"
             );
 
@@ -460,11 +706,27 @@ form.addEventListener(
 
         }
 
+
+        if(!password){
+
+            showMessage(
+                "Please enter admin password.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /* LOCK BUTTON */
+
         loginBtn.disabled =
             true;
 
         loginBtn.textContent =
             "Logging in...";
+
 
         showMessage(
             "Connecting to Firebase...",
@@ -474,21 +736,14 @@ form.addEventListener(
 
         try{
 
-            /* =========================================
-               LOCAL PERSISTENCE
-            ========================================= */
-
-            await auth.setPersistence(
-                firebase.auth.Auth.Persistence.LOCAL
-            );
-
 
             /* =========================================
-               SIGN IN
+            FIREBASE AUTH LOGIN
             ========================================= */
 
             const result =
-                await auth.signInWithEmailAndPassword(
+                await auth
+                .signInWithEmailAndPassword(
                     email,
                     password
                 );
@@ -501,23 +756,20 @@ form.addEventListener(
             if(!user){
 
                 throw new Error(
-                    "Firebase user session was not created."
+                    "Firebase authentication failed."
                 );
 
             }
 
 
-            /* =========================================
-               REFRESH TOKEN
-            ========================================= */
-
-            await user.getIdToken(
-                true
+            console.log(
+                "Admin login successful:",
+                user.uid
             );
 
 
             /* =========================================
-               SAVE ADMIN SESSION
+            SAVE ADMIN SESSION
             ========================================= */
 
             sessionStorage.setItem(
@@ -525,115 +777,93 @@ form.addEventListener(
                 "true"
             );
 
+
             sessionStorage.setItem(
                 "adminUID",
                 user.uid
             );
 
+
             sessionStorage.setItem(
                 "adminEmail",
-                user.email || ""
+                user.email || email
             );
 
 
-            console.log(
-                "================================"
-            );
-
-            console.log(
-                "ADMIN LOGIN SUCCESS"
-            );
-
-            console.log(
-                "UID:",
-                user.uid
-            );
-
-            console.log(
-                "EMAIL:",
-                user.email
-            );
-
-            console.log(
-                "Firebase Auth currentUser:",
-                auth.currentUser
-            );
-
-            console.log(
-                "================================"
-            );
-
-
-            showMessage(
-                "✅ Admin login successful.\n\nOpening Admin Dashboard...",
-                "success"
+            sessionStorage.setItem(
+                "adminLoginTime",
+                new Date().toISOString()
             );
 
 
             /* =========================================
-               REDIRECT
+            SUCCESS
             ========================================= */
+
+            showMessage(
+                "✅ Admin login successful.\nOpening Admin Dashboard...",
+                "success"
+            );
+
+
+            /*
+               IMPORTANT:
+               Your actual filename is:
+               admin_dashboard.html
+
+               Direct redirect.
+               No fetch.
+               No HEAD.
+               No fallback.
+            */
 
             setTimeout(
                 function(){
 
-                    window.location.replace(
-                        "admin_dashboard.html"
-                    );
+                    window.location.href =
+                        "admin_dashboard.html";
 
                 },
-                800
+                500
             );
 
 
-        }catch(error){
+        }
+        catch(error){
 
             console.error(
-                "================================"
-            );
-
-            console.error(
-                "ADMIN LOGIN ERROR"
-            );
-
-            console.error(
+                "Admin Login Error:",
                 error
             );
 
-            console.error(
-                "CODE:",
-                error.code
+
+            /* CLEAR SESSION */
+
+            sessionStorage.removeItem(
+                "adminLoggedIn"
             );
 
-            console.error(
-                "MESSAGE:",
-                error.message
+            sessionStorage.removeItem(
+                "adminUID"
             );
 
-            console.error(
-                "================================"
+            sessionStorage.removeItem(
+                "adminEmail"
             );
 
 
             let errorMessage =
-                "Admin login failed.";
+                "Unable to login.";
 
 
-            switch(error.code){
+            switch(
+                error.code
+            ){
 
-                case "auth/api-key-not-valid":
-
-                    errorMessage =
-                        "Firebase API key is being rejected.\n\n" +
-                        "Please verify the Web App API key in Firebase Console.";
-
-                    break;
-
-
-                case "auth/invalid-credential":
+                case "auth/invalid-email":
 
                     errorMessage =
-                        "Invalid email or password.";
+                        "Invalid email address.";
 
                     break;
 
@@ -641,7 +871,7 @@ form.addEventListener(
                 case "auth/user-not-found":
 
                     errorMessage =
-                        "Admin account not found in Firebase Authentication.";
+                        "Admin account not found.";
 
                     break;
 
@@ -654,10 +884,10 @@ form.addEventListener(
                     break;
 
 
-                case "auth/invalid-email":
+                case "auth/invalid-credential":
 
                     errorMessage =
-                        "Invalid email address.";
+                        "Incorrect email or password.";
 
                     break;
 
@@ -665,7 +895,7 @@ form.addEventListener(
                 case "auth/user-disabled":
 
                     errorMessage =
-                        "This admin account has been disabled.";
+                        "This admin account is disabled.";
 
                     break;
 
@@ -673,7 +903,7 @@ form.addEventListener(
                 case "auth/too-many-requests":
 
                     errorMessage =
-                        "Too many login attempts. Please try again later.";
+                        "Too many login attempts. Try again later.";
 
                     break;
 
@@ -689,7 +919,7 @@ form.addEventListener(
                 case "auth/operation-not-allowed":
 
                     errorMessage =
-                        "Email/Password authentication is disabled in Firebase.";
+                        "Email/Password login is disabled in Firebase.";
 
                     break;
 
@@ -698,14 +928,13 @@ form.addEventListener(
 
                     errorMessage =
                         error.message ||
-                        errorMessage;
+                        "Login failed.";
 
             }
 
 
             showMessage(
-                "❌ " +
-                errorMessage,
+                "❌ " + errorMessage,
                 "error"
             );
 
@@ -714,37 +943,7 @@ form.addEventListener(
                 false;
 
             loginBtn.textContent =
-                "Admin Login";
-
-        }
-
-    }
-);
-
-
-/* =====================================================
-   AUTH STATE MONITOR
-===================================================== */
-
-auth.onAuthStateChanged(
-    function(user){
-
-        if(user){
-
-            console.log(
-                "Firebase Auth State: LOGGED IN"
-            );
-
-            console.log(
-                "User:",
-                user.email
-            );
-
-        }else{
-
-            console.log(
-                "Firebase Auth State: LOGGED OUT"
-            );
+                "Login to Admin Dashboard";
 
         }
 
@@ -753,5 +952,7 @@ auth.onAuthStateChanged(
 
 </script>
 
+
 </body>
+
 </html>

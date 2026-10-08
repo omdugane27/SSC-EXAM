@@ -1,577 +1,953 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Admin Dashboard - SSC Examination System</title>
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Admin Dashboard | SSC Examination System</title>
 
 <style>
+
 *{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial,Helvetica,sans-serif;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
-  background:#f4f7fb;
-  color:#1e293b;
+    background:#f4f7fb;
+    color:#1e293b;
 }
 
-/* HEADER */
+
+/* ================= HEADER ================= */
 
 .header{
-  background:linear-gradient(135deg,#0f172a,#1e3a8a);
-  color:white;
-  padding:18px 25px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  box-shadow:0 3px 15px rgba(0,0,0,.15);
+    background:linear-gradient(
+        135deg,
+        #0f172a,
+        #1e3a8a,
+        #2563eb
+    );
+
+    color:white;
+    padding:15px 25px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    gap:15px;
+
+    position:sticky;
+    top:0;
+    z-index:1000;
+
+    box-shadow:0 4px 18px rgba(0,0,0,.18);
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo{
+    width:48px;
+    height:48px;
+
+    border-radius:50%;
+
+    background:white;
+    color:#1e3a8a;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:17px;
+    font-weight:bold;
+    flex-shrink:0;
 }
 
 .header-left h1{
-  font-size:22px;
+    font-size:21px;
 }
 
 .header-left p{
-  margin-top:5px;
-  font-size:12px;
-  opacity:.75;
+    margin-top:4px;
+    font-size:11px;
+    opacity:.75;
 }
 
 .header-right{
-  display:flex;
-  align-items:center;
-  gap:10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
 .admin-badge{
-  background:rgba(255,255,255,.12);
-  padding:9px 12px;
-  border-radius:8px;
-  font-size:12px;
+    background:rgba(255,255,255,.12);
+    padding:9px 12px;
+    border-radius:8px;
+    font-size:12px;
 }
 
 .logout{
-  background:#ef4444;
-  border:0;
-  color:white;
-  padding:10px 16px;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:bold;
+    background:#ef4444;
+    border:0;
+    color:white;
+
+    padding:10px 16px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+    font-weight:bold;
 }
 
-/* CONTAINER */
+.logout:hover{
+    background:#dc2626;
+}
+
+
+/* ================= CONTAINER ================= */
 
 .container{
-  width:95%;
-  max-width:1250px;
-  padding:25px 0;
-  margin:auto;
+    width:94%;
+    max-width:1400px;
+
+    margin:auto;
+
+    padding:25px 0 40px;
 }
 
-/* WELCOME */
+
+/* ================= WELCOME ================= */
 
 .welcome{
-  margin-bottom:25px;
+    background:
+        linear-gradient(
+            135deg,
+            #1e3a8a,
+            #2563eb
+        );
+
+    color:white;
+
+    border-radius:16px;
+
+    padding:25px;
+
+    margin-bottom:22px;
+
+    box-shadow:
+        0 7px 25px rgba(37,99,235,.20);
 }
 
 .welcome h2{
-  font-size:25px;
-  margin-bottom:6px;
+    font-size:26px;
+    margin-bottom:7px;
 }
 
 .welcome p{
-  color:#64748b;
-  font-size:14px;
+    font-size:13px;
+    opacity:.9;
 }
 
-/* STATS */
+
+/* ================= STATS ================= */
 
 .stats{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:15px;
-  margin-bottom:30px;
+    display:grid;
+
+    grid-template-columns:
+        repeat(5,1fr);
+
+    gap:15px;
+
+    margin-bottom:28px;
 }
 
 .stat-card{
-  background:white;
-  padding:20px;
-  border-radius:14px;
-  box-shadow:0 4px 15px rgba(0,0,0,.07);
-  border-left:4px solid #2563eb;
+    background:white;
+
+    padding:19px;
+
+    border-radius:13px;
+
+    box-shadow:
+        0 4px 15px rgba(0,0,0,.07);
+
+    border-left:4px solid #2563eb;
+
+    transition:.2s;
+}
+
+.stat-card:hover{
+    transform:translateY(-2px);
 }
 
 .stat-card:nth-child(2){
-  border-left-color:#7c3aed;
+    border-left-color:#7c3aed;
 }
 
 .stat-card:nth-child(3){
-  border-left-color:#16a34a;
+    border-left-color:#16a34a;
 }
 
 .stat-card:nth-child(4){
-  border-left-color:#059669;
+    border-left-color:#059669;
 }
 
 .stat-card:nth-child(5){
-  border-left-color:#ea580c;
+    border-left-color:#ea580c;
 }
 
 .stat-card h3{
-  font-size:13px;
-  color:#64748b;
-  margin-bottom:10px;
+    font-size:12px;
+    color:#64748b;
+    margin-bottom:10px;
 }
 
 .stat-card p{
-  font-size:28px;
-  font-weight:bold;
-  color:#0f172a;
+    font-size:27px;
+    font-weight:bold;
+    color:#0f172a;
 }
 
-/* SECTION */
+
+/* ================= SECTION ================= */
+
+.section-header{
+    margin-bottom:15px;
+}
 
 .section-title{
-  margin-bottom:15px;
-  font-size:20px;
+    font-size:20px;
 }
 
-/* MENU */
+.section-subtitle{
+    color:#64748b;
+    font-size:12px;
+    margin-top:4px;
+}
+
+
+/* ================= MENU ================= */
 
 .menu{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:18px;
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:17px;
 }
 
 .menu-card{
-  background:white;
-  border-radius:14px;
-  padding:22px;
-  box-shadow:0 4px 15px rgba(0,0,0,.07);
-  transition:.2s;
+    background:white;
+
+    border-radius:14px;
+
+    padding:20px;
+
+    box-shadow:
+        0 4px 15px rgba(0,0,0,.07);
+
+    border:1px solid #eef2f7;
+
+    transition:.2s;
 }
 
 .menu-card:hover{
-  transform:translateY(-3px);
-  box-shadow:0 8px 22px rgba(0,0,0,.10);
+    transform:translateY(-4px);
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.10);
 }
 
 .menu-icon{
-  width:48px;
-  height:48px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:12px;
-  background:#eff6ff;
-  font-size:24px;
-  margin-bottom:15px;
+    width:48px;
+    height:48px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:12px;
+
+    background:#eff6ff;
+
+    font-size:24px;
+
+    margin-bottom:14px;
 }
 
 .menu-card h3{
-  margin-bottom:8px;
-  font-size:17px;
+    font-size:16px;
+    margin-bottom:7px;
 }
 
 .menu-card p{
-  color:#64748b;
-  font-size:13px;
-  line-height:1.5;
-  min-height:40px;
-  margin-bottom:17px;
+    color:#64748b;
+
+    font-size:12px;
+
+    line-height:1.5;
+
+    min-height:38px;
+
+    margin-bottom:15px;
 }
 
-.menu-card a,
-.menu-card button{
-  display:block;
-  width:100%;
-  padding:11px;
-  border:0;
-  border-radius:8px;
-  background:#2563eb;
-  color:white;
-  cursor:pointer;
-  font-size:14px;
-  text-align:center;
-  text-decoration:none;
-  font-weight:bold;
+.menu-link{
+    display:block;
+
+    width:100%;
+
+    padding:11px;
+
+    border:0;
+
+    border-radius:8px;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:13px;
+
+    text-align:center;
+
+    text-decoration:none;
+
+    font-weight:bold;
+
+    background:#2563eb;
+}
+
+.menu-link:hover{
+    opacity:.9;
+}
+
+
+/* COLORS */
+
+.candidate .menu-icon{
+    background:#eff6ff;
+}
+
+.candidate .menu-link{
+    background:#2563eb;
 }
 
 .invigilator .menu-icon{
-  background:#f5f3ff;
+    background:#f5f3ff;
 }
 
-.invigilator a{
-  background:#7c3aed;
+.invigilator .menu-link{
+    background:#7c3aed;
 }
 
 .exam .menu-icon{
-  background:#ecfdf5;
+    background:#ecfdf5;
 }
 
-.exam a{
-  background:#059669;
+.exam .menu-link{
+    background:#059669;
+}
+
+.question .menu-icon{
+    background:#fff7ed;
+}
+
+.question .menu-link{
+    background:#ea580c;
 }
 
 .monitoring .menu-icon{
-  background:#eff6ff;
+    background:#ecfeff;
 }
 
-.monitoring button{
-  background:#2563eb;
+.monitoring .menu-link{
+    background:#0891b2;
 }
 
 .results .menu-icon{
-  background:#fff7ed;
+    background:#fef2f2;
 }
 
-.results button{
-  background:#ea580c;
+.results .menu-link{
+    background:#dc2626;
 }
 
 .reports .menu-icon{
-  background:#ecfeff;
+    background:#f0fdf4;
 }
 
-.reports button{
-  background:#0891b2;
+.reports .menu-link{
+    background:#16a34a;
 }
 
-/* RECENT */
+.notifications .menu-icon{
+    background:#fefce8;
+}
+
+.notifications .menu-link{
+    background:#ca8a04;
+}
+
+.settings .menu-icon{
+    background:#f8fafc;
+}
+
+.settings .menu-link{
+    background:#475569;
+}
+
+
+/* ================= QUICK ACTIONS ================= */
+
+.quick-actions{
+    margin-top:28px;
+
+    background:white;
+
+    border-radius:14px;
+
+    padding:20px;
+
+    box-shadow:
+        0 4px 15px rgba(0,0,0,.07);
+}
+
+.quick-grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:10px;
+
+    margin-top:15px;
+}
+
+.quick-btn{
+    border:0;
+
+    padding:12px;
+
+    border-radius:8px;
+
+    background:#f1f5f9;
+
+    color:#334155;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    font-size:12px;
+}
+
+.quick-btn:hover{
+    background:#e2e8f0;
+}
+
+
+/* ================= RECENT ================= */
 
 .recent{
-  margin-top:30px;
-  background:white;
-  padding:22px;
-  border-radius:14px;
-  box-shadow:0 4px 15px rgba(0,0,0,.07);
+    margin-top:28px;
+
+    background:white;
+
+    padding:20px;
+
+    border-radius:14px;
+
+    box-shadow:
+        0 4px 15px rgba(0,0,0,.07);
 }
 
 .recent-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:10px;
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:10px;
 }
 
 .recent-header h2{
-  font-size:19px;
+    font-size:18px;
 }
 
 .refresh-btn{
-  border:0;
-  background:#e0e7ff;
-  color:#3730a3;
-  padding:8px 12px;
-  border-radius:7px;
-  cursor:pointer;
-  font-weight:bold;
+    border:0;
+
+    background:#e0e7ff;
+
+    color:#3730a3;
+
+    padding:8px 12px;
+
+    border-radius:7px;
+
+    cursor:pointer;
+
+    font-weight:bold;
 }
 
 .recent-item{
-  padding:13px 0;
-  border-bottom:1px solid #e5e7eb;
-  font-size:13px;
-  line-height:1.7;
+    padding:13px 0;
+
+    border-bottom:
+        1px solid #e5e7eb;
+
+    font-size:13px;
+
+    line-height:1.7;
 }
 
 .recent-item:last-child{
-  border-bottom:0;
+    border-bottom:0;
 }
 
 .recent-item strong{
-  color:#0f172a;
+    color:#0f172a;
 }
 
 .meta{
-  color:#64748b;
+    color:#64748b;
+    font-size:11px;
 }
 
 .empty{
-  color:#64748b;
-  padding:15px 0;
-  text-align:center;
+    color:#64748b;
+    padding:20px;
+    text-align:center;
 }
 
 .loading{
-  color:#2563eb;
-  padding:15px 0;
-  text-align:center;
-  font-weight:bold;
+    color:#2563eb;
+    padding:20px;
+    text-align:center;
+    font-weight:bold;
 }
 
-/* STATUS */
+
+/* ================= OVERVIEW ================= */
+
+.overview{
+    margin-top:28px;
+
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:18px;
+}
+
+.overview-card{
+    background:white;
+
+    border-radius:14px;
+
+    padding:20px;
+
+    box-shadow:
+        0 4px 15px rgba(0,0,0,.07);
+}
+
+.overview-card h3{
+    font-size:17px;
+    margin-bottom:15px;
+}
+
+.overview-row{
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:10px 0;
+
+    border-bottom:
+        1px solid #f1f5f9;
+
+    font-size:12px;
+}
+
+.overview-row:last-child{
+    border-bottom:0;
+}
+
+.overview-value{
+    font-weight:bold;
+    color:#2563eb;
+}
+
+
+/* ================= STATUS ================= */
 
 .status-pill{
-  display:inline-block;
-  padding:4px 8px;
-  border-radius:20px;
-  font-size:10px;
-  font-weight:bold;
-  margin-left:5px;
+    display:inline-block;
+
+    padding:4px 8px;
+
+    border-radius:20px;
+
+    font-size:9px;
+
+    font-weight:bold;
 }
 
-.status-published{
-  background:#dcfce7;
-  color:#166534;
+.status-online{
+    background:#dcfce7;
+    color:#166534;
 }
 
-.status-draft{
-  background:#fef3c7;
-  color:#92400e;
+.status-info{
+    background:#dbeafe;
+    color:#1d4ed8;
 }
 
-/* TOAST */
+
+/* ================= TOAST ================= */
 
 .toast{
-  position:fixed;
-  right:20px;
-  bottom:20px;
-  background:#0f172a;
-  color:white;
-  padding:13px 17px;
-  border-radius:9px;
-  display:none;
-  z-index:9999;
-  box-shadow:0 5px 20px rgba(0,0,0,.2);
-  font-size:13px;
+    position:fixed;
+
+    right:20px;
+    bottom:20px;
+
+    background:#0f172a;
+
+    color:white;
+
+    padding:13px 17px;
+
+    border-radius:9px;
+
+    display:none;
+
+    z-index:9999;
+
+    box-shadow:
+        0 5px 20px rgba(0,0,0,.2);
+
+    font-size:13px;
 }
 
 .toast.show{
-  display:block;
+    display:block;
 }
 
-/* MOBILE */
 
-@media(max-width:1000px){
+/* ================= MOBILE ================= */
 
-  .stats{
-    grid-template-columns:repeat(3,1fr);
-  }
+@media(max-width:1100px){
 
-  .menu{
-    grid-template-columns:repeat(2,1fr);
-  }
+    .stats{
+        grid-template-columns:
+            repeat(3,1fr);
+    }
 
+    .menu{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .quick-grid{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
 }
 
-@media(max-width:650px){
+@media(max-width:700px){
 
-  .header{
-    padding:15px;
-    align-items:flex-start;
-  }
+    .header{
+        padding:13px 15px;
+        align-items:flex-start;
+    }
 
-  .header-left h1{
-    font-size:18px;
-  }
+    .header-left h1{
+        font-size:17px;
+    }
 
-  .header-right{
-    flex-direction:column;
-    align-items:flex-end;
-  }
+    .header-left p{
+        font-size:9px;
+    }
 
-  .admin-badge{
-    display:none;
-  }
+    .logo{
+        width:40px;
+        height:40px;
+        font-size:13px;
+    }
 
-  .container{
-    width:93%;
-    padding:18px 0;
-  }
+    .admin-badge{
+        display:none;
+    }
 
-  .welcome h2{
-    font-size:21px;
-  }
+    .logout{
+        padding:8px 11px;
+        font-size:11px;
+    }
 
-  .stats{
-    grid-template-columns:repeat(2,1fr);
-    gap:10px;
-  }
+    .container{
+        width:92%;
+        padding:18px 0 30px;
+    }
 
-  .stat-card{
-    padding:16px;
-  }
+    .welcome{
+        padding:20px;
+    }
 
-  .stat-card p{
-    font-size:24px;
-  }
+    .welcome h2{
+        font-size:21px;
+    }
 
-  .menu{
-    grid-template-columns:1fr;
-  }
+    .stats{
+        grid-template-columns:
+            repeat(2,1fr);
 
-  .recent-header{
-    align-items:flex-start;
-  }
+        gap:10px;
+    }
 
+    .stat-card{
+        padding:15px;
+    }
+
+    .stat-card h3{
+        font-size:10px;
+    }
+
+    .stat-card p{
+        font-size:23px;
+    }
+
+    .menu{
+        grid-template-columns:1fr;
+    }
+
+    .quick-grid{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .overview{
+        grid-template-columns:1fr;
+    }
 }
+
+@media(max-width:400px){
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .quick-grid{
+        grid-template-columns:1fr;
+    }
+}
+
 </style>
+
 </head>
+
 
 <body>
 
-<!-- HEADER -->
+
+<!-- ================= HEADER ================= -->
 
 <header class="header">
 
-  <div class="header-left">
+    <div class="header-left">
 
-    <h1>
-      🛡️ SSC Examination System
-    </h1>
+        <div class="logo">
+            SSC
+        </div>
 
-    <p>
-      Super Admin Control Panel
-    </p>
+        <div>
 
-  </div>
+            <h1>
+                SSC Examination System
+            </h1>
 
-  <div class="header-right">
+            <p>
+                Super Admin Control Panel
+            </p>
 
-    <div class="admin-badge">
-      🔐 Administrator
+        </div>
+
     </div>
 
-    <button
-      class="logout"
-      onclick="logout()">
 
-      Logout
+    <div class="header-right">
 
-    </button>
+        <div class="admin-badge">
+            🔐 Administrator
+        </div>
 
-  </div>
+        <button
+            class="logout"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
 
 </header>
 
 
+
 <main class="container">
 
-  <!-- WELCOME -->
 
-  <section class="welcome">
+<!-- ================= WELCOME ================= -->
+
+<section class="welcome">
 
     <h2>
-      Admin Dashboard
+        Admin Dashboard
     </h2>
 
     <p>
-      Manage candidates, invigilators, examinations and system operations.
+        Manage candidates, invigilators, examinations,
+        questions, results, monitoring and reports.
     </p>
 
-  </section>
+</section>
 
 
-  <!-- STATS -->
 
-  <section class="stats">
+<!-- ================= STATS ================= -->
+
+<section class="stats">
 
     <div class="stat-card">
 
-      <h3>
-        👨‍🎓 Total Candidates
-      </h3>
+        <h3>
+            👨‍🎓 Total Candidates
+        </h3>
 
-      <p id="candidateCount">
-        0
-      </p>
+        <p id="candidateCount">
+            0
+        </p>
 
     </div>
 
 
     <div class="stat-card">
 
-      <h3>
-        👨‍🏫 Total Invigilators
-      </h3>
+        <h3>
+            👨‍🏫 Total Invigilators
+        </h3>
 
-      <p id="invigilatorCount">
-        0
-      </p>
-
-    </div>
-
-
-    <div class="stat-card">
-
-      <h3>
-        🟢 Active Invigilators
-      </h3>
-
-      <p id="activeInvigilatorCount">
-        0
-      </p>
+        <p id="invigilatorCount">
+            0
+        </p>
 
     </div>
 
 
     <div class="stat-card">
 
-      <h3>
-        📝 Total Exams
-      </h3>
+        <h3>
+            🟢 Active Invigilators
+        </h3>
 
-      <p id="examCount">
-        0
-      </p>
+        <p id="activeInvigilatorCount">
+            0
+        </p>
 
     </div>
 
 
     <div class="stat-card">
 
-      <h3>
-        📢 Published Exams
-      </h3>
+        <h3>
+            📝 Total Exams
+        </h3>
 
-      <p id="publishedExamCount">
-        0
-      </p>
+        <p id="examCount">
+            0
+        </p>
 
     </div>
 
-  </section>
+
+    <div class="stat-card">
+
+        <h3>
+            📢 Published Exams
+        </h3>
+
+        <p id="publishedExamCount">
+            0
+        </p>
+
+    </div>
+
+</section>
 
 
-  <!-- ADMINISTRATION -->
 
-  <h2 class="section-title">
-    Administration
-  </h2>
+<!-- ================= ADMINISTRATION ================= -->
+
+<div class="section-header">
+
+    <h2 class="section-title">
+        Administration
+    </h2>
+
+    <p class="section-subtitle">
+        Manage the complete SSC Examination System
+    </p>
+
+</div>
 
 
-  <section class="menu">
+
+<section class="menu">
 
 
     <!-- CANDIDATES -->
 
-    <div class="menu-card">
+    <div class="menu-card candidate">
 
-      <div class="menu-icon">
-        👨‍🎓
-      </div>
+        <div class="menu-icon">
+            👨‍🎓
+        </div>
 
-      <h3>
-        Candidate Management
-      </h3>
+        <h3>
+            Candidate Management
+        </h3>
 
-      <p>
-        Search candidates and allocate centre,
-        lab, room and seat numbers.
-      </p>
+        <p>
+            Search candidates, view candidate details
+            and allocate centre, room and seat.
+        </p>
 
-      <a href="admin_candidates.html">
-        Open Candidate Management
-      </a>
+        <a
+            class="menu-link"
+            href="admin_candidates.html"
+        >
+            Open Candidates
+        </a>
 
     </div>
 
@@ -580,22 +956,25 @@ body{
 
     <div class="menu-card invigilator">
 
-      <div class="menu-icon">
-        👨‍🏫
-      </div>
+        <div class="menu-icon">
+            👨‍🏫
+        </div>
 
-      <h3>
-        Invigilator Management
-      </h3>
+        <h3>
+            Invigilator Management
+        </h3>
 
-      <p>
-        Create and manage examination
-        invigilator accounts and assignments.
-      </p>
+        <p>
+            Create, manage and allocate examination
+            invigilators to centres and rooms.
+        </p>
 
-      <a href="admin_invigilators.html">
-        Open Invigilator Management
-      </a>
+        <a
+            class="menu-link"
+            href="admin_invigilators.html"
+        >
+            Open Invigilators
+        </a>
 
     </div>
 
@@ -604,26 +983,52 @@ body{
 
     <div class="menu-card exam">
 
-      <div class="menu-icon">
-        📝
-      </div>
+        <div class="menu-icon">
+            📝
+        </div>
 
-      <h3>
-        Exam Management
-      </h3>
+        <h3>
+            Exam Management
+        </h3>
 
-      <p>
-        Create exams, subjects, schedules,
-        duration, marks and publish status.
-      </p>
+        <p>
+            Create exams, subjects, schedules,
+            duration, marks and publish examinations.
+        </p>
 
-      <a href="admin_exams.html">
-        Open Exam Management
-      </a>
-      
-      <a href="admin-questions.html" class="menu-btn">
-    📝 Question Bank
-      </a>
+        <a
+            class="menu-link"
+            href="admin_exams.html"
+        >
+            Open Exams
+        </a>
+
+    </div>
+
+
+    <!-- QUESTIONS -->
+
+    <div class="menu-card question">
+
+        <div class="menu-icon">
+            ❓
+        </div>
+
+        <h3>
+            Question Bank
+        </h3>
+
+        <p>
+            Import questions from PDF using AI,
+            review MCQs and manage questions.
+        </p>
+
+        <a
+            class="menu-link"
+            href="admin-questions.html"
+        >
+            Open Question Bank
+        </a>
 
     </div>
 
@@ -632,25 +1037,25 @@ body{
 
     <div class="menu-card monitoring">
 
-      <div class="menu-icon">
-        🖥️
-      </div>
+        <div class="menu-icon">
+            🖥️
+        </div>
 
-      <h3>
-        Examination Monitoring
-      </h3>
+        <h3>
+            Examination Monitoring
+        </h3>
 
-      <p>
-        Monitor centres, labs, candidates,
-        invigilators and examination activity.
-      </p>
+        <p>
+            Monitor candidates, centres, rooms,
+            invigilators and examination activity.
+        </p>
 
-      <button
-        onclick="comingSoon('Examination Monitoring')">
-
-        Open Monitoring
-
-      </button>
+        <button
+            class="menu-link"
+            onclick="openMonitoring()"
+        >
+            Open Monitoring
+        </button>
 
     </div>
 
@@ -659,25 +1064,25 @@ body{
 
     <div class="menu-card results">
 
-      <div class="menu-icon">
-        🏆
-      </div>
+        <div class="menu-icon">
+            🏆
+        </div>
 
-      <h3>
-        Results
-      </h3>
+        <h3>
+            Results Management
+        </h3>
 
-      <p>
-        View candidate results, pass/fail
-        information and result data.
-      </p>
+        <p>
+            Check submitted results, preview marks
+            and publish candidate results.
+        </p>
 
-      <button
-        onclick="comingSoon('Results')">
-
-        View Results
-
-      </button>
+        <a
+            class="menu-link"
+            href="admin-results.html"
+        >
+            Open Results
+        </a>
 
     </div>
 
@@ -686,74 +1091,370 @@ body{
 
     <div class="menu-card reports">
 
-      <div class="menu-icon">
-        📄
-      </div>
+        <div class="menu-icon">
+            📄
+        </div>
 
-      <h3>
-        Reports
-      </h3>
+        <h3>
+            Reports
+        </h3>
 
-      <p>
-        Candidate, attendance, exam,
-        centre and result reports.
-      </p>
+        <p>
+            View candidate, examination, centre
+            and result reports.
+        </p>
 
-      <button
-        onclick="comingSoon('Reports')">
-
-        View Reports
-
-      </button>
+        <button
+            class="menu-link"
+            onclick="openReports()"
+        >
+            Open Reports
+        </button>
 
     </div>
 
-  </section>
+
+    <!-- NOTIFICATIONS -->
+
+    <div class="menu-card notifications">
+
+        <div class="menu-icon">
+            🔔
+        </div>
+
+        <h3>
+            Notifications
+        </h3>
+
+        <p>
+            View notification records and monitor
+            published result notifications.
+        </p>
+
+        <button
+            class="menu-link"
+            onclick="openNotifications()"
+        >
+            View Notifications
+        </button>
+
+    </div>
 
 
-  <!-- RECENT CANDIDATES -->
+    <!-- SETTINGS -->
 
-  <section class="recent">
+    <div class="menu-card settings">
+
+        <div class="menu-icon">
+            ⚙️
+        </div>
+
+        <h3>
+            System Settings
+        </h3>
+
+        <p>
+            System configuration and administrative
+            settings for the examination platform.
+        </p>
+
+        <button
+            class="menu-link"
+            onclick="openSettings()"
+        >
+            Open Settings
+        </button>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ================= QUICK ACTIONS ================= -->
+
+<section class="quick-actions">
+
+    <h2>
+        ⚡ Quick Actions
+    </h2>
+
+    <p class="section-subtitle">
+        Frequently used administrator actions
+    </p>
+
+
+    <div class="quick-grid">
+
+
+        <button
+            class="quick-btn"
+            onclick="go('admin_candidates.html')"
+        >
+            👨‍🎓 Manage Candidates
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="go('admin_invigilators.html')"
+        >
+            👨‍🏫 Manage Invigilators
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="go('admin_exams.html')"
+        >
+            📝 Manage Exams
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="go('admin-questions.html')"
+        >
+            ❓ Question Bank
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="go('admin-results.html')"
+        >
+            🏆 Manage Results
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="openMonitoring()"
+        >
+            🖥️ Monitoring
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="openReports()"
+        >
+            📄 Reports
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="openNotifications()"
+        >
+            🔔 Notifications
+        </button>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= OVERVIEW ================= -->
+
+<section class="overview">
+
+
+    <div class="overview-card">
+
+        <h3>
+            📊 Examination System
+        </h3>
+
+
+        <div class="overview-row">
+
+            <span>
+                Candidates
+            </span>
+
+            <span
+                class="overview-value"
+                id="overviewCandidates"
+            >
+                0
+            </span>
+
+        </div>
+
+
+        <div class="overview-row">
+
+            <span>
+                Invigilators
+            </span>
+
+            <span
+                class="overview-value"
+                id="overviewInvigilators"
+            >
+                0
+            </span>
+
+        </div>
+
+
+        <div class="overview-row">
+
+            <span>
+                Active Invigilators
+            </span>
+
+            <span
+                class="overview-value"
+                id="overviewActive"
+            >
+                0
+            </span>
+
+        </div>
+
+
+        <div class="overview-row">
+
+            <span>
+                Exams
+            </span>
+
+            <span
+                class="overview-value"
+                id="overviewExams"
+            >
+                0
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="overview-card">
+
+        <h3>
+            🔐 System Status
+        </h3>
+
+
+        <div class="overview-row">
+
+            <span>
+                Firebase Authentication
+            </span>
+
+            <span class="status-pill status-online">
+                ONLINE
+            </span>
+
+        </div>
+
+
+        <div class="overview-row">
+
+            <span>
+                Firestore Database
+            </span>
+
+            <span class="status-pill status-online">
+                ONLINE
+            </span>
+
+        </div>
+
+
+        <div class="overview-row">
+
+            <span>
+                Admin Session
+            </span>
+
+            <span class="status-pill status-online">
+                ACTIVE
+            </span>
+
+        </div>
+
+
+        <div class="overview-row">
+
+            <span>
+                Examination System
+            </span>
+
+            <span class="status-pill status-info">
+                READY
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= RECENT CANDIDATES ================= -->
+
+<section class="recent">
+
 
     <div class="recent-header">
 
-      <h2>
-        Recent Candidates
-      </h2>
+        <div>
 
-      <button
-        class="refresh-btn"
-        onclick="loadDashboardData()">
+            <h2>
+                Recent Candidates
+            </h2>
 
-        ↻ Refresh
+            <p class="section-subtitle">
+                Latest candidate records from Firestore
+            </p>
 
-      </button>
+        </div>
+
+
+        <button
+            class="refresh-btn"
+            onclick="loadDashboardData()"
+        >
+            ↻ Refresh
+        </button>
 
     </div>
 
 
     <div id="recentCandidates">
 
-      <div class="loading">
-        Loading candidates...
-      </div>
+        <div class="loading">
+            Loading candidates...
+        </div>
 
     </div>
 
-  </section>
+</section>
+
 
 </main>
 
 
-<!-- TOAST -->
+
+<!-- ================= TOAST ================= -->
 
 <div
-  id="toast"
-  class="toast">
-</div>
+    id="toast"
+    class="toast"
+></div>
 
 
-<!-- FIREBASE -->
+
+<!-- ================= FIREBASE ================= -->
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 
@@ -765,492 +1466,679 @@ body{
 <script>
 
 /* =====================================================
-   FIREBASE CONFIG
+FIREBASE CONFIG
 ===================================================== */
 
 const firebaseConfig = {
 
-  apiKey:
-    "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
+    apiKey:
+        "AIzaSyCuYIuB_I9OrrTx6Qox6GnUerkN_vDgIHI",
 
-  authDomain:
-    "ssc-exam-project-8af6b.firebaseapp.com",
+    authDomain:
+        "ssc-exam-project-8af6b.firebaseapp.com",
 
-  projectId:
-    "ssc-exam-project-8af6b",
+    projectId:
+        "ssc-exam-project-8af6b",
 
-  storageBucket:
-    "ssc-exam-project-8af6b.firebasestorage.app",
+    storageBucket:
+        "ssc-exam-project-8af6b.firebasestorage.app",
 
-  messagingSenderId:
-    "288245274853",
+    messagingSenderId:
+        "288245274853",
 
-  appId:
-    "1:288245274853:web:b4d535a08faf305f5e9c0c",
+    appId:
+        "1:288245274853:web:b4d535a08faf305f5e9c0c",
 
-  measurementId:
-    "G-4BTLY67VDS"
-
+    measurementId:
+        "G-4BTLY67VDS"
 };
 
 
 /* =====================================================
-   FIREBASE INITIALIZATION
+INITIALIZE FIREBASE
 ===================================================== */
 
 if(!firebase.apps.length){
 
-  firebase.initializeApp(
-    firebaseConfig
-  );
+    firebase.initializeApp(
+        firebaseConfig
+    );
 
 }
 
 const auth =
-  firebase.auth();
+    firebase.auth();
 
 const db =
-  firebase.firestore();
+    firebase.firestore();
 
 
 /* =====================================================
-   SESSION CHECK
+HELPER
 ===================================================== */
 
-if(
-  sessionStorage.getItem(
-    "adminLoggedIn"
-  ) !== "true"
-){
+function go(file){
 
-  window.location.replace(
-    "admin_login.html"
-  );
+    window.location.href =
+        file;
 
 }
 
 
 /* =====================================================
-   COMING SOON
-===================================================== */
-
-function comingSoon(name){
-
-  showToast(
-    name +
-    " module is coming next."
-  );
-
-}
-
-
-/* =====================================================
-   TOAST
-===================================================== */
-
-function showToast(message){
-
-  const toast =
-    document.getElementById(
-      "toast"
-    );
-
-  toast.textContent =
-    message;
-
-  toast.classList.add(
-    "show"
-  );
-
-  setTimeout(
-    function(){
-
-      toast.classList.remove(
-        "show"
-      );
-
-    },
-    3000
-  );
-
-}
-
-
-/* =====================================================
-   LOGOUT
-===================================================== */
-
-async function logout(){
-
-  try{
-
-    await auth.signOut();
-
-  }catch(error){
-
-    console.error(
-      "Logout Error:",
-      error
-    );
-
-  }
-
-  sessionStorage.clear();
-
-  window.location.replace(
-    "admin-login.html"
-  );
-
-}
-
-
-/* =====================================================
-   AUTH STATE
-===================================================== */
-
-auth.onAuthStateChanged(
-  function(user){
-
-    const logged =
-      sessionStorage.getItem(
-        "adminLoggedIn"
-      );
-
-    if(
-      !user &&
-      logged !== "true"
-    ){
-
-      window.location.replace(
-        "admin_login.html"
-      );
-
-      return;
-
-    }
-
-    loadDashboardData();
-
-  }
-);
-
-
-/* =====================================================
-   DASHBOARD DATA
-===================================================== */
-
-async function loadDashboardData(){
-
-  const recent =
-    document.getElementById(
-      "recentCandidates"
-    );
-
-  recent.innerHTML =
-    '<div class="loading">Loading dashboard data...</div>';
-
-
-  try{
-
-    /* -----------------------------------------------
-       CANDIDATES
-    ------------------------------------------------ */
-
-    const candidatesSnapshot =
-      await db
-        .collection("candidates")
-        .get();
-
-
-    document.getElementById(
-      "candidateCount"
-    ).textContent =
-      candidatesSnapshot.size;
-
-
-    /* -----------------------------------------------
-       INVIGILATORS
-    ------------------------------------------------ */
-
-    const invigilatorsSnapshot =
-      await db
-        .collection("invigilators")
-        .get();
-
-
-    document.getElementById(
-      "invigilatorCount"
-    ).textContent =
-      invigilatorsSnapshot.size;
-
-
-    let activeInvigilators = 0;
-
-
-    invigilatorsSnapshot.forEach(
-      function(doc){
-
-        const data =
-          doc.data();
-
-
-        if(
-          data.status === "active"
-        ){
-
-          activeInvigilators++;
-
-        }
-
-      }
-    );
-
-
-    document.getElementById(
-      "activeInvigilatorCount"
-    ).textContent =
-      activeInvigilators;
-
-
-    /* -----------------------------------------------
-       EXAMS
-    ------------------------------------------------ */
-
-    let examCount = 0;
-    let publishedExamCount = 0;
-
-    try{
-
-      const examsSnapshot =
-        await db
-          .collection("exams")
-          .get();
-
-
-      examCount =
-        examsSnapshot.size;
-
-
-      examsSnapshot.forEach(
-        function(doc){
-
-          const data =
-            doc.data();
-
-
-          if(
-            data.status === "published"
-          ){
-
-            publishedExamCount++;
-
-          }
-
-        }
-      );
-
-    }catch(examError){
-
-      console.warn(
-        "Exam collection unavailable:",
-        examError
-      );
-
-    }
-
-
-    document.getElementById(
-      "examCount"
-    ).textContent =
-      examCount;
-
-
-    document.getElementById(
-      "publishedExamCount"
-    ).textContent =
-      publishedExamCount;
-
-
-    /* -----------------------------------------------
-       RECENT CANDIDATES
-    ------------------------------------------------ */
-
-    recent.innerHTML =
-      "";
-
-
-    if(
-      candidatesSnapshot.empty
-    ){
-
-      recent.innerHTML =
-        '<div class="empty">No candidates found.</div>';
-
-      return;
-
-    }
-
-
-    let candidateNumber = 0;
-
-
-    candidatesSnapshot.forEach(
-      function(doc){
-
-        if(candidateNumber >= 10)
-          return;
-
-
-        const data =
-          doc.data();
-
-
-        const div =
-          document.createElement(
-            "div"
-          );
-
-
-        div.className =
-          "recent-item";
-
-
-        const name =
-          escapeHtml(
-            data.fullName ||
-            "Candidate"
-          );
-
-        const roll =
-          escapeHtml(
-            data.rollNumber ||
-            "-"
-          );
-
-        const centre =
-          escapeHtml(
-            data.centre ||
-            "-"
-          );
-
-        const lab =
-          escapeHtml(
-            data.roomNo ||
-            data.lab ||
-            "-"
-          );
-
-        const seat =
-          escapeHtml(
-            data.seatNumber ||
-            "-"
-          );
-
-
-        div.innerHTML = `
-
-          <strong>
-            👤 ${name}
-          </strong>
-
-          <div class="meta">
-
-            Roll No:
-            ${roll}
-
-            &nbsp; | &nbsp;
-
-            Centre:
-            ${centre}
-
-            &nbsp; | &nbsp;
-
-            Lab:
-            ${lab}
-
-            &nbsp; | &nbsp;
-
-            Seat:
-            ${seat}
-
-          </div>
-
-        `;
-
-
-        recent.appendChild(
-          div
-        );
-
-
-        candidateNumber++;
-
-      }
-    );
-
-
-    if(
-      candidateNumber === 0
-    ){
-
-      recent.innerHTML =
-        '<div class="empty">No candidates found.</div>';
-
-    }
-
-
-  }catch(error){
-
-    console.error(
-      "Dashboard Error:",
-      error
-    );
-
-
-    recent.innerHTML =
-      '<div class="empty">Dashboard data unavailable.</div>';
-
-  }
-
-}
-
-
-/* =====================================================
-   ESCAPE HTML
+ESCAPE HTML
 ===================================================== */
 
 function escapeHtml(value){
 
-  return String(value)
+    return String(value ?? "")
 
-    .replace(
-      /&/g,
-      "&amp;"
-    )
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
 
-    .replace(
-      /</g,
-      "&lt;"
-    )
 
-    .replace(
-      />/g,
-      "&gt;"
-    )
+/* =====================================================
+TOAST
+===================================================== */
 
-    .replace(
-      /"/g,
-      "&quot;"
-    )
+function showToast(message){
 
-    .replace(
-      /'/g,
-      "&#039;"
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent =
+        message;
+
+    toast.classList.add("show");
+
+    setTimeout(function(){
+
+        toast.classList.remove("show");
+
+    },3000);
+
+}
+
+
+/* =====================================================
+AUTH CHECK
+===================================================== */
+
+auth.onAuthStateChanged(
+    async function(user){
+
+        const session =
+            sessionStorage.getItem(
+                "adminLoggedIn"
+            );
+
+
+        /*
+           Firebase needs time to restore
+           the authentication state.
+
+           Therefore we check redirect ONLY
+           inside onAuthStateChanged.
+        */
+
+        if(!user && session !== "true"){
+
+            window.location.replace(
+                "admin_login.html"
+            );
+
+            return;
+
+        }
+
+
+        /*
+           User is authenticated or valid
+           admin session exists.
+        */
+
+        loadDashboardData();
+
+    }
+);
+
+
+/* =====================================================
+LOGOUT
+===================================================== */
+
+async function logout(){
+
+    try{
+
+        await auth.signOut();
+
+    }
+    catch(error){
+
+        console.error(
+            "Logout error:",
+            error
+        );
+
+    }
+
+
+    sessionStorage.removeItem(
+        "adminLoggedIn"
     );
+
+    sessionStorage.removeItem(
+        "adminUID"
+    );
+
+    sessionStorage.removeItem(
+        "adminEmail"
+    );
+
+    sessionStorage.removeItem(
+        "adminLoginTime"
+    );
+
+
+    window.location.replace(
+        "admin_login.html"
+    );
+
+}
+
+
+/* =====================================================
+MONITORING
+===================================================== */
+
+function openMonitoring(){
+
+    showToast(
+        "Examination Monitoring module will be connected next."
+    );
+
+}
+
+
+/* =====================================================
+REPORTS
+===================================================== */
+
+function openReports(){
+
+    showToast(
+        "Reports module will be connected next."
+    );
+
+}
+
+
+/* =====================================================
+NOTIFICATIONS
+===================================================== */
+
+async function openNotifications(){
+
+    try{
+
+        const snapshot =
+            await db
+            .collection("notifications")
+            .limit(20)
+            .get();
+
+
+        if(snapshot.empty){
+
+            showToast(
+                "No notification records found."
+            );
+
+            return;
+
+        }
+
+
+        showToast(
+            snapshot.size +
+            " notification records found."
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "Notification error:",
+            error
+        );
+
+        showToast(
+            "Unable to load notifications."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+SETTINGS
+===================================================== */
+
+function openSettings(){
+
+    showToast(
+        "System Settings module will be connected next."
+    );
+
+}
+
+
+/* =====================================================
+LOAD DASHBOARD DATA
+===================================================== */
+
+async function loadDashboardData(){
+
+    const recent =
+        document.getElementById(
+            "recentCandidates"
+        );
+
+
+    recent.innerHTML =
+        `
+        <div class="loading">
+            Loading dashboard data...
+        </div>
+        `;
+
+
+    try{
+
+
+        /* =============================================
+        CANDIDATES
+        ============================================= */
+
+        const candidatesSnapshot =
+            await db
+            .collection("candidates")
+            .get();
+
+
+        const totalCandidates =
+            candidatesSnapshot.size;
+
+
+        document.getElementById(
+            "candidateCount"
+        ).textContent =
+            totalCandidates;
+
+
+        document.getElementById(
+            "overviewCandidates"
+        ).textContent =
+            totalCandidates;
+
+
+
+        /* =============================================
+        INVIGILATORS
+        ============================================= */
+
+        const invigilatorsSnapshot =
+            await db
+            .collection("invigilators")
+            .get();
+
+
+        const totalInvigilators =
+            invigilatorsSnapshot.size;
+
+
+        let activeInvigilators = 0;
+
+
+        invigilatorsSnapshot.forEach(
+            function(doc){
+
+                const data =
+                    doc.data() || {};
+
+
+                if(
+                    String(
+                        data.status || ""
+                    ).toLowerCase()
+                    ===
+                    "active"
+                ){
+
+                    activeInvigilators++;
+
+                }
+
+            }
+        );
+
+
+        document.getElementById(
+            "invigilatorCount"
+        ).textContent =
+            totalInvigilators;
+
+
+        document.getElementById(
+            "activeInvigilatorCount"
+        ).textContent =
+            activeInvigilators;
+
+
+        document.getElementById(
+            "overviewInvigilators"
+        ).textContent =
+            totalInvigilators;
+
+
+        document.getElementById(
+            "overviewActive"
+        ).textContent =
+            activeInvigilators;
+
+
+
+        /* =============================================
+        EXAMS
+        ============================================= */
+
+        const examsSnapshot =
+            await db
+            .collection("exams")
+            .get();
+
+
+        const totalExams =
+            examsSnapshot.size;
+
+
+        let publishedExams = 0;
+
+
+        examsSnapshot.forEach(
+            function(doc){
+
+                const data =
+                    doc.data() || {};
+
+
+                const status =
+                    String(
+                        data.status || ""
+                    ).toLowerCase();
+
+
+                if(
+                    status === "published" ||
+                    status === "active"
+                ){
+
+                    publishedExams++;
+
+                }
+
+            }
+        );
+
+
+        document.getElementById(
+            "examCount"
+        ).textContent =
+            totalExams;
+
+
+        document.getElementById(
+            "publishedExamCount"
+        ).textContent =
+            publishedExams;
+
+
+        document.getElementById(
+            "overviewExams"
+        ).textContent =
+            totalExams;
+
+
+
+        /* =============================================
+        RECENT CANDIDATES
+        ============================================= */
+
+        recent.innerHTML = "";
+
+
+        if(
+            candidatesSnapshot.empty
+        ){
+
+            recent.innerHTML =
+                `
+                <div class="empty">
+                    No candidates found.
+                </div>
+                `;
+
+            return;
+
+        }
+
+
+        const candidates = [];
+
+
+        candidatesSnapshot.forEach(
+            function(doc){
+
+                candidates.push({
+
+                    id:doc.id,
+
+                    data:doc.data() || {}
+
+                });
+
+            }
+        );
+
+
+        candidates.sort(
+            function(a,b){
+
+                const aTime =
+                    a.data.createdAt &&
+                    typeof a.data.createdAt.toMillis ===
+                    "function"
+                    ?
+                    a.data.createdAt.toMillis()
+                    :
+                    0;
+
+
+                const bTime =
+                    b.data.createdAt &&
+                    typeof b.data.createdAt.toMillis ===
+                    "function"
+                    ?
+                    b.data.createdAt.toMillis()
+                    :
+                    0;
+
+
+                return bTime - aTime;
+
+            }
+        );
+
+
+        candidates
+        .slice(0,10)
+        .forEach(
+            function(candidate){
+
+                const data =
+                    candidate.data;
+
+
+                const name =
+                    escapeHtml(
+                        data.fullName ||
+                        data.name ||
+                        "Candidate"
+                    );
+
+
+                const roll =
+                    escapeHtml(
+                        data.rollNumber ||
+                        "-"
+                    );
+
+
+                const centre =
+                    escapeHtml(
+                        data.centre ||
+                        "-"
+                    );
+
+
+                const room =
+                    escapeHtml(
+                        data.roomNo ||
+                        data.lab ||
+                        "-"
+                    );
+
+
+                const seat =
+                    escapeHtml(
+                        data.seatNumber ||
+                        "-"
+                    );
+
+
+                const exam =
+                    escapeHtml(
+                        data.assignedExamName ||
+                        "-"
+                    );
+
+
+                const status =
+                    escapeHtml(
+                        data.assignmentStatus ||
+                        data.examStatus ||
+                        "registered"
+                    );
+
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.className =
+                    "recent-item";
+
+
+                div.innerHTML = `
+
+                    <strong>
+                        👤 ${name}
+                    </strong>
+
+                    <span
+                        class="status-pill status-info"
+                    >
+                        ${status}
+                    </span>
+
+                    <div class="meta">
+
+                        Roll No:
+                        ${roll}
+
+                        &nbsp; | &nbsp;
+
+                        Centre:
+                        ${centre}
+
+                        &nbsp; | &nbsp;
+
+                        Room:
+                        ${room}
+
+                        &nbsp; | &nbsp;
+
+                        Seat:
+                        ${seat}
+
+                    </div>
+
+                    <div class="meta">
+
+                        Exam:
+                        ${exam}
+
+                    </div>
+
+                `;
+
+
+                recent.appendChild(
+                    div
+                );
+
+            }
+        );
+
+
+    }
+    catch(error){
+
+        console.error(
+            "Dashboard Error:",
+            error
+        );
+
+
+        recent.innerHTML =
+            `
+            <div class="empty">
+
+                ⚠️ Unable to load dashboard data.
+
+                <br><br>
+
+                ${escapeHtml(
+                    error.message
+                )}
+
+            </div>
+            `;
+
+    }
 
 }
 
 </script>
 
 </body>
+
 </html>
